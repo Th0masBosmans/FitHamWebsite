@@ -1,0 +1,1 @@
+ALTER TABLE sponsors ALTER COLUMN website_url DROP NOT NULL;

@@ -54,7 +54,7 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
     <div className="mb-6" id="contact-form">
       <div className="flex items-center gap-3 mb-4">
         <div className="h-1 w-8 bg-[var(--color-accent)] rounded-full"></div>
-        <h2 className="text-white whitespace-nowrap title-section">Stuur een Bericht</h2>
+        <h2 className="text-white whitespace-nowrap title-section">Stuur een Bericht.</h2>
         <div className="h-1 flex-1 bg-[var(--color-accent)] rounded-full"></div>
       </div>
 

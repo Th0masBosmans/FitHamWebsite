@@ -149,7 +149,7 @@ export function Footer() {
         <div className="text-center pt-6 border-t border-white/20">
           <button
             onClick={handleMapClick}
-            className="inline-flex items-center gap-3 text-white/90 hover:text-white transition-colors group mx-auto bg-white/10 px-5 py-3 rounded-xl backdrop-blur-sm border border-white/10 hover:bg-white/20"
+            className="inline-flex items-center gap-3 text-white/90 hover:text-white transition-colors group mx-auto bg-white/10 px-5 py-3 rounded-xl backdrop-blur-sm border border-white/10 hover:bg-white/20 cursor-pointer"
           >
             <div className="relative flex items-center justify-center w-10 h-10 shrink-0">
               <span className="absolute inset-0 bg-white/20 rounded-full animate-ping"></span>

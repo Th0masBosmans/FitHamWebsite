@@ -25,9 +25,10 @@ export function BoardMembers() {
 
       <div className="space-y-4">
         {boardMembers.map((member) => (
-          <div
+          <a
             key={member.id}
-            className="bg-white/90 rounded-2xl p-5 shadow-xl border-2 border-white/50 hover:scale-[1.02] transition-transform"
+            href={`mailto:${member.email}`}
+            className="block bg-white/90 rounded-2xl p-5 shadow-xl border-2 border-white/50 hover:scale-[1.02] transition-transform cursor-pointer"
           >
             <div className="flex items-center gap-4">
               <img
@@ -42,16 +43,13 @@ export function BoardMembers() {
                 <p className="label-regular text-[var(--color-primary-brand)]/70 mb-1 font-semibold">
                   {member.function}
                 </p>
-                <a
-                  href={`mailto:${member.email}`}
-                  className="inline-flex items-center gap-2 text-[var(--color-primary-brand)] hover:text-[var(--color-primary-brand-dark)] transition-colors font-bold"
-                >
+                <span className="inline-flex items-center gap-2 text-[var(--color-primary-brand)] font-bold">
                   <Mail className="w-4 h-4" />
                   {member.email}
-                </a>
+                </span>
               </div>
             </div>
-          </div>
+          </a>
         ))}
       </div>
     </div>

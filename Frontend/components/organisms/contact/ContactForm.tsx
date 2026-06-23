@@ -90,7 +90,7 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
               onChange={(event) => setFormData({ ...formData, email: event.target.value })}
               className={inputClasses}
              
-              placeholder="jouw@email.nl"
+              placeholder="jouw@email.be"
             />
           </div>
 

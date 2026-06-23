@@ -21,7 +21,7 @@ export function SocialMediaSection() {
       <SectionHeading title="Volg Ons" />
       <div className="grid grid-cols-3 gap-3 lg:gap-6">
         <motion.a
-          href="https://facebook.com"
+          href="https://www.facebook.com/profile.php?id=100063627339831"
           target="_blank"
           rel="noopener noreferrer"
           className={socialLinkClasses}
@@ -35,7 +35,7 @@ export function SocialMediaSection() {
         </motion.a>
 
         <motion.a
-          href="https://instagram.com"
+          href="https://www.instagram.com/vcfitham/"
           target="_blank"
           rel="noopener noreferrer"
           className={socialLinkClasses}
@@ -48,7 +48,7 @@ export function SocialMediaSection() {
         </motion.a>
 
         <motion.a
-          href="https://www.tiktok.com/@fitham"
+          href="https://www.tiktok.com/"
           target="_blank"
           rel="noopener noreferrer"
           className={socialLinkClasses}

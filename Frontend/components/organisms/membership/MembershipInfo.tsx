@@ -44,7 +44,7 @@ export function MembershipInfo() {
           <div className="relative z-10 flex flex-col items-center">
             <h4 className="text-white title-section font-black italic uppercase mb-2">Gratis Proeftraining</h4>
             <p className="text-white/90 font-medium label-regular leading-relaxed mb-6 max-w-[280px] lg:max-w-md">
-              Nog niet zeker, kom gerust al eens test trainen om te zien of Fit Ham jouw club wordt! Je kan tot 3 maal toe gratis test trainen!
+              Nog niet zeker, kom gerust al eens proef trainen om te zien of Fit Ham jouw club wordt! Je kan tot 3 maal toe gratis proef trainen!
             </p>
             <div className="inline-flex items-center gap-2 bg-[var(--color-accent)] text-[var(--color-primary-brand)] px-6 py-3 rounded-xl shadow-lg group-hover:bg-white group-hover:text-[var(--color-primary-brand)] transition-colors font-black uppercase tracking-wider label-regular">
               Aanvragen via Contact

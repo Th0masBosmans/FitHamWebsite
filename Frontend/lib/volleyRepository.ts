@@ -1,18 +1,15 @@
 // Live data from VolleyAdmin (standings + match calendar) for a team page.
 //
-// Fetch strategy:
-//   - Development: go through the internal Next.js proxy routes (/api/proxy-*),
-//     which dodge CORS cleanly while running `next dev`.
-//   - Production: the deployed site does not serve those API routes, so fetch
-//     through a public CORS proxy (allorigins) straight from the browser.
-// Both paths return the same raw VolleyAdmin XML, parsed identically below.
+// Fetch strategy: always go through the internal Next.js proxy routes
+// (/api/proxy-*), which dodge CORS cleanly and run both under `next dev` and as
+// serverless functions on Vercel. They return the raw VolleyAdmin XML, parsed
+// identically below.
 
 import type { VolleyMatch, VolleyRankingRow } from "@/types";
 
 export type { VolleyMatch, VolleyRankingRow };
 
 const DEFAULT_CLUB_ID = "L-0759";
-const IS_DEV = process.env.NODE_ENV !== "production";
 
 const cleanTeamName = (name = ""): string => name.replaceAll(/[+-]/g, "").trim();
 
@@ -83,11 +80,8 @@ const parseRanking = (xml: string): VolleyRankingRow[] =>
 
 // --- Fetching -----------------------------------------------------------------
 
-const fetchXML = async (devProxyPath: string, upstreamUrl: string): Promise<string> => {
-  const url = IS_DEV
-    ? `${devProxyPath}&timestamp=${Date.now()}`
-    : `https://api.allorigins.win/raw?url=${encodeURIComponent(upstreamUrl)}&timestamp=${Date.now()}`;
-
+const fetchXML = async (proxyPath: string): Promise<string> => {
+  const url = `${proxyPath}&timestamp=${Date.now()}`;
   const response = await fetch(url, { headers: { Accept: "text/xml, application/xml, */*" } });
   if (!response.ok) throw new Error(`Status ${response.status}`);
   return response.text();
@@ -155,8 +149,7 @@ class VolleyRepository {
     const mapped = mapSeriesForStandings(reeks);
     try {
       const xml = await fetchXML(
-        `/api/proxy-rangschikking?stamnummer=${encodeURIComponent(clubId)}&reeks=${encodeURIComponent(mapped)}`,
-        `https://www.volleyadmin2.be/services/rangschikking_xml.php?stamnummer=${clubId}&reeks=${mapped}`
+        `/api/proxy-rangschikking?stamnummer=${encodeURIComponent(clubId)}&reeks=${encodeURIComponent(mapped)}`
       );
       return parseRanking(xml);
     } catch (error) {
@@ -170,8 +163,7 @@ class VolleyRepository {
     if (!reeks) return [];
     try {
       const xml = await fetchXML(
-        `/api/proxy-matches?stamnummer=${encodeURIComponent(clubId)}`,
-        `https://www.volleyadmin2.be/services/wedstrijden_xml.php?stamnummer=${clubId}`
+        `/api/proxy-matches?stamnummer=${encodeURIComponent(clubId)}`
       );
       return parseMatches(xml).filter((match) => match.reeks === reeks);
     } catch (error) {

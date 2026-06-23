@@ -12,7 +12,7 @@ export function MembershipInfo() {
     <div className="mt-12 px-6 pb-8 max-w-md lg:max-w-xl mx-auto space-y-6">
       {/* Insurance Documents Download */}
       <motion.a
-        href="/verzekering-fitham.pdf"
+        href="/Verzekering.pdf"
         download
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}

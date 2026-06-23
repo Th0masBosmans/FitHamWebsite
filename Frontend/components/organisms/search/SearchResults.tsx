@@ -35,7 +35,7 @@ function getPageIcon(pageName: string) {
       return Mail;
     case "Lidmaatschap":
       return UserPlus;
-    case "Sponsoren":
+    case "Sponsors":
       return Award;
     default:
       return Home;

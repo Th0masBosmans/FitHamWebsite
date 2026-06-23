@@ -37,7 +37,7 @@ export function AboutSection() {
             href="/sponsors"
             className="text-[var(--color-secondary-brand)] hover:text-[var(--color-accent)] underline decoration-2 underline-offset-2 transition-colors font-bold"
           >
-            sponsoren
+            sponsors
           </Link>{" "}
           die ons steunen. Bekijk wie er achter ons staan!
         </p>

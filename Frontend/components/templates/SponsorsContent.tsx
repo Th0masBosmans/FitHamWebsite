@@ -37,7 +37,7 @@ export function SponsorsContent() {
 
       {/* Header */}
       <PageHeading
-        title="Sponsoren"
+        title="Sponsors"
         subtitle="Dankzij de steun van onze sponsors kunnen we FIT HAM blijven ontwikkelen en onze teams de beste faciliteiten bieden. Bedankt voor jullie vertrouwen!"
       />
 

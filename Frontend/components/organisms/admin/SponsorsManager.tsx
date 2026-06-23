@@ -101,7 +101,7 @@ export function SponsorsManager({ active }: { active: boolean }) {
           />
         );
       })}
-      {sponsors.length === 0 && <EmptyState msg="Geen sponsoren gevonden." />}
+      {sponsors.length === 0 && <EmptyState msg="Geen sponsors gevonden." />}
 
       {sponsorModal && (
         <ModalWrapper title={sponsorModal.item ? "Sponsor Bewerken" : "Nieuwe Sponsor"} onClose={() => setSponsorModal(null)}>

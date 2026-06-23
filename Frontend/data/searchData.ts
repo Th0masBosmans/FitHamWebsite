@@ -112,11 +112,11 @@ export const searchableContent: SearchableContent[] = [
     ]
   },
   {
-    page: "Sponsoren",
+    page: "Sponsors",
     path: "/sponsors",
     sections: [
       {
-        title: "Onze Sponsoren",
+        title: "Onze Sponsors",
         content: "Bekijk alle sponsors die FIT HAM Volleybal steunen"
       },
       {

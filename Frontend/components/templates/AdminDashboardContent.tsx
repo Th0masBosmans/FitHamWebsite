@@ -24,7 +24,7 @@ const NAV_TABS: { id: TabType; label: string }[] = [
   { id: "events", label: "Evenementen" },
   { id: "contact", label: "Contact" },
   { id: "memberships", label: "Lidgeld" },
-  { id: "sponsors", label: "Sponsoren" },
+  { id: "sponsors", label: "Sponsors" },
 ];
 
 const tabTitles: Record<TabType, string> = {
@@ -32,7 +32,7 @@ const tabTitles: Record<TabType, string> = {
   photos: "Foto's",
   events: "Evenementen",
   memberships: "Lidgeld",
-  sponsors: "Sponsoren",
+  sponsors: "Sponsors",
   homepage: "Home",
   contact: "Contact",
 };

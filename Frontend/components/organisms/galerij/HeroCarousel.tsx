@@ -101,7 +101,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
 
   return (
     <div
-      className="relative mb-6 overflow-hidden h-96 w-full bg-neutral-900"
+      className="relative mb-6 overflow-hidden h-96 w-full bg-gradient-to-br from-[var(--color-primary-brand-darker)] via-[var(--color-primary-brand)] to-[var(--color-primary-brand-dark)]"
       style={{
         maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
         WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",

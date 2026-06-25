@@ -103,7 +103,7 @@ export function MediaViewerModal({ gallery, mediaIndex, onClose, onSelectMedia }
               <button
                 onClick={onClose}
                 aria-label="Sluiten"
-                className="absolute right-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition-all hover:bg-black/60 hover:scale-105 active:scale-95"
+                className="absolute right-3 top-3 z-10 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition-all hover:bg-black/60 hover:scale-105 active:scale-95"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -121,14 +121,14 @@ export function MediaViewerModal({ gallery, mediaIndex, onClose, onSelectMedia }
                   <button
                     onClick={goPrev}
                     aria-label="Vorige"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-md shadow-lg transition-all hover:bg-[var(--color-accent)] hover:text-[var(--color-primary-brand)] hover:scale-105 active:scale-95"
+                    className="absolute left-3 top-1/2 z-10 -translate-y-1/2 inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-md shadow-lg transition-all hover:bg-[var(--color-accent)] hover:text-[var(--color-primary-brand)] hover:scale-105 active:scale-95"
                   >
                     <ChevronLeft className="h-6 w-6" />
                   </button>
                   <button
                     onClick={goNext}
                     aria-label="Volgende"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-md shadow-lg transition-all hover:bg-[var(--color-accent)] hover:text-[var(--color-primary-brand)] hover:scale-105 active:scale-95"
+                    className="absolute right-3 top-1/2 z-10 -translate-y-1/2 inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-md shadow-lg transition-all hover:bg-[var(--color-accent)] hover:text-[var(--color-primary-brand)] hover:scale-105 active:scale-95"
                   >
                     <ChevronRight className="h-6 w-6" />
                   </button>

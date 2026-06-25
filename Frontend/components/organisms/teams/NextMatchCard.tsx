@@ -14,6 +14,34 @@ const formatMatchDate = (match: VolleyMatch): string => {
   });
 };
 
+/** Epoch ms → iCalendar "YYYYMMDDTHHMMSSZ" UTC format. */
+const toCalendarDate = (ms: number): string =>
+  new Date(ms).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+
+/**
+ * A downloadable .ics file for the match (2-hour default duration). Using an
+ * .ics data URL keeps it generic: it opens in whatever calendar app the user
+ * has (Google, Apple, Outlook, …) rather than forcing one provider.
+ */
+const calendarFileUrl = (match: VolleyMatch): string => {
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//FitHam//Wedstrijd//NL",
+    "BEGIN:VEVENT",
+    `UID:${match.timestamp}@fitham`,
+    `DTSTAMP:${toCalendarDate(Date.now())}`,
+    `DTSTART:${toCalendarDate(match.timestamp)}`,
+    `DTEND:${toCalendarDate(match.timestamp + 2 * 60 * 60 * 1000)}`,
+    `SUMMARY:${match.thuisploeg} - ${match.bezoekersploeg}`,
+    `LOCATION:${match.sporthal || ""}`,
+    "DESCRIPTION:Volleybalwedstrijd via FitHam",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
+  return `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
+};
+
 /** "Volgende Wedstrijd" column: the upcoming/most-recent match from VolleyAdmin. */
 export function NextMatchCard({ match, loading }: { match: VolleyMatch | null; loading: boolean }) {
   return (
@@ -25,17 +53,33 @@ export function NextMatchCard({ match, loading }: { match: VolleyMatch | null; l
         <div className="flex flex-1 flex-col rounded-2xl border-2 border-white/50 bg-white/90 p-6 shadow-xl">
           <div className="flex flex-1 flex-col justify-between gap-4">
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-              <div className="flex items-start gap-3">
-                <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary-brand)]">
-                  <Calendar className="h-5 w-5 text-white" />
+              {match.timestamp ? (
+                <a
+                  href={calendarFileUrl(match)}
+                  download="wedstrijd.ics"
+                  className="group flex cursor-pointer items-start gap-3"
+                  aria-label="Voeg wedstrijd toe aan agenda"
+                >
+                  <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary-brand)] transition-all group-hover:scale-110 group-hover:bg-[var(--color-primary-brand-darker)]">
+                    <Calendar className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[var(--color-primary-brand)] label-regular font-bold capitalize transition-colors group-hover:text-[var(--color-secondary-brand)]">{formatMatchDate(match)}</p>
+                    {match.aanvangsuur && (
+                      <p className="text-[var(--color-primary-brand)]/80 font-bold transition-colors group-hover:text-[var(--color-secondary-brand)]">{match.aanvangsuur}</p>
+                    )}
+                  </div>
+                </a>
+              ) : (
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary-brand)]">
+                    <Calendar className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[var(--color-primary-brand)] label-regular font-bold capitalize">{formatMatchDate(match)}</p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-[var(--color-primary-brand)] label-regular font-bold capitalize">{formatMatchDate(match)}</p>
-                  {match.aanvangsuur && (
-                    <p className="text-[var(--color-primary-brand)]/80 font-bold">{match.aanvangsuur}</p>
-                  )}
-                </div>
-              </div>
+              )}
 
               {match.sporthal && (
                 <a
@@ -49,7 +93,7 @@ export function NextMatchCard({ match, loading }: { match: VolleyMatch | null; l
                     <MapPin className="h-5 w-5 text-white" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[var(--color-primary-brand)] font-bold underline-offset-2 group-hover:underline">{match.sporthal}</p>
+                    <p className="text-[var(--color-primary-brand)] font-bold transition-colors group-hover:text-[var(--color-secondary-brand)]">{match.sporthal}</p>
                   </div>
                 </a>
               )}

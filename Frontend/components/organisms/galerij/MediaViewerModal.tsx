@@ -137,10 +137,7 @@ export function MediaViewerModal({ gallery, mediaIndex, onClose, onSelectMedia }
 
               {/* Caption overlay - frosted, over the image */}
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[var(--color-primary-brand-darker)]/95 via-[var(--color-primary-brand-darker)]/55 to-transparent p-5 pt-12">
-                <h3 className="text-white label-xl font-black italic uppercase tracking-tight leading-tight drop-shadow-lg">
-                  {gallery.title}
-                </h3>
-                <p className="mt-1 text-white/85 body-small font-semibold">{gallery.media[mediaIndex].caption}</p>
+                <p className="text-white/85 body-small font-semibold">{gallery.media[mediaIndex].caption}</p>
               </div>
             </div>
 

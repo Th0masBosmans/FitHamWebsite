@@ -4,5 +4,6 @@ export const navLinks = [
   { path: "/teams", label: "Teams" },
   { path: "/galerij", label: "Foto's" },
   { path: "/events", label: "Evenementen" },
+  { path: "/sponsors", label: "sponsors" },
   { path: "/contact", label: "Contact" },
 ];

@@ -34,7 +34,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <ScrollToTop />
       <div className="min-h-screen w-full overflow-x-hidden relative flex flex-col">
         <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-linear-to-b from-[var(--color-primary-brand)] to-[#5cd6ff]" />
+          <div className="absolute inset-0 bg-linear-to-b from-[#5cd6ff] to-[var(--color-primary-brand)]" />
           <div
             className="absolute inset-0"
             style={{
@@ -42,7 +42,7 @@ export default function App({ Component, pageProps }: AppProps) {
               backgroundSize: "540px",
               backgroundPosition: "center",
               backgroundRepeat: "repeat",
-              opacity: 0.11,
+              opacity: 0.06,
             }}
           />
         </div>

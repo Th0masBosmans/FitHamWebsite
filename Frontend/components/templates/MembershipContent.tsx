@@ -41,7 +41,7 @@ export function MembershipContent() {
       </div>
 
       {/* Plans */}
-      <div className="px-4 -mt-8 grid grid-cols-1 gap-6 max-w-md lg:max-w-xl mx-auto relative z-10">
+      <div className="px-4 -mt-8 grid grid-cols-1 lg:grid-cols-2 lg:auto-rows-fr gap-6 max-w-md lg:max-w-4xl mx-auto relative z-10">
         {plans.map((plan, index) => (
           <PlanCard key={plan.id} plan={plan} index={index} onRegister={handleRegisterClick} />
         ))}

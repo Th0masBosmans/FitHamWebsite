@@ -9,7 +9,7 @@ const proeftrainingHref = `/contact?message=${encodeURIComponent(PROEFTRAINING_M
 
 export function MembershipInfo() {
   return (
-    <div className="mt-12 px-6 pb-8 max-w-md lg:max-w-xl mx-auto space-y-6">
+    <div className="mt-12 px-6 pb-8 max-w-md lg:max-w-4xl mx-auto space-y-6">
       {/* Insurance Documents Download */}
       <motion.a
         href="/Verzekering.pdf"

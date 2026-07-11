@@ -88,7 +88,9 @@ export function WebshopSection() {
 
           {/* Shop Button */}
           <a
-            href="#"
+            href="https://fitham.ninesquared.club/shop/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-[var(--color-accent)] text-[var(--color-primary-brand)] px-8 lg:px-10 py-3 lg:py-4 rounded-xl shadow-lg hover:bg-white hover:text-[var(--color-primary-brand)] transition-colors body-large cursor-pointer font-extrabold"
           >
             Shop Nu

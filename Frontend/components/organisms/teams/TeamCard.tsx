@@ -7,6 +7,11 @@ import { TeamRepository, type Team } from "@/repository/teamRepository";
 
 const teamRepository = new TeamRepository();
 
+function getSilhouette(team: Pick<Team, "division" | "name">): string {
+  const isFemale = team.division === "dames" || team.name.toLowerCase().includes("meisjes");
+  return isFemale ? "/WomenSilhouette.png" : "/MenSilhouette.png";
+}
+
 /**
  * Compact banner card for one team: the photo fills a short row, darkened so
  * the team name stays legible, with a chevron hinting at the team page. Clicking
@@ -28,18 +33,29 @@ export function TeamCard({ team, index = 0 }: { team: Team; index?: number }) {
         aria-label={`Bekijk ${team.name}`}
         className="group block relative h-28 overflow-hidden rounded-2xl shadow-xl transition-all duration-200 hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98]"
       >
-        {/* Photo (or brand fallback) behind a dark scrim that keeps the name legible */}
+        {/* Photo behind a heavy scrim, or a silhouette placeholder behind a lighter one */}
         {photo ? (
-          <img
-            src={photo}
-            alt={team.name}
-            loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-          />
+          <>
+            <img
+              src={photo}
+              alt={team.name}
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-black/70 transition-colors duration-150 group-hover:bg-black/60" />
+          </>
         ) : (
-          <div className="absolute inset-0 bg-[var(--color-primary-brand)]" />
+          <>
+            <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary-brand)] to-[var(--color-primary-brand-darker)]" />
+            <img
+              src={getSilhouette(team)}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 h-full w-full object-contain object-center opacity-60"
+            />
+            <div className="absolute inset-0 bg-black/40 transition-colors duration-150 group-hover:bg-black/30" />
+          </>
         )}
-        <div className="absolute inset-0 bg-black/70 transition-colors duration-150 group-hover:bg-black/60" />
 
         <div className="relative flex h-full items-center justify-between gap-3 px-5">
           <h3 className="text-white label-large font-extrabold drop-shadow-lg">{team.name}</h3>

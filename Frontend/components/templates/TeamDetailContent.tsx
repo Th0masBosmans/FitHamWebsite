@@ -20,6 +20,11 @@ import { StandingsTable } from "@/components/organisms/teams/StandingsTable";
 const teamRepository = new TeamRepository();
 const volleyRepository = new VolleyRepository();
 
+function getSilhouette(team: Pick<Team, "division" | "name">): string {
+  const isFemale = team.division === "dames" || team.name.toLowerCase().includes("meisjes");
+  return isFemale ? "/WomenSilhouette.png" : "/MenSilhouette.png";
+}
+
 type TeamDetailContentProps = {
   teamId: number;
 }
@@ -121,8 +126,13 @@ export function TeamDetailContent({ teamId }: TeamDetailContentProps) {
           {team.photo_url ? (
             <img src={teamRepository.getTeamPhotoUrl(team.photo_url)} alt={team.name} className="h-auto w-full object-contain" />
           ) : (
-            <div className="flex h-64 w-full items-center justify-center bg-gradient-to-br from-[var(--color-primary-brand)] to-[var(--color-primary-brand-darker)] lg:h-96">
-              <Users className="h-16 w-16 text-white/30" />
+            <div className="relative h-64 w-full overflow-hidden bg-gradient-to-br from-[var(--color-primary-brand)] to-[var(--color-primary-brand-darker)] lg:h-96">
+              <img
+                src={getSilhouette(team)}
+                alt=""
+                aria-hidden
+                className="absolute inset-0 h-full w-full object-contain opacity-40"
+              />
             </div>
           )}
 

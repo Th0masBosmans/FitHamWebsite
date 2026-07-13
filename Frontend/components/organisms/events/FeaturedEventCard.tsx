@@ -34,7 +34,26 @@ function getTimeLeft(targetIso: string): TimeLeft | null {
  * extras: a live countdown in glass tiles and the agenda CTA. The description
  * stays hidden and slides up on hover or tap, exactly like the cards below.
  */
-export function FeaturedEventCard({ event }: { event: ClubEvent }) {
+export function FeaturedEventCard({
+  event,
+  // Width of the card's container. Defaults to the events-page width; the home
+  // page overrides it to match its other sections.
+  widthClassName = "max-w-md sm:max-w-2xl lg:max-w-5xl",
+  // Breakpoint at which the agenda button expands from icon-only to icon+label.
+  // Tie this to where the card actually widens: the events card widens at `sm`,
+  // the home card only at `lg`, so the label shouldn't appear until then.
+  agendaLabelBreakpoint = "sm",
+}: {
+  event: ClubEvent;
+  widthClassName?: string;
+  agendaLabelBreakpoint?: "sm" | "lg";
+}) {
+  // Full literal class strings (not composed) so Tailwind picks them up.
+  const agendaPadding =
+    agendaLabelBreakpoint === "lg" ? "px-2.5 py-2 lg:px-5" : "px-2.5 py-2 sm:px-5";
+  const agendaLabelVisibility =
+    agendaLabelBreakpoint === "lg" ? "hidden lg:inline" : "hidden sm:inline";
+
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
@@ -49,7 +68,7 @@ export function FeaturedEventCard({ event }: { event: ClubEvent }) {
   const imageY = useTransform(scrollYProgress, [0, 1], reduceMotion ? ["0%", "0%"] : ["-5%", "5%"]);
 
   return (
-    <section ref={sectionRef} className="relative mx-auto w-full max-w-md px-6 sm:max-w-2xl lg:max-w-5xl">
+    <section ref={sectionRef} className={`relative mx-auto w-full px-6 ${widthClassName}`}>
       {/* Atmospheric glows behind the card */}
       <div
         aria-hidden
@@ -136,10 +155,10 @@ export function FeaturedEventCard({ event }: { event: ClubEvent }) {
               rel="noopener noreferrer"
               onClick={(clickEvent) => clickEvent.stopPropagation()}
               aria-label="Zet in agenda"
-              className="order-2 inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] text-[var(--color-primary-brand)] px-2.5 py-2 sm:px-5 shadow-lg label-small font-extrabold uppercase tracking-wide transition-all hover:bg-white hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white"
+              className={`order-2 inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] text-[var(--color-primary-brand)] ${agendaPadding} shadow-lg label-small font-extrabold uppercase tracking-wide transition-all hover:bg-white hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white`}
             >
               <CalendarPlus className="h-4 w-4" />
-              <span className="hidden sm:inline">Zet in agenda</span>
+              <span className={agendaLabelVisibility}>Zet in agenda</span>
             </a>
 
             {timeLeft && (

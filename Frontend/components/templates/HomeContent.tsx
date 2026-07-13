@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { HomeHero } from "@/components/organisms/home/HomeHero";
+import { FeaturedEventSection } from "@/components/organisms/home/FeaturedEventSection";
 import { AboutSection } from "@/components/organisms/home/AboutSection";
 import { WebshopSection } from "@/components/organisms/home/WebshopSection";
 import { SocialMediaSection } from "@/components/organisms/home/SocialMediaSection";
@@ -16,6 +17,9 @@ export function HomeContent({ heroImageUrl }: { heroImageUrl?: string | null }) 
     >
       {/* Hero Image - Full Width */}
       <HomeHero heroImageUrl={heroImageUrl} />
+
+      {/* Highlighted event spotlight — same card/layout as the events page */}
+      <FeaturedEventSection />
 
       <div className="max-w-md lg:max-w-6xl mx-auto px-6">
         <AboutSection />

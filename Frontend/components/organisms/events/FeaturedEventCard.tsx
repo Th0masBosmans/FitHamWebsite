@@ -129,20 +129,21 @@ export function FeaturedEventCard({ event }: { event: ClubEvent }) {
             </div>
           )}
 
-          <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <a
               href={googleCalendarUrl(event)}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(clickEvent) => clickEvent.stopPropagation()}
-              className="inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] text-[var(--color-primary-brand)] px-5 py-2 shadow-lg label-small font-extrabold uppercase tracking-wide transition-all hover:bg-white hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white"
+              aria-label="Zet in agenda"
+              className="order-2 inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] text-[var(--color-primary-brand)] px-2.5 py-2 sm:px-5 shadow-lg label-small font-extrabold uppercase tracking-wide transition-all hover:bg-white hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white"
             >
               <CalendarPlus className="h-4 w-4" />
-              Zet in agenda
+              <span className="hidden sm:inline">Zet in agenda</span>
             </a>
 
             {timeLeft && (
-              <div className="flex gap-2">
+              <div className="order-1 flex gap-2">
                 {(
                   [
                     { label: "dagen", value: timeLeft.dagen },

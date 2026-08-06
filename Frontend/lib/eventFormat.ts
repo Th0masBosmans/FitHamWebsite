@@ -31,24 +31,57 @@ export function formatEventTimeRange(startIso: string, endIso: string | null): s
   return endIso ? `${start} - ${formatEventTime(endIso)}` : start;
 }
 
-export function googleCalendarUrl(event: {
+type CalendarEvent = {
+  id?: number;
   title: string;
   description: string;
   location: string;
   start_date: string;
   end_date: string | null;
-}): string {
-  const toGCalDate = (iso: string) => new Date(iso).toISOString().replace(/\.\d{3}|[-:]/g, "");
-  // Google Calendar requires an end time; default to two hours after the start.
+};
+
+/** ISO timestamp → iCalendar "YYYYMMDDTHHMMSSZ" UTC format. */
+const toCalendarDate = (iso: string): string =>
+  new Date(iso).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+
+/** Backslashes, semicolons, commas and newlines are all delimiters in a property value. */
+const escapeCalendarText = (value: string): string =>
+  value.replace(/([\\;,])/g, "\\$1").replace(/\r?\n/g, "\\n");
+
+/**
+ * A downloadable .ics file for the event (2-hour default duration when it has
+ * no end). Using an .ics data URL keeps it generic: it opens in whatever
+ * calendar app the visitor has (Google, Apple, Outlook, …) on whatever device
+ * they are on, rather than forcing one provider. Same approach as the match
+ * card on the team pages.
+ */
+export function eventCalendarFileUrl(event: CalendarEvent): string {
   const end = event.end_date ?? new Date(new Date(event.start_date).getTime() + 2 * 60 * 60 * 1000).toISOString();
 
-  const params = new URLSearchParams({
-    action: "TEMPLATE",
-    text: event.title,
-    dates: `${toGCalDate(event.start_date)}/${toGCalDate(end)}`,
-    details: event.description,
-    location: event.location,
-  });
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//FitHam//Evenement//NL",
+    "BEGIN:VEVENT",
+    `UID:${event.id ?? toCalendarDate(event.start_date)}@fitham`,
+    `DTSTAMP:${toCalendarDate(new Date().toISOString())}`,
+    `DTSTART:${toCalendarDate(event.start_date)}`,
+    `DTEND:${toCalendarDate(end)}`,
+    `SUMMARY:${escapeCalendarText(event.title)}`,
+    `LOCATION:${escapeCalendarText(event.location)}`,
+    `DESCRIPTION:${escapeCalendarText(event.description)}`,
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
 
-  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+  return `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
+}
+
+/** Filename for the downloaded .ics: the event title, stripped to something safe. */
+export function eventCalendarFileName(event: { title: string }): string {
+  const slug = event.title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  return `${slug || "evenement"}.ics`;
 }

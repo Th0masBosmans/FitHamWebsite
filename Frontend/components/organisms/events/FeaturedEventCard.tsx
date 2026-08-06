@@ -4,7 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { CalendarPlus, Clock, MapPin, Sparkles } from "lucide-react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { EventRepository, type ClubEvent } from "@/repository/eventRepository";
-import { formatEventDay, formatEventMonthShort, formatEventTimeRange, googleCalendarUrl } from "@/lib/eventFormat";
+import {
+  formatEventDay,
+  formatEventMonthShort,
+  formatEventTimeRange,
+  eventCalendarFileName,
+  eventCalendarFileUrl,
+} from "@/lib/eventFormat";
 
 const eventRepository = new EventRepository();
 
@@ -150,9 +156,8 @@ export function FeaturedEventCard({
 
           <div className="flex flex-wrap items-center justify-between gap-4">
             <a
-              href={googleCalendarUrl(event)}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={eventCalendarFileUrl(event)}
+              download={eventCalendarFileName(event)}
               onClick={(clickEvent) => clickEvent.stopPropagation()}
               aria-label="Zet in agenda"
               className={`order-2 inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] text-[var(--color-primary-brand)] ${agendaPadding} shadow-lg label-small font-extrabold uppercase tracking-wide transition-all hover:bg-white hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white`}

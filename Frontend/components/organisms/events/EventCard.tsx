@@ -10,7 +10,8 @@ import {
   formatEventMonthShort,
   formatEventTimeRange,
   formatEventWeekday,
-  googleCalendarUrl,
+  eventCalendarFileName,
+  eventCalendarFileUrl,
 } from "@/lib/eventFormat";
 
 const eventRepository = new EventRepository();
@@ -144,9 +145,8 @@ export function EventCard({
 
             {!past && (
               <a
-                href={googleCalendarUrl(event)}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={eventCalendarFileUrl(event)}
+                download={eventCalendarFileName(event)}
                 onClick={(clickEvent) => clickEvent.stopPropagation()}
                 className="self-start inline-flex items-center gap-1.5 rounded-full bg-[var(--color-accent)] text-[var(--color-primary-brand)] px-4 py-1.5 label-small font-extrabold uppercase tracking-wide shadow-lg transition-all hover:bg-white hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white"
               >

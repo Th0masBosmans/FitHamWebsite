@@ -10,7 +10,8 @@ import {
   formatEventMonthShort,
   formatEventTimeRange,
   formatEventWeekday,
-  googleCalendarUrl,
+  eventCalendarFileName,
+  eventCalendarFileUrl,
 } from "@/lib/eventFormat";
 
 const eventRepository = new EventRepository();
@@ -157,9 +158,8 @@ export function EventDetailModal({ event, past, onClose }: EventDetailModalProps
 
                 {!past && (
                   <a
-                    href={googleCalendarUrl(event)}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={eventCalendarFileUrl(event)}
+                    download={eventCalendarFileName(event)}
                     className="self-start inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] text-[var(--color-primary-brand)] px-5 py-2 shadow-lg label-small font-extrabold uppercase tracking-wide transition-all hover:bg-white hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white"
                   >
                     <CalendarPlus className="h-4 w-4" />

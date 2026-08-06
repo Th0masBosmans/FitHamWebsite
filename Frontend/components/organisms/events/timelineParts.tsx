@@ -41,19 +41,29 @@ export function TimelineBottomArrow({ className = "", yellow }: { className?: st
 }
 
 /**
- * Short dashed tail that trails off the top of the spine, staying yellow — the
- * calendar fading out above the first event. Same width as the spine, dashes
- * dimming as they climb away from the line.
+ * Dashed tail that trails off the top of the spine, staying yellow — the
+ * calendar fading out above the first event. The container takes the spine's
+ * exact width *and* its exact left offset — rather than centring itself with a
+ * translate — so the dashes land on precisely the same pixels as the line at
+ * both sizes. The dashes lengthen and brighten as they descend towards the
+ * spine, and the last one is long, fully opaque and fades in from its own top,
+ * so it reads as the line itself resolving out of the dashes rather than as a
+ * fourth detached dash.
+ *
+ * No z-index, for the same reason as the arrow: the tail only has to sit above
+ * the spine, which it already does by DOM order, and staying at the default
+ * level lets the volleyball (rendered after it) roll over the dashes rather
+ * than behind them when it is parked at the top.
  */
 export function TimelineTopDashes({ className = "" }: { className?: string }) {
   return (
     <div
       aria-hidden
-      className={`absolute left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1.5 ${className}`}
+      className={`absolute left-[calc(50%-2px)] flex w-1 flex-col items-center gap-1.5 lg:left-[calc(50%-2.5px)] lg:w-[5px] ${className}`}
     >
-      <span className="h-2 w-1 rounded-full bg-[var(--color-accent)]/35 lg:w-[5px]" />
-      <span className="h-2 w-1 rounded-full bg-[var(--color-accent)]/65 lg:w-[5px]" />
-      <span className="h-2 w-1 rounded-full bg-[var(--color-accent)] shadow-[0_0_8px_rgba(250,204,21,0.5)] lg:w-[5px]" />
+      <span className="h-2 w-full rounded-full bg-[var(--color-accent)]/35" />
+      <span className="h-3 w-full rounded-full bg-[var(--color-accent)]/65" />
+      <span className="h-6 w-full rounded-full bg-gradient-to-b from-[var(--color-accent)]/70 to-[var(--color-accent)] shadow-[0_0_8px_rgba(250,204,21,0.5)]" />
     </div>
   );
 }

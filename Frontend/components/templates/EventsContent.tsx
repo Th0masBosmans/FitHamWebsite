@@ -73,7 +73,7 @@ export function EventsContent() {
                   aria-hidden
                   className="absolute inset-x-0 top-0 bottom-0 rounded-full bg-gradient-to-b from-[var(--color-accent-border)] to-[var(--color-accent)] shadow-[0_0_10px_rgba(250,204,21,0.55)]"
                 />
-                <TimelineTopDashes className="top-0 -translate-y-full" />
+                <TimelineTopDashes className="-top-1.5 -translate-y-full" />
                 <TimelineBottomArrow className="bottom-0 translate-y-full" />
               </div>
             )}

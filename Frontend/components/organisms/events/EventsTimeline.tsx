@@ -1,31 +1,12 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
-import {
-  motion,
-  useMotionValue,
-  useMotionValueEvent,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "motion/react";
+import { Fragment, useRef, useState } from "react";
+import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
 import type { ClubEvent } from "@/repository/eventRepository";
 import { EventCard } from "./EventCard";
 import { EventDetailModal } from "./EventDetailModal";
 import { TimelineTopDashes, TimelineBottomArrow, PastMarkerChip, EventNode } from "./timelineParts";
-/**
- * One continuous timeline of the whole club calendar: a straight blue spine
- * down the middle that fills up yellow as the visitor scrolls (with the
- * rolling volleyball, like the scrollbar at the page edge). Events alternate
- * left and right of the spine and overlap vertically, so the calendar
- * descends like a staircase; every event gets a bigger node on the line that
- * lights up when the fill reaches it. Past events continue below on the same
- * spine, desaturated and marked by an "Afgelopen" chip. Below lg the split
- * disappears: cards stack full-width over the same centred spine (visible in
- * the gaps), a smaller volleyball rolls down the middle, and each card's
- * border lights up yellow as the ball passes it.
- */
+
 export function EventsTimeline({ upcoming, past }: { upcoming: ClubEvent[]; past: ClubEvent[] }) {
   const reduceMotion = useReducedMotion();
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -41,29 +22,19 @@ export function EventsTimeline({ upcoming, past }: { upcoming: ClubEvent[]; past
   const ballTop = useTransform(progress, [0, 1], ["0%", "100%"]);
   const ballRotate = useTransform(progress, [0, 1], [0, 1440]);
 
-  // How "parked" the ball is at the very top of its travel: 0 while it's moving,
-  // ramping to 1 as it comes to rest â€” either because the fill has emptied
-  // (progress 0) or the page can't scroll any higher. Wide ramps so the line
-  // empties to yellow gradually instead of snapping.
-  const { scrollY: windowScrollY } = useScroll();
-  const parked = useMotionValue(0);
-  const updateParked = () =>
-    parked.set(
-      Math.min(1, Math.max(0, Math.max(1 - progress.get() / 0.1, 1 - windowScrollY.get() / 48))),
-    );
-  useMotionValueEvent(progress, "change", updateParked);
-  useMotionValueEvent(windowScrollY, "change", updateParked);
-  useEffect(updateParked, []);
-
-  // The yellow fill follows the ball but retracts as it parks, so the top
-  // stretch of line empties back to blue once the ball is at rest against the top.
-  const fillScaleY = useTransform([progress, parked], (values: number[]) => values[0] * (1 - values[1]));
+  // The yellow fill simply tracks the ball, so the line lights up smoothly from
+  // the first pixel of travel and stays exactly level with it all the way down.
+  // It grows by height rather than by a vertical scale: scaling squashes the
+  // pill's rounded cap into a flat sliver, and the leading edge of the yellow
+  // has to stay as round as the dashes the line grows out of. 100% - 8px is the
+  // spine's own length inside this box (its top-1 to its bottom-1).
+  const fillHeight = useTransform(progress, (value) => `calc(${value} * (100% - 8px))`);
 
   // The arrow caps the *bottom* of the line, so it stays dark like the stretch
   // of spine still ahead of the ball and only lights yellow once the fill has
   // nearly run all the way down to it, easing in on a soft spring so it lights
   // a beat *after* the line reaches it, never before.
-  const arrowTarget = useTransform(fillScaleY, [0.94, 0.99], [0, 1]);
+  const arrowTarget = useTransform(progress, [0.94, 0.99], [0, 1]);
   const arrowYellow = useSpring(arrowTarget, { stiffness: 55, damping: 20 });
 
   const items = [
@@ -75,8 +46,10 @@ export function EventsTimeline({ upcoming, past }: { upcoming: ClubEvent[]; past
 
   return (
     // Extra vertical room lengthens the line past the first and last cards, so
-    // the ball has spine to travel up to the arrow and down to the dashed tail.
-    <div ref={timelineRef} className="relative py-12">
+    // the ball has spine to travel down to the arrow. The top margin is the
+    // dashed tail's room: it hangs above the spine, outside this box entirely,
+    // and would otherwise ride up over the section heading.
+    <div ref={timelineRef} className="relative mt-16 py-12">
       {/* Centred spine at every size, behind the cards (it peeks through the
           gaps on mobile). The whole line sits dark blue; the part already
           scrolled past fills up glowing yellow from the top. */}
@@ -86,22 +59,24 @@ export function EventsTimeline({ upcoming, past }: { upcoming: ClubEvent[]; past
       />
       <motion.div
         aria-hidden
-        style={{ scaleY: fillScaleY }}
-        className="absolute left-[calc(50%-2px)] top-1 bottom-1 w-1 origin-top rounded-full bg-gradient-to-b from-[var(--color-accent-border)] to-[var(--color-accent)] shadow-[0_0_10px_rgba(250,204,21,0.55)] lg:left-[calc(50%-2.5px)] lg:w-[5px]"
+        style={{ height: fillHeight }}
+        className="absolute left-[calc(50%-2px)] top-1 w-1 rounded-full bg-gradient-to-b from-[var(--color-accent-border)] to-[var(--color-accent)] shadow-[0_0_10px_rgba(250,204,21,0.55)] lg:left-[calc(50%-2.5px)] lg:w-[5px]"
       />
 
       {/* Yellow dashed tail trailing off the top of the line; arrow capping the
           bottom. Both sit just outside the cards (translated past the spine ends)
-          so they read clear on mobile, where the cards run full-width. */}
-      <TimelineTopDashes className="top-0 -translate-y-full" />
+          so they read clear on mobile, where the cards run full-width. The tail
+          stops 6px short of the spine's own top-1, so the gap between the last
+          dash and the line matches the gap-1.5 between the dashes themselves. */}
+      <TimelineTopDashes className="-top-0.5 -translate-y-full" />
       <TimelineBottomArrow className="bottom-1 translate-y-full" yellow={arrowYellow} />
 
       {/* Volleyball rolling down the centred spine. It sits *behind* the cards
           (rendered before them), so on mobile it only shows where the line
           shows â€” in the gaps between cards â€” instead of passing over them. On
           desktop it stays visible in the empty centre column. It is rendered
-          after the arrow, so once it reaches the bottom it rolls over the
-          arrowhead rather than disappearing behind it. */}
+          after the tail and the arrow, so at either end of its travel it rolls
+          over the dashes and the arrowhead rather than behind them. */}
       <motion.div
         aria-hidden
         className="pointer-events-none absolute left-1/2"

@@ -13,7 +13,7 @@ import {
 import type { ClubEvent } from "@/repository/eventRepository";
 import { EventCard } from "./EventCard";
 import { EventDetailModal } from "./EventDetailModal";
-import { TimelineTopArrow, TimelineBottomDashes, PastMarkerChip, EventNode } from "./timelineParts";
+import { TimelineTopDashes, TimelineBottomArrow, PastMarkerChip, EventNode } from "./timelineParts";
 /**
  * One continuous timeline of the whole club calendar: a straight blue spine
  * down the middle that fills up yellow as the visitor scrolls (with the
@@ -55,14 +55,15 @@ export function EventsTimeline({ upcoming, past }: { upcoming: ClubEvent[]; past
   useMotionValueEvent(windowScrollY, "change", updateParked);
   useEffect(updateParked, []);
 
-  // The blue fill follows the ball but retracts as it parks, so the stretch of
-  // line leading up to the arrow empties to yellow too once the ball is at rest.
+  // The yellow fill follows the ball but retracts as it parks, so the top
+  // stretch of line empties back to blue once the ball is at rest against the top.
   const fillScaleY = useTransform([progress, parked], (values: number[]) => values[0] * (1 - values[1]));
 
-  // The arrow only starts lighting once the line is nearly empty (parked past
-  // ~0.85), then eases in on a soft spring â€” so it turns yellow a beat *after*
-  // the line finishes, never before it.
-  const arrowTarget = useTransform(parked, [0.85, 1], [0, 1]);
+  // The arrow caps the *bottom* of the line, so it stays dark like the stretch
+  // of spine still ahead of the ball and only lights yellow once the fill has
+  // nearly run all the way down to it, easing in on a soft spring so it lights
+  // a beat *after* the line reaches it, never before.
+  const arrowTarget = useTransform(fillScaleY, [0.94, 0.99], [0, 1]);
   const arrowYellow = useSpring(arrowTarget, { stiffness: 55, damping: 20 });
 
   const items = [
@@ -77,28 +78,30 @@ export function EventsTimeline({ upcoming, past }: { upcoming: ClubEvent[]; past
     // the ball has spine to travel up to the arrow and down to the dashed tail.
     <div ref={timelineRef} className="relative py-12">
       {/* Centred spine at every size, behind the cards (it peeks through the
-          gaps on mobile). The whole line glows yellow; the part already
-          scrolled past turns blue from the top. */}
+          gaps on mobile). The whole line sits dark blue; the part already
+          scrolled past fills up glowing yellow from the top. */}
       <div
         aria-hidden
-        className="absolute left-[calc(50%-2px)] top-1 bottom-1 w-1 rounded-full bg-gradient-to-b from-[var(--color-accent-border)] to-[var(--color-accent)] shadow-[0_0_10px_rgba(250,204,21,0.55)] lg:left-[calc(50%-2.5px)] lg:w-[5px]"
+        className="absolute left-[calc(50%-2px)] top-1 bottom-1 w-1 rounded-full bg-[var(--color-primary-brand-darker)] lg:left-[calc(50%-2.5px)] lg:w-[5px]"
       />
       <motion.div
         aria-hidden
         style={{ scaleY: fillScaleY }}
-        className="absolute left-[calc(50%-2px)] top-1 bottom-1 w-1 origin-top rounded-full bg-[var(--color-primary-brand-darker)] lg:left-[calc(50%-2.5px)] lg:w-[5px]"
+        className="absolute left-[calc(50%-2px)] top-1 bottom-1 w-1 origin-top rounded-full bg-gradient-to-b from-[var(--color-accent-border)] to-[var(--color-accent)] shadow-[0_0_10px_rgba(250,204,21,0.55)] lg:left-[calc(50%-2.5px)] lg:w-[5px]"
       />
 
-      {/* Arrow capping the top of the line; yellow dashed tail trailing off the
+      {/* Yellow dashed tail trailing off the top of the line; arrow capping the
           bottom. Both sit just outside the cards (translated past the spine ends)
           so they read clear on mobile, where the cards run full-width. */}
-      <TimelineTopArrow className="top-1 -translate-y-full" yellow={arrowYellow} />
-      <TimelineBottomDashes className="bottom-0 translate-y-full" />
+      <TimelineTopDashes className="top-0 -translate-y-full" />
+      <TimelineBottomArrow className="bottom-1 translate-y-full" yellow={arrowYellow} />
 
       {/* Volleyball rolling down the centred spine. It sits *behind* the cards
           (rendered before them), so on mobile it only shows where the line
           shows â€” in the gaps between cards â€” instead of passing over them. On
-          desktop it stays visible in the empty centre column. */}
+          desktop it stays visible in the empty centre column. It is rendered
+          after the arrow, so once it reaches the bottom it rolls over the
+          arrowhead rather than disappearing behind it. */}
       <motion.div
         aria-hidden
         className="pointer-events-none absolute left-1/2"
@@ -138,27 +141,27 @@ export function EventsTimeline({ upcoming, past }: { upcoming: ClubEvent[]; past
                       past={item.past}
                       onOpen={() => setSelected({ event: item.event, past: item.past })}
                     />
-                    {/* The card border is yellow by default and fades away as the
-                        ball reaches the card (returning on the way up) â€” there is
-                        no border behind it, so once the yellow fades the card has
-                        no border at all. The two yellow layers differ only in flip
-                        timing: mobile (full-width tall card) holds yellow until the
-                        ball nears the bottom (-90%); desktop (half-width card
-                        beside the spine) flips exactly when the card centre meets
-                        the ball, in sync with the node (amount 0.5 + -50%). Both
-                        lift with the card on hover so the border tracks it. */}
+                    {/* The card has no border by default and a yellow one fades in
+                        as the ball reaches the card (fading back out on the way up),
+                        matching the line lighting up behind it. The two yellow
+                        layers differ only in flip timing: mobile (full-width tall
+                        card) waits until the ball nears the bottom (-90%); desktop
+                        (half-width card beside the spine) flips exactly when the
+                        card centre meets the ball, in sync with the node (amount
+                        0.5 + -50%). Both lift with the card on hover so the border
+                        tracks it. */}
                     <motion.div
                       aria-hidden
-                      initial={{ opacity: 1 }}
-                      whileInView={{ opacity: 0 }}
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
                       viewport={{ margin: "0px 0px -90% 0px" }}
                       transition={{ duration: 0.3, ease: "easeOut" }}
                       className="pointer-events-none absolute inset-0 rounded-2xl border-[3px] border-[var(--color-accent)] shadow-[0_0_16px_rgba(250,204,21,0.45)] transition-transform duration-300 ease-out group-hover/card:-translate-y-1 lg:hidden"
                     />
                     <motion.div
                       aria-hidden
-                      initial={{ opacity: 1 }}
-                      whileInView={{ opacity: 0 }}
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
                       viewport={{ amount: 0.5, margin: "0px 0px -50% 0px" }}
                       transition={{ duration: 0.3, ease: "easeOut" }}
                       className="pointer-events-none absolute inset-0 hidden rounded-2xl border-[3px] border-[var(--color-accent)] shadow-[0_0_16px_rgba(250,204,21,0.45)] transition-transform duration-300 ease-out group-hover/card:-translate-y-1 lg:block"

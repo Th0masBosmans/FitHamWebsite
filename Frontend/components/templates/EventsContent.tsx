@@ -7,7 +7,7 @@ import { SectionHeading } from "@/components/molecules/SectionHeading";
 import { EventRepository, type ClubEvent } from "@/repository/eventRepository";
 import { FeaturedEventCard } from "@/components/organisms/events/FeaturedEventCard";
 import { EventsTimeline } from "@/components/organisms/events/EventsTimeline";
-import { TimelineTopArrow, TimelineBottomDashes } from "@/components/organisms/events/timelineParts";
+import { TimelineTopDashes, TimelineBottomArrow } from "@/components/organisms/events/timelineParts";
 
 const eventRepository = new EventRepository();
 export function EventsContent() {
@@ -66,15 +66,15 @@ export function EventsContent() {
             {upcomingEvents.length > 0 || pastEvents.length > 0 ? (
               <EventsTimeline upcoming={upcomingEvents} past={pastEvents} />
             ) : (
-              // No events at all: a short arrow-topped, dash-tailed stub of spine
+              // No events at all: a short dash-topped, arrow-tailed stub of spine
               // stands in for the (otherwise empty) timeline.
               <div className="relative mx-auto my-6 h-20 w-[5px]">
                 <div
                   aria-hidden
                   className="absolute inset-x-0 top-0 bottom-0 rounded-full bg-gradient-to-b from-[var(--color-accent-border)] to-[var(--color-accent)] shadow-[0_0_10px_rgba(250,204,21,0.55)]"
                 />
-                <TimelineTopArrow className="top-0 -translate-y-full" />
-                <TimelineBottomDashes className="bottom-0 translate-y-full" />
+                <TimelineTopDashes className="top-0 -translate-y-full" />
+                <TimelineBottomArrow className="bottom-0 translate-y-full" />
               </div>
             )}
           </section>

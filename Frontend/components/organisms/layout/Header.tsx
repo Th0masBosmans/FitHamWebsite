@@ -45,7 +45,7 @@ export function Header() {
             <Link href="/" className="flex items-center flex-shrink-0 h-full py-1">
               <img
                 src="/FitHamLogo.png"
-                alt="FIT HAM Logo"
+                alt="Fit Ham"
                 className="h-full w-auto object-contain"
               />
             </Link>

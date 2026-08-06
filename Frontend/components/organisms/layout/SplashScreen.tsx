@@ -49,7 +49,7 @@ export function SplashScreen() {
       >
         <img
           src="/FitHamLogo.png"
-          alt="FIT HAM Logo"
+          alt="Fit Ham"
           className="w-64 h-auto object-contain"
         />
 

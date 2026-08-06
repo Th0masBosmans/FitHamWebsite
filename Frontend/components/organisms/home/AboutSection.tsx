@@ -15,32 +15,34 @@ export function AboutSection() {
       className="mb-8 lg:mb-16"
     >
       <SectionHeading title="Over ons"></SectionHeading>
-      <motion.div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 lg:p-10 shadow-xl border-2 border-white/50 hover:shadow-2xl hover:scale-[1.01] transition-all duration-150 text-center">
-        <h3
-          className="text-(--color-primary-brand) mb-2 lg:mb-3 title-section"
-          style={{ fontWeight: "var(--font-weight-extrabold)" }}
-        >
-          Welkom bij Fit Ham!
-        </h3>
-        <p
-          className="text-[var(--color-primary-brand)] leading-relaxed mb-4 lg:mb-6 body-large max-w-3xl mx-auto font-medium"
-        >
-          Van je eerste serve tot spannende competitiewedstrijden. Fit Ham biedt teams voor alle
-          leeftijden en niveaus. Onze ervaren trainers & coaches zorgen voor een leerrijke en uitdagende omgeving
-          waar iedereen zich kan ontwikkelen en plezier beleven.
-        </p>
-        <p
-          className="text-[var(--color-primary-brand)] leading-relaxed body-large max-w-3xl mx-auto font-medium"
-        >
-          Dit kunnen we alleen doen dankzij onze geweldige{" "}
-          <Link
-            href="/sponsors"
-            className="text-[var(--color-secondary-brand)] hover:text-[var(--color-accent)] underline decoration-2 underline-offset-2 transition-colors font-bold"
+      <motion.div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 lg:p-10 shadow-xl border-2 border-white/50 hover:shadow-2xl hover:scale-[1.01] transition-all duration-150">
+        <div className="max-w-3xl mx-auto text-left">
+          <h3
+            className="text-(--color-primary-brand) mb-2 lg:mb-3 title-section text-center"
+            style={{ fontWeight: "var(--font-weight-extrabold)" }}
           >
-            sponsors
-          </Link>{" "}
-          die ons steunen. Bekijk wie er achter ons staan!
-        </p>
+            Welkom bij Fit Ham!
+          </h3>
+          <p
+            className="text-[var(--color-primary-brand)] leading-relaxed mb-4 lg:mb-6 body-large font-medium"
+          >
+            Van je eerste serve tot spannende competitiewedstrijden. Fit Ham biedt teams voor alle
+            leeftijden en niveaus. Onze ervaren trainers & coaches zorgen voor een leerrijke en uitdagende omgeving
+            waar iedereen zich kan ontwikkelen en plezier beleven.
+          </p>
+          <p
+            className="text-[var(--color-primary-brand)] leading-relaxed body-large font-medium"
+          >
+            Dit kunnen we alleen doen dankzij onze geweldige{" "}
+            <Link
+              href="/sponsors"
+              className="text-[var(--color-secondary-brand)] hover:text-[var(--color-accent)] underline decoration-2 underline-offset-2 transition-colors font-bold"
+            >
+              sponsors
+            </Link>{" "}
+            die ons steunen. Bekijk wie er achter ons staan!
+          </p>
+        </div>
       </motion.div>
     </motion.div>
   );

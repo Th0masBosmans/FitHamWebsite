@@ -10,7 +10,12 @@ const labelClasses = "block text-[var(--color-primary-brand)] mb-2 label-regular
 type SubmitStatus = "idle" | "sending" | "success" | "error";
 
 export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
-  const [formData, setFormData] = useState({ name: "", email: "", message: prefillMessage });
+  const [formData, setFormData] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    message: prefillMessage,
+  });
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -43,7 +48,7 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
       }
 
       setStatus("success");
-      setFormData({ name: "", email: "", message: "" });
+      setFormData({ email: "", firstName: "", lastName: "", message: "" });
     } catch (caughtError) {
       setStatus("error");
       setErrorMessage(caughtError instanceof Error ? caughtError.message : "Versturen mislukt");
@@ -64,21 +69,6 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
       >
         <div className="space-y-4">
           <div>
-            <label htmlFor="name" className={labelClasses}>
-              Naam
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formData.name}
-              onChange={(event) => setFormData({ ...formData, name: event.target.value })}
-              className={inputClasses}
-             
-              placeholder="Jouw naam"
-            />
-          </div>
-
-          <div>
             <label htmlFor="email" className={labelClasses}>
               Email *
             </label>
@@ -89,9 +79,37 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
               value={formData.email}
               onChange={(event) => setFormData({ ...formData, email: event.target.value })}
               className={inputClasses}
-             
               placeholder="jouw@email.be"
             />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label htmlFor="firstName" className={labelClasses}>
+                Voornaam
+              </label>
+              <input
+                type="text"
+                id="firstName"
+                value={formData.firstName}
+                onChange={(event) => setFormData({ ...formData, firstName: event.target.value })}
+                className={inputClasses}
+                placeholder="Jouw voornaam"
+              />
+            </div>
+            <div>
+              <label htmlFor="lastName" className={labelClasses}>
+                Naam
+              </label>
+              <input
+                type="text"
+                id="lastName"
+                value={formData.lastName}
+                onChange={(event) => setFormData({ ...formData, lastName: event.target.value })}
+                className={inputClasses}
+                placeholder="Jouw naam"
+              />
+            </div>
           </div>
 
           <div>
@@ -105,7 +123,6 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
               onChange={(event) => setFormData({ ...formData, message: event.target.value })}
               rows={5}
               className={`${inputClasses} resize-none`}
-             
               placeholder="Typ hier jouw bericht..."
             />
           </div>

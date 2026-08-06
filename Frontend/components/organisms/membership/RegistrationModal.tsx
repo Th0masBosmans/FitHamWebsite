@@ -15,24 +15,79 @@ const labelClasses = "block text-[var(--color-primary-brand)]/70 label-regular m
 const inputClasses =
   "w-full px-4 py-2 border-2 border-[var(--color-primary-brand)]/20 rounded-lg focus:border-[var(--color-primary-brand)] focus:outline-none transition-colors";
 
-export function RegistrationModal({ isOpen, onClose, teamName, isYouth }: RegistrationModalProps) {
-  const [formData, setFormData] = useState({
-    playerFirstName: "",
-    playerLastName: "",
-    birthDate: "",
-    hasExperience: "",
-    experienceDescription: "",
-    parentFirstName: "",
-    parentLastName: "",
-    parentEmail: "",
-    email: "",
-  });
+type SubmitStatus = "idle" | "sending" | "success" | "error";
 
-  const handleSubmit = (event: React.FormEvent) => {
+const emptyForm = {
+  playerFirstName: "",
+  playerLastName: "",
+  birthDate: "",
+  hasExperience: "",
+  experienceDescription: "",
+  parentFirstName: "",
+  parentLastName: "",
+  parentEmail: "",
+  email: "",
+};
+
+/** Age in whole years, so the aanvrager sees the same number as het bestuur in de mail. */
+function calculateAge(birthDate: string) {
+  const birth = new Date(birthDate);
+  if (Number.isNaN(birth.getTime())) return null;
+
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age -= 1;
+  }
+
+  return age >= 0 && age < 120 ? age : null;
+}
+
+export function RegistrationModal({ isOpen, onClose, teamName, isYouth }: RegistrationModalProps) {
+  const [formData, setFormData] = useState(emptyForm);
+  const [status, setStatus] = useState<SubmitStatus>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const age = formData.birthDate ? calculateAge(formData.birthDate) : null;
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("Inschrijving voor", teamName, formData);
-    alert(`Bedankt voor je inschrijving voor ${teamName}! We nemen zo snel mogelijk contact op.`);
-    onClose();
+    setStatus("sending");
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/api/registration", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          planName: teamName,
+          playerFirstName: formData.playerFirstName,
+          playerLastName: formData.playerLastName,
+          birthDate: formData.birthDate,
+          email: formData.email,
+          experience: isYouth
+            ? formData.hasExperience === "ja"
+              ? "Ja, heeft al eerder gevolleybald"
+              : "Nee, nog niet eerder gevolleybald"
+            : formData.experienceDescription,
+          parentFirstName: formData.parentFirstName,
+          parentLastName: formData.parentLastName,
+          parentEmail: formData.parentEmail,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Versturen mislukt");
+      }
+
+      setStatus("success");
+      setFormData(emptyForm);
+    } catch (caughtError) {
+      setStatus("error");
+      setErrorMessage(caughtError instanceof Error ? caughtError.message : "Versturen mislukt");
+    }
   };
 
   const handleChange = (
@@ -83,6 +138,15 @@ export function RegistrationModal({ isOpen, onClose, teamName, isYouth }: Regist
                 </h3>
 
                 <div className="space-y-4">
+                  {!isYouth && (
+                    <div>
+                      <label className={labelClasses}>
+                        Email *
+                      </label>
+                      <input type="email" name="email" value={formData.email} onChange={handleChange} required className={inputClasses} />
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className={labelClasses}>
@@ -98,14 +162,17 @@ export function RegistrationModal({ isOpen, onClose, teamName, isYouth }: Regist
                     </div>
                   </div>
 
-                  {isYouth && (
-                    <div>
-                      <label className={labelClasses}>
-                        Geboortedatum *
-                      </label>
-                      <input type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} required className={inputClasses} />
-                    </div>
-                  )}
+                  <div>
+                    <label className={labelClasses}>
+                      Geboortedatum *
+                    </label>
+                    <input type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} required className={inputClasses} />
+                    {age !== null && (
+                      <p className="mt-1 label-small text-[var(--color-primary-brand)]/60 font-semibold">
+                        {age} jaar
+                      </p>
+                    )}
+                  </div>
 
                   <div>
                     <label className="block text-[var(--color-primary-brand)]/70 label-regular mb-2 font-semibold">
@@ -130,7 +197,7 @@ export function RegistrationModal({ isOpen, onClose, teamName, isYouth }: Regist
               </div>
 
               {/* Ouder Gegevens (alleen voor jeugd) */}
-              {isYouth ? (
+              {isYouth && (
                 <div>
                   <h3 className="text-[var(--color-primary-brand)] mb-4 label-large font-bold">
                     Gegevens Ouder(s)
@@ -160,13 +227,6 @@ export function RegistrationModal({ isOpen, onClose, teamName, isYouth }: Regist
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div>
-                  <label className={labelClasses}>
-                    Email *
-                  </label>
-                  <input type="email" name="email" value={formData.email} onChange={handleChange} required className={inputClasses} />
-                </div>
               )}
 
               {/* Buttons */}
@@ -176,15 +236,25 @@ export function RegistrationModal({ isOpen, onClose, teamName, isYouth }: Regist
                   onClick={onClose}
                   className="flex-1 px-6 py-3 border-2 border-[var(--color-primary-brand)]/30 text-[var(--color-primary-brand)] rounded-lg hover:bg-[var(--color-primary-brand)]/5 transition-colors font-bold"
                 >
-                  Annuleren
+                  {status === "success" ? "Sluiten" : "Annuleren"}
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[var(--color-primary-brand)] to-[var(--color-secondary-brand)] text-white rounded-lg hover:shadow-lg transition-all font-bold"
+                  disabled={status === "sending"}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[var(--color-primary-brand)] to-[var(--color-secondary-brand)] text-white rounded-lg hover:shadow-lg transition-all font-bold disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  Versturen
+                  {status === "sending" ? "Versturen..." : "Versturen"}
                 </button>
               </div>
+
+              {status === "success" && (
+                <p className="text-center text-green-700 label-regular font-bold">
+                  Bedankt! Je inschrijvingsaanvraag is verstuurd. Het bestuur neemt zo snel mogelijk contact op.
+                </p>
+              )}
+              {status === "error" && (
+                <p className="text-center text-red-600 label-regular font-bold">{errorMessage}</p>
+              )}
             </form>
           </motion.div>
         </div>

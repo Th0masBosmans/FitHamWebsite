@@ -32,7 +32,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Fit Ham — Volleybalclub Ham</title>
+        <title>Fit Ham</title>
       </Head>
       <SplashScreen />
       <ScrollToTop />

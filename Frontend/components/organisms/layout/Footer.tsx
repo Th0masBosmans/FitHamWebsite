@@ -166,7 +166,7 @@ export function Footer() {
           </button>
           <div className="flex items-center justify-center gap-2 mt-6">
             <p className="text-white/50 label-small">
-              © 2026 FIT HAM. Alle rechten voorbehouden.
+              © 2026 Fit Ham. Alle rechten voorbehouden.
             </p>
             <Link
               href="/admin/login"

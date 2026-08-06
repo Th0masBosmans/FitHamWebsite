@@ -31,7 +31,7 @@ export function AdminLoginContent() {
   return (
     <AdminAuthLayout
       title="Inloggen"
-      subtitle="Beheerdersportaal van FIT HAM"
+      subtitle="Beheerdersportaal van Fit Ham"
       backLink={{ href: "/", label: "Terug naar site" }}
     >
       {error && <p className="mb-5 text-sm font-medium text-red-600">{error}</p>}

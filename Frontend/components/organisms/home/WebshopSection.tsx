@@ -42,13 +42,13 @@ export function WebshopSection() {
                 >
                   <img
                     src="/Webshop/merch-shirt.png"
-                    alt="FIT HAM Shirt"
+                    alt="Fit Ham Shirt"
                     className="absolute top-0 left-0 w-44 h-44 object-contain drop-shadow-2xl"
                     style={{ rotate: "-10deg", zIndex: 1 }}
                   />
                   <img
                     src="/Webshop/merch-shorts.png"
-                    alt="FIT HAM Shorts"
+                    alt="Fit Ham Shorts"
                     className="absolute bottom-0 right-0 w-36 h-36 object-contain drop-shadow-2xl"
                     style={{ rotate: "12deg", zIndex: 2 }}
                   />
@@ -71,13 +71,13 @@ export function WebshopSection() {
                 >
                   <img
                     src="/Webshop/merch-bag.png"
-                    alt="FIT HAM Rugzak"
+                    alt="Fit Ham Rugzak"
                     className="absolute top-0 left-0 w-48 h-48 object-contain drop-shadow-2xl"
                     style={{ rotate: "8deg", zIndex: 1 }}
                   />
                   <img
                     src="/Webshop/merch-socks.png"
-                    alt="FIT HAM Sokken"
+                    alt="Fit Ham Sokken"
                     className="absolute bottom-2 right-1 w-32 h-32 object-contain drop-shadow-2xl"
                     style={{ rotate: "-12deg", zIndex: 2 }}
                   />

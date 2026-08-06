@@ -4,7 +4,7 @@ export default function Document() {
   return (
     <Html lang="nl">
       <Head>
-        <meta name="description" content="FIT HAM — volleybalclub uit Ham. Teams voor alle leeftijden en niveaus, een eigen webshop en een hechte clubcultuur." />
+        <meta name="description" content="Fit Ham — volleybalclub uit Ham. Teams voor alle leeftijden en niveaus, een eigen webshop en een hechte clubcultuur." />
       </Head>
       <body>
         <Main />

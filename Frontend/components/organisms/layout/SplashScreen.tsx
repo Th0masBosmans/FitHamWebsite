@@ -3,28 +3,45 @@
 import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 
+const FADE_DURATION = 500;
+// Short floor so a fast load still reads as a deliberate fade instead of a flash
+const MIN_VISIBLE = 600;
+// Failsafe: never trap the visitor behind a hanging asset
+const MAX_VISIBLE = 5000;
+
 export function SplashScreen() {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [shouldRender, setShouldRender] = useState(true);
 
   useEffect(() => {
-    // Check if splash was already shown in this session
-    const splashShown = sessionStorage.getItem("splashShown");
+    const start = Date.now();
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    let dismissed = false;
 
-    if (splashShown) {
-      setShouldRender(false);
-      return;
-    }
+    const dismiss = () => {
+      if (dismissed) return;
+      dismissed = true;
 
-    setIsVisible(true);
+      const remaining = Math.max(0, MIN_VISIBLE - (Date.now() - start));
+      timers.push(
+        setTimeout(() => {
+          setIsVisible(false);
+          timers.push(setTimeout(() => setShouldRender(false), FADE_DURATION));
+        }, remaining)
+      );
+    };
 
-    const timer = setTimeout(() => {
-      setIsVisible(false);
-      sessionStorage.setItem("splashShown", "true");
-      setTimeout(() => setShouldRender(false), 500);
-    }, 2000);
+    const windowLoaded =
+      document.readyState === "complete"
+        ? Promise.resolve()
+        : new Promise<void>((resolve) =>
+            window.addEventListener("load", () => resolve(), { once: true })
+          );
 
-    return () => clearTimeout(timer);
+    Promise.all([windowLoaded, document.fonts?.ready]).then(dismiss);
+    timers.push(setTimeout(dismiss, MAX_VISIBLE));
+
+    return () => timers.forEach(clearTimeout);
   }, []);
 
   if (!shouldRender) return null;
@@ -50,7 +67,7 @@ export function SplashScreen() {
         <img
           src="/FitHamLogo.png"
           alt="Fit Ham"
-          className="w-64 h-auto object-contain"
+          className="w-28 sm:w-36 h-auto object-contain"
         />
 
         {/* Pulsing Glow Effect */}

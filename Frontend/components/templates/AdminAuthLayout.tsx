@@ -61,7 +61,7 @@ export function AdminAuthLayout({ title, subtitle, backLink, children }: AdminAu
         <div className="overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/5">
           <div className="h-1 bg-gradient-to-r from-[var(--color-primary-brand)] via-[var(--color-secondary-brand)] to-[var(--color-accent)]" />
           <div className="p-8 sm:p-10">
-            <img src="/FitHamLogo.png" alt="FIT HAM" className="mb-8 h-9 w-auto" />
+            <img src="/FitHamLogo.png" alt="Fit Ham" className="mb-8 h-9 w-auto" />
 
             <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
             <p className="mt-1 mb-7 text-sm text-gray-500">{subtitle}</p>
@@ -70,7 +70,7 @@ export function AdminAuthLayout({ title, subtitle, backLink, children }: AdminAu
           </div>
         </div>
 
-        <p className="mt-6 text-center text-xs text-white/60">FIT HAM · Beheerdersportaal</p>
+        <p className="mt-6 text-center text-xs text-white/60">Fit Ham · Beheerdersportaal</p>
       </motion.div>
     </div>
   );

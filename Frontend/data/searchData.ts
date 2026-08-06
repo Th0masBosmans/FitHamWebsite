@@ -7,8 +7,8 @@ export const searchableContent: SearchableContent[] = [
     path: "/",
     sections: [
       {
-        title: "Over FIT HAM",
-        content: "FIT HAM is een gepassioneerde volleybalclub met teams voor alle niveaus en leeftijden. Met ervaren coaches, moderne faciliteiten en een hechte clubcultuur zorgen wij voor de beste omgeving om te groeien."
+        title: "Over Fit Ham",
+        content: "Fit Ham is een gepassioneerde volleybalclub met teams voor alle niveaus en leeftijden. Met ervaren coaches, moderne faciliteiten en een hechte clubcultuur zorgen wij voor de beste omgeving om te groeien."
       },
       {
         title: "Fit Ham merch",
@@ -83,7 +83,7 @@ export const searchableContent: SearchableContent[] = [
     sections: [
       {
         title: "Word nu Lid",
-        content: "Word onderdeel van de FIT HAM familie en ontdek de passie voor volleybal"
+        content: "Word onderdeel van de Fit Ham familie en ontdek de passie voor volleybal"
       },
       {
         title: "Starters",
@@ -117,7 +117,7 @@ export const searchableContent: SearchableContent[] = [
     sections: [
       {
         title: "Onze Sponsors",
-        content: "Bekijk alle sponsors die FIT HAM Volleybal steunen"
+        content: "Bekijk alle sponsors die Fit Ham Volleybal steunen"
       },
       {
         content: "Hoofdsponsoren, sponsors, partners, bedrijven, steun, samenwerking, sponsoring"
@@ -127,7 +127,7 @@ export const searchableContent: SearchableContent[] = [
       },
       {
         title: "Word sponsor",
-        content: "Wilt u ook FIT HAM Volleybal steunen? Neem contact met ons op voor de mogelijkheden"
+        content: "Wilt u ook Fit Ham Volleybal steunen? Neem contact met ons op voor de mogelijkheden"
       }
     ]
   }

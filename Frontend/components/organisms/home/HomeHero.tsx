@@ -23,7 +23,7 @@ export function HomeHero({ heroImageUrl }: { heroImageUrl?: string | null }) {
       >
         <img
           src={heroSrc}
-          alt="FIT HAM Spirit"
+          alt="Fit Ham Spirit"
           className="w-full h-full object-cover"
         />
       </motion.div>

@@ -38,7 +38,7 @@ export function SponsorsContent() {
       {/* Header */}
       <PageHeading
         title="Sponsors"
-        subtitle="Dankzij de steun van onze sponsors kunnen we FIT HAM blijven ontwikkelen en onze teams de beste faciliteiten bieden. Bedankt voor jullie vertrouwen!"
+        subtitle="Dankzij de steun van onze sponsors kunnen we Fit Ham blijven ontwikkelen en onze teams de beste faciliteiten bieden. Bedankt voor jullie vertrouwen!"
       />
 
       {/* Sponsors Grid */}
@@ -81,7 +81,7 @@ export function SponsorsContent() {
             Word ook sponsor!
           </h2>
           <p className="text-white/90 mb-5 leading-relaxed font-medium">
-            Wilt u ook FIT HAM Volleybal steunen? Neem contact met ons op voor de mogelijkheden.
+            Wilt u ook Fit Ham Volleybal steunen? Neem contact met ons op voor de mogelijkheden.
           </p>
           <Link
             href="/contact"

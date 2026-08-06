@@ -1,6 +1,7 @@
 import type { AppProps } from "next/app";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
 import { Header } from "@/components/organisms/layout/Header";
 import { Footer } from "@/components/organisms/layout/Footer";
 import { SplashScreen } from "@/components/organisms/layout/SplashScreen";
@@ -30,6 +31,9 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
+      <Head>
+        <title>Fit Ham — Volleybalclub Ham</title>
+      </Head>
       <SplashScreen />
       <ScrollToTop />
       <div className="min-h-screen w-full overflow-x-hidden relative flex flex-col">

@@ -35,7 +35,7 @@ export function MembershipContent() {
         >
           <h1 className="title-page font-black italic uppercase tracking-tighter">Word nu Lid!</h1>
           <p className="label-large text-white/90 mt-4 max-w-md lg:max-w-2xl mx-auto font-medium">
-            Word onderdeel van de FIT HAM familie en ontdek de passie voor volleybal
+            Word onderdeel van de Fit Ham familie en ontdek de passie voor volleybal
           </p>
         </motion.div>
       </div>

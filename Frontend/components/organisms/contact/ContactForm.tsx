@@ -12,6 +12,7 @@ type SubmitStatus = "idle" | "sending" | "success" | "error";
 export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
   const [formData, setFormData] = useState({
     email: "",
+    phoneNumber: "",
     firstName: "",
     lastName: "",
     message: prefillMessage,
@@ -48,7 +49,7 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
       }
 
       setStatus("success");
-      setFormData({ email: "", firstName: "", lastName: "", message: "" });
+      setFormData({ email: "", phoneNumber: "", firstName: "", lastName: "", message: "" });
     } catch (caughtError) {
       setStatus("error");
       setErrorMessage(caughtError instanceof Error ? caughtError.message : "Versturen mislukt");
@@ -80,6 +81,20 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
               onChange={(event) => setFormData({ ...formData, email: event.target.value })}
               className={inputClasses}
               placeholder="jouw@email.be"
+            />
+          </div>
+          <div>
+            <label htmlFor="phoneNumber" className={labelClasses}>
+              Telefoonnummer *
+            </label>
+            <input
+              type="tel"
+              id="phoneNumber"
+              required
+              value={formData.phoneNumber}
+              onChange={(event) => setFormData({ ...formData, phoneNumber: event.target.value })}
+              className={inputClasses}
+              placeholder="+32 470 12 34 56"
             />
           </div>
 

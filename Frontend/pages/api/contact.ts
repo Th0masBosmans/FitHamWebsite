@@ -8,15 +8,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { email, firstName, lastName, message } = (req.body ?? {}) as {
+  const { email, phoneNumber, firstName, lastName, message } = (req.body ?? {}) as {
     email?: string;
+    phoneNumber?: string;
     firstName?: string;
     lastName?: string;
     message?: string;
   };
 
-  if (!email || !message) {
-    return res.status(400).json({ error: "E-mail en bericht zijn verplicht" });
+  if (!email || !phoneNumber || !message) {
+    return res.status(400).json({ error: "E-mail, telefoonnummer en bericht zijn verplicht" });
   }
 
   const user = process.env.SMTP_USER;
@@ -35,7 +36,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const fullName = [firstName?.trim(), lastName?.trim()].filter(Boolean).join(" ");
 
   const rows: Array<[string, string]> = [
-    ["E-mail (antwoord hierop)", email],
+    ["E-mail", email],
+    ["Telefoonnummer", phoneNumber],
     ["Voornaam", firstName?.trim() || "-"],
     ["Naam", lastName?.trim() || "-"],
   ];

@@ -6,6 +6,7 @@ import { Header } from "@/components/organisms/layout/Header";
 import { Footer } from "@/components/organisms/layout/Footer";
 import { SplashScreen } from "@/components/organisms/layout/SplashScreen";
 import { ScrollToTop } from "@/components/organisms/layout/ScrollToTop";
+import "react-international-phone/style.css";
 import "@/styles/globals.css"
 
 export default function App({ Component, pageProps }: AppProps) {

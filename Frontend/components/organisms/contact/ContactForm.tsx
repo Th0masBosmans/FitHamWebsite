@@ -2,10 +2,28 @@
 
 import { useState, useEffect, type FormEvent } from "react";
 import { Send } from "lucide-react";
+import { PhoneInput } from "react-international-phone";
 
 const inputClasses =
   "w-full px-4 py-3 rounded-xl border-2 border-[var(--color-primary-brand)]/20 focus:border-[var(--color-primary-brand)] focus:outline-none transition-all text-[var(--color-primary-brand)] font-semibold";
 const labelClasses = "block text-[var(--color-primary-brand)] mb-2 label-regular font-bold";
+
+// Het telefoonveld erft de vormgeving van de andere velden via CSS-variabelen.
+const phoneFieldStyle = {
+  "--react-international-phone-height": "50px",
+  "--react-international-phone-border-radius": "12px",
+  "--react-international-phone-font-size": "16px",
+  "--react-international-phone-text-color": "var(--color-primary-brand)",
+  "--react-international-phone-border-color":
+    "color-mix(in srgb, var(--color-primary-brand) 20%, transparent)",
+  "--react-international-phone-country-selector-border-color":
+    "color-mix(in srgb, var(--color-primary-brand) 20%, transparent)",
+  "--react-international-phone-country-selector-background-color-hover":
+    "color-mix(in srgb, var(--color-primary-brand) 8%, transparent)",
+  "--react-international-phone-selected-dropdown-item-background-color":
+    "color-mix(in srgb, var(--color-primary-brand) 12%, transparent)",
+  "--react-international-phone-dropdown-item-text-color": "var(--color-primary-brand)",
+} as React.CSSProperties;
 
 type SubmitStatus = "idle" | "sending" | "success" | "error";
 
@@ -33,6 +51,14 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+
+    // Het veld staat al vooraf ingevuld met de landcode, dus "required" alleen volstaat niet.
+    if (formData.phoneNumber.replace(/\D/g, "").length < 8) {
+      setStatus("error");
+      setErrorMessage("Vul een geldig telefoonnummer in");
+      return;
+    }
+
     setStatus("sending");
     setErrorMessage("");
 
@@ -49,7 +75,13 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
       }
 
       setStatus("success");
-      setFormData({ email: "", phoneNumber: "", firstName: "", lastName: "", message: "" });
+      setFormData({
+        email: "",
+        phoneNumber: "",
+        firstName: "",
+        lastName: "",
+        message: "",
+      });
     } catch (caughtError) {
       setStatus("error");
       setErrorMessage(caughtError instanceof Error ? caughtError.message : "Versturen mislukt");
@@ -87,14 +119,14 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
             <label htmlFor="phoneNumber" className={labelClasses}>
               Telefoonnummer *
             </label>
-            <input
-              type="tel"
-              id="phoneNumber"
-              required
+            <PhoneInput
+              defaultCountry="be"
+              preferredCountries={["be", "nl", "fr", "de", "lu"]}
               value={formData.phoneNumber}
-              onChange={(event) => setFormData({ ...formData, phoneNumber: event.target.value })}
-              className={inputClasses}
-              placeholder="+32 470 12 34 56"
+              onChange={(phone) => setFormData({ ...formData, phoneNumber: phone })}
+              inputProps={{ id: "phoneNumber", required: true }}
+              className="phone-field"
+              style={phoneFieldStyle}
             />
           </div>
 

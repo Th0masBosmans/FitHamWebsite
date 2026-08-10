@@ -71,6 +71,22 @@
   }
 }
 
+/* Telefoonveld (react-international-phone) gelijkstemmen met de andere formuliervelden. */
+.phone-field .react-international-phone-country-selector-button,
+.phone-field .react-international-phone-input {
+  border-width: 2px;
+}
+
+.phone-field .react-international-phone-input {
+  width: 100%;
+  font-weight: 600;
+}
+
+.phone-field:focus-within .react-international-phone-country-selector-button,
+.phone-field:focus-within .react-international-phone-input {
+  border-color: var(--color-primary-brand);
+}
+
 @utility title-hero {
   font-size: var(--text-title-hero);
   font-weight: 900;

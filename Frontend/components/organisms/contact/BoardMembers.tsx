@@ -6,6 +6,10 @@ import { BoardMemberRepository, type BoardMember } from "@/repository/boardMembe
 
 const boardMemberRepository = new BoardMemberRepository();
 
+// De API-knop hierboven scrollt naar dit bestuurslid.
+const isIntegrityOfficer = (memberFunction: string) =>
+  /\bapi\b|aanspreekpunt/i.test(memberFunction);
+
 export function BoardMembers() {
   const [boardMembers, setBoardMembers] = useState<BoardMember[]>([]);
 
@@ -15,8 +19,10 @@ export function BoardMembers() {
 
   if (boardMembers.length === 0) return null;
 
+  const apiMemberId = boardMembers.find((member) => isIntegrityOfficer(member.function))?.id;
+
   return (
-    <div className="mb-6">
+    <div className="mb-6" id="bestuur">
       <div className="flex items-center gap-3 mb-4">
         <div className="h-1 w-8 bg-[var(--color-accent)] rounded-full"></div>
         <h2 className="text-white whitespace-nowrap title-section">Bestuur</h2>
@@ -27,8 +33,9 @@ export function BoardMembers() {
         {boardMembers.map((member) => (
           <a
             key={member.id}
+            id={member.id === apiMemberId ? "api-board-member" : undefined}
             href={`mailto:${member.email}`}
-            className="block bg-white/90 rounded-2xl p-5 shadow-xl border-2 border-white/50 hover:scale-[1.02] transition-transform cursor-pointer"
+            className="block bg-white/90 rounded-2xl p-5 shadow-xl border-2 border-white/50 hover:scale-[1.02] transition-transform cursor-pointer scroll-mt-24"
           >
             <div className="flex items-center gap-4">
               <img

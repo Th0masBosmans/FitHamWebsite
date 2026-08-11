@@ -87,6 +87,30 @@
   border-color: var(--color-primary-brand);
 }
 
+/* Lichtte het bestuurslid met functie API op na een klik op de API-knop. */
+@keyframes api-highlight {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 70%, transparent);
+  }
+  60% {
+    box-shadow: 0 0 0 12px color-mix(in srgb, var(--color-accent) 0%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 0%, transparent);
+  }
+}
+
+.api-highlight {
+  animation: api-highlight 0.9s ease-out 10;
+  border-color: var(--color-accent-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .api-highlight {
+    animation: none;
+  }
+}
+
 @utility title-hero {
   font-size: var(--text-title-hero);
   font-weight: 900;

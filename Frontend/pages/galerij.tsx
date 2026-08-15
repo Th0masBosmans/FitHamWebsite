@@ -1,4 +1,4 @@
-import { GalerijContent } from "@/components/templates/GalerijContent";
+import { GalerijContent } from "@/components/pages/public/GalerijContent";
 
 export default function GalerijPage() {
   return <GalerijContent />;

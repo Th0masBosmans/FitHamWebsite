@@ -1,8 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-// Server-side proxy to VolleyAdmin's match calendar XML (no CORS on the browser).
-// Only used in development; in production the client fetches via a public CORS
-// proxy instead (see volleyRepository).
+// Haalt de wedstrijdkalender van VolleyAdmin op (de officiële volleybalbond).
+//
+// Dit moet via de server: de browser mag die website niet rechtstreeks
+// aanspreken. We halen de gegevens hier op en geven ze onbewerkt door;
+// repository/volleyRepository leest ze uit en toont ze op de teampagina.
+//
+// Zonder stamnummer nemen we dat van Fit Ham zelf (L-0759).
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { stamnummer } = req.query;
   const stam = (Array.isArray(stamnummer) ? stamnummer[0] : stamnummer) || "L-0759";

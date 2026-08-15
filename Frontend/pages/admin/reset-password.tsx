@@ -1,4 +1,4 @@
-import { AdminResetPasswordContent } from "@/components/templates/AdminResetPasswordContent";
+import { AdminResetPasswordContent } from "@/components/pages/admin/AdminResetPasswordContent";
 
 export default function AdminResetPasswordPage() {
   return <AdminResetPasswordContent />;

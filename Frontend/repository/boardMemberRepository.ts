@@ -38,7 +38,8 @@ class BoardMemberRepository {
       .single();
 
     if (error || !data) {
-      // Insert failed: remove the just-uploaded image so Cloudinary stays unchanged.
+      // Toevoegen mislukt: de zonet geuploade foto weer weghalen, zodat er geen
+      // losse foto in Cloudinary achterblijft.
       await this.deleteFromCloudinary(publicId).catch((error) => console.error("Cloudinary rollback failed:", error));
       if (error) throw error;
       throw new Error("Kon het bestuurslid niet toevoegen, probeer opnieuw.");
@@ -48,7 +49,8 @@ class BoardMemberRepository {
   }
 
   async updateBoardMember(id: number, member: Omit<BoardMember, "id">, newImage?: File): Promise<BoardMember> {
-    // member.profile_picture holds the current public id; only replace it once the DB update succeeds.
+    // Hierin zit nog de oude foto. Die verwijderen we pas als de database
+    // met de nieuwe foto is bijgewerkt, anders zijn we ze allebei kwijt.
     const oldPublicId = member.profile_picture;
     const publicId = newImage ? await this.uploadToCloudinary(newImage) : member.profile_picture;
 

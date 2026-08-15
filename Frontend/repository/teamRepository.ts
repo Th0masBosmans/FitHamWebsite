@@ -9,7 +9,12 @@ const STAFF_COLUMNS = "id, team_id, name, role, photo, sort_order";
 const TRAINING_COLUMNS = "id, team_id, day, time, sort_order";
 const TEAM_COLUMNS = `id, name, description, division, photo_url, reeks, volley_club_id, sort_order, players(${PLAYER_COLUMNS}), staff(${STAFF_COLUMNS}), training_days(${TRAINING_COLUMNS})`;
 
-// Children are returned in an arbitrary order by the embed; sort them by sort_order then id for a stable UI.
+// Alles rond teams zit in dit ene bestand: het team zelf plus zijn spelers,
+// staf en trainingsuren. Die laatste drie staan in eigen tabellen, maar horen bij
+// een team en worden dus hier beheerd.
+
+// De database geeft spelers, staf en trainingen in willekeurige volgorde terug.
+// Dit zet ze in een vaste volgorde, zodat de lijst niet telkens anders staat.
 const bySortOrder = <T extends { sort_order?: number; id?: number }>(a: T, b: T) =>
   (a.sort_order ?? 0) - (b.sort_order ?? 0) || (a.id ?? 0) - (b.id ?? 0);
 
@@ -56,7 +61,7 @@ class TeamRepository {
     };
   }
 
-  // --- Teams ---
+  // --- Teams zelf ---
 
   async postTeam(
     team: { name: string; description: string | null; division: Division; reeks: string | null; volley_club_id: string | null },
@@ -107,8 +112,9 @@ class TeamRepository {
     return data as Omit<Team, "players" | "staff" | "training_days">;
   }
 
-  // Deleting a team cascades to its players/staff/training_days in the DB; we still clean up
-  // the team photo and every staff photo from Cloudinary ourselves.
+  // Een team wissen verwijdert in de database vanzelf ook zijn spelers, staf en
+  // trainingen. De foto's in Cloudinary moeten we wel zelf opruimen: die van het
+  // team en die van elk staflid.
   async deleteTeam(id: number, photoPublicId?: string | null, staffPhotos: (string | null)[] = []): Promise<void> {
     const { error } = await supabase.from("teams").delete().eq("id", id);
     if (error) throw error;
@@ -117,7 +123,7 @@ class TeamRepository {
     await Promise.all(toRemove.map((p) => this.cloudinary.deleteFromCloudinary(p).catch((error) => console.error("Cloudinary cleanup failed:", error))));
   }
 
-  // --- Players ---
+  // --- Spelers ---
 
   async addPlayer(teamId: number, player: { name: string; position: string }): Promise<Player> {
     const { data, error } = await supabase
@@ -145,7 +151,7 @@ class TeamRepository {
     if (error) throw error;
   }
 
-  // --- Staff ---
+  // --- Staf (coaches en trainers) ---
 
   async addStaff(teamId: number, member: { name: string; role: string }, photoFile?: File): Promise<StaffMember> {
     const publicId = photoFile ? await this.cloudinary.uploadToCloudinary(photoFile, 300) : null;
@@ -193,7 +199,7 @@ class TeamRepository {
     if (photoPublicId) await this.cloudinary.deleteFromCloudinary(photoPublicId).catch((error) => console.error("Cloudinary cleanup failed:", error));
   }
 
-  // --- Training days ---
+  // --- Trainingsdagen ---
 
   async addTrainingDay(teamId: number, training: { day: string; time: string }): Promise<TrainingDay> {
     const { data, error } = await supabase
@@ -221,7 +227,7 @@ class TeamRepository {
     if (error) throw error;
   }
 
-  // --- Image URLs ---
+  // --- Foto-adressen opvragen ---
 
   getTeamPhotoUrl(publicId: string): string {
     return this.cloudinary.getImageUrl(publicId);

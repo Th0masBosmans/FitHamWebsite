@@ -1,9 +1,14 @@
 import { encode } from "@jsquash/jpeg";
 
+// Verkleint foto's in de browser vóór ze geüpload worden. Zo blijven de uploads
+// snel en blijven we onder de maximumgrootte van Cloudinary. Wordt gebruikt door
+// repository/cloudinaryRepository (alle foto's) en repository/albumRepository
+// (albumfoto's). Video's gaan er niet door: die kan de browser niet omzetten.
+
 type CompressOptions = {
-  /** JPEG quality 0-100. */
+  /** JPEG-kwaliteit, 0-100. Lager = kleiner bestand, maar korreliger. */
   quality?: number;
-  /** If set, the image is scaled down so its longest side is at most this many pixels. */
+  /** Schaalt de foto terug zodat de langste zijde hoogstens zoveel pixels is. */
   maxDimension?: number;
 }
 

@@ -1,11 +1,14 @@
 import type { NextApiRequest } from "next";
 import { createClient } from "@supabase/supabase-js";
 
-// Verifies that an API request comes from a signed-in admin. The browser sends
-// its Supabase access token in the Authorization header; we hand it to Supabase
-// (which validates the signature and expiry) and then confirm the 'admin' role
-// that lives in app_metadata — the same claim the database RLS policies check.
-// Returns true only for a valid, non-expired token belonging to an admin user.
+// Controleert of een API-aanvraag van een ingelogde beheerder komt.
+//
+// De browser stuurt zijn Supabase-token mee; wij laten Supabase nakijken of dat
+// token echt en nog geldig is, en of de gebruiker de rol 'admin' heeft. Dat is
+// dezelfde rol die de database zelf ook controleert in haar RLS-regels.
+//
+// Gebruikt door de twee Cloudinary-routes (/api/cloudinary/*), want zonder deze
+// controle zou iedereen bestanden kunnen uploaden of verwijderen.
 export async function isAdminRequest(req: NextApiRequest): Promise<boolean> {
   const authHeader = req.headers.authorization;
   const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;

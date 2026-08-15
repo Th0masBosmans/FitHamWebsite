@@ -2,9 +2,13 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import crypto from "crypto";
 import { isAdminRequest } from "@/lib/requireAdmin";
 
-// Returns a short-lived signature for a Cloudinary upload. Signing happens here so the
-// API secret stays server-side; the browser uploads directly to Cloudinary with the result.
-// Admin-only: an open signing endpoint would let anyone upload to our Cloudinary account.
+// Geeft een kortlopend "toegangsbewijs" om een foto naar Cloudinary te mogen
+// uploaden.
+//
+// Waarom deze omweg: het geheime Cloudinary-wachtwoord mag nooit in de browser
+// terechtkomen. De browser vraagt hier dus eerst een handtekening op, en uploadt
+// daarna zelf rechtstreeks naar Cloudinary. Alleen ingelogde beheerders krijgen
+// er een, anders zou iedereen in onze Cloudinary kunnen uploaden.
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });

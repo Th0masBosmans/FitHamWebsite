@@ -1,4 +1,4 @@
-import { EventsContent } from "@/components/templates/EventsContent";
+import { EventsContent } from "@/components/pages/public/EventsContent";
 
 export default function EventsPage() {
   return <EventsContent />;

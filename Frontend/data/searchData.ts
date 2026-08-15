@@ -1,4 +1,9 @@
-// All searchable content from the website
+// De tekst die het zoekvenster in de header doorzoekt.
+//
+// LET OP: dit is handgeschreven en staat LOS van de echte pagina's. Verandert er
+// tekst op de site, dan verandert die hier niet mee. Voeg nieuwe teksten hier
+// toe als bezoekers ze moeten kunnen vinden. Het zoeken zelf zit in
+// lib/siteSearch, het venster in sections/search/SearchResults.
 import type { SearchableContent } from "@/types";
 
 export const searchableContent: SearchableContent[] = [

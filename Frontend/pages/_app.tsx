@@ -2,10 +2,10 @@ import type { AppProps } from "next/app";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { Header } from "@/components/organisms/layout/Header";
-import { Footer } from "@/components/organisms/layout/Footer";
-import { SplashScreen } from "@/components/organisms/layout/SplashScreen";
-import { ScrollToTop } from "@/components/organisms/layout/ScrollToTop";
+import { Header } from "@/components/sections/layout/Header";
+import { Footer } from "@/components/sections/layout/Footer";
+import { SplashScreen } from "@/components/sections/layout/SplashScreen";
+import { ScrollToTop } from "@/components/sections/layout/ScrollToTop";
 import "react-international-phone/style.css";
 import "@/styles/globals.css"
 

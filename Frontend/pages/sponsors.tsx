@@ -1,4 +1,4 @@
-import { SponsorsContent } from "@/components/templates/SponsorsContent";
+import { SponsorsContent } from "@/components/pages/public/SponsorsContent";
 
 export default function SponsorsPage() {
   return <SponsorsContent />;

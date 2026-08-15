@@ -34,7 +34,8 @@ class SponsorRepository {
       .single();
 
     if (error || !data) {
-      // Insert failed: remove the just-uploaded image so Cloudinary stays unchanged.
+      // Toevoegen mislukt: de zonet geuploade foto weer weghalen, zodat er geen
+      // losse foto in Cloudinary achterblijft.
       await this.deleteFromCloudinary(publicId).catch((error) => console.error("Cloudinary rollback failed:", error));
       if (error) throw error;
       throw new Error("Kon de sponsor niet toevoegen, probeer opnieuw.");

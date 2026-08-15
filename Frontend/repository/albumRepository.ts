@@ -8,8 +8,17 @@ export type { Album, SlideshowImage };
 const BUCKET = "albums";
 const COLUMNS = "id, name, cover_image, images, date, tags";
 const SLIDESHOW_COLUMNS = "id, image_path";
-// Covers go to Cloudinary uncompressed (they drive the hero slideshow); only fall
-// back to client compression above this size to respect Cloudinary's upload limit.
+// Alles rond fotoalbums. Let op de twee opslagplaatsen:
+//   - de COVER van een album gaat naar Cloudinary (blijft scherp, want hij wordt
+//     groot getoond in de diavoorstelling);
+//   - de FOTO'S EN FILMPJES in het album gaan naar Supabase Storage, map `albums`.
+// Dit is de enige plek op de site waar die twee door elkaar lopen.
+//
+// Onderaan staat ook de diavoorstelling van de galerijpagina (tabel
+// `slideshow_images`): een aparte lijst met foto's die de beheerder uitkoos.
+
+// Tot deze grootte laten we een cover ongemoeid; daarboven verkleinen we hem
+// alsnog, want anders weigert Cloudinary de upload.
 const COVER_MAX_KB = 10000;
 
 type AlbumFields = {
@@ -41,7 +50,7 @@ class AlbumRepository {
     return data ?? [];
   }
 
-  /** Fetches a single album by id (used to deep-link straight to an album from an event). */
+  /** Eén album ophalen. Gebruikt als je vanaf een evenement rechtstreeks naar dat album gaat. */
   async fetchAlbumById(id: number): Promise<Album | null> {
     const { data, error } = await supabase.from("albums").select(COLUMNS).eq("id", id).single();
 
@@ -70,7 +79,8 @@ class AlbumRepository {
       .single();
 
     if (error || !data) {
-      // Insert failed: remove the just-uploaded files so the stores stay unchanged.
+      // Toevoegen mislukt: de zonet geüploade bestanden weer weghalen, zodat er
+      // niets blijft rondslingeren waar niets meer naar verwijst.
       await this.deleteCover(cover_image);
       await this.deleteMedia(images).catch((error) => console.error("Storage rollback failed:", error));
       if (error) throw error;
@@ -114,7 +124,7 @@ class AlbumRepository {
     return data;
   }
 
-  /** Removes one or more images/videos from an album, in both the DB row and Storage. */
+  /** Haalt foto's of filmpjes uit een album weg, zowel uit de database als uit de opslag. */
   async removeAlbumImages(id: number, currentImages: string[], paths: string[]): Promise<Album> {
     const remove = new Set(paths);
     const images = currentImages.filter((p) => !remove.has(p));
@@ -143,7 +153,7 @@ class AlbumRepository {
     await this.deleteMedia(imagePaths).catch((error) => console.error("Storage cleanup failed:", error));
   }
 
-  /** Uploads the cover to Cloudinary (kept full quality) and returns its public id. */
+  /** Zet de cover in Cloudinary, op volle kwaliteit. */
   async uploadCover(file: File): Promise<string> {
     return this.cloudinary.uploadToCloudinary(file, COVER_MAX_KB);
   }
@@ -154,9 +164,12 @@ class AlbumRepository {
   }
 
   /**
-   * Uploads one media file to the `albums` bucket under a unique key and returns that
-   * key. Images are downscaled + re-encoded as JPEG first to keep uploads fast; videos
-   * are uploaded as-is (the browser can't transcode them).
+   * Zet één foto of filmpje in Supabase Storage, onder een willekeurige naam (de
+   * oorspronkelijke bestandsnaam gaat dus verloren).
+   *
+   * Foto's worden eerst verkleind naar maximaal 1920 pixels en opnieuw als JPEG
+   * opgeslagen, zodat het uploaden vlot gaat. Video's gaan onveranderd omhoog:
+   * die kan de browser niet omzetten.
    */
   async uploadMedia(file: File): Promise<string> {
     const isImage = file.type.startsWith("image/");
@@ -178,17 +191,17 @@ class AlbumRepository {
     if (error) throw error;
   }
 
-  /** Cloudinary URL for a cover image (stored as a Cloudinary public id). */
+  /** Het webadres van een cover in Cloudinary. */
   getCoverUrl(publicId: string): string {
     return this.cloudinary.getImageUrl(publicId);
   }
 
-  /** Public URL for a media file stored under its key in the `albums` bucket. */
+  /** Het webadres van een foto of filmpje in Supabase Storage. */
   getMediaUrl(path: string): string {
     return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
   }
 
-  // --- Hero slideshow (curated album photos shown on the gallery page) ---
+  // --- De diavoorstelling bovenaan de galerijpagina ---
 
   async fetchSlideshowImages(): Promise<SlideshowImage[]> {
     const { data, error } = await supabase
@@ -204,7 +217,7 @@ class AlbumRepository {
     return data ?? [];
   }
 
-  /** Adds album media (by Storage key) to the slideshow, ignoring any already present. */
+  /** Zet albumfoto's in de diavoorstelling. Foto's die er al in staan worden overgeslagen. */
   async addSlideshowImages(paths: string[]): Promise<SlideshowImage[]> {
     if (paths.length === 0) return [];
 

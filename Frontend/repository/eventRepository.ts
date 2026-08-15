@@ -8,7 +8,8 @@ class EventRepository {
   private cloudinary = new CloudinaryRepository();
 
   async fetchEvents(): Promise<ClubEvent[]> {
-    // Embed the linked album's media keys so the UI knows whether there are photos to show.
+    // We halen meteen de foto's van het gekoppelde album mee op, zodat de pagina
+    // weet of er iets te bekijken valt.
     const { data, error } = await supabase
       .from("events")
       .select("id, title, description, location, start_date, end_date, image, highlighted, album_id, album:albums(images)")
@@ -44,7 +45,8 @@ class EventRepository {
       .single();
 
     if (error || !data) {
-      // Insert failed: remove the just-uploaded image so Cloudinary stays unchanged.
+      // Toevoegen mislukt: de zonet geuploade foto weer weghalen, zodat er geen
+      // losse foto in Cloudinary achterblijft.
       await this.deleteFromCloudinary(publicId).catch((error) => console.error("Cloudinary rollback failed:", error));
       if (error) throw error;
       throw new Error("Kon het evenement niet toevoegen, probeer opnieuw.");
@@ -54,7 +56,8 @@ class EventRepository {
   }
 
   async updateEvent(id: number, event: Omit<ClubEvent, "id">, newImage?: File): Promise<ClubEvent> {
-    // event.image holds the current public id; only replace it once the DB update succeeds.
+    // Hierin zit nog de oude foto. Die verwijderen we pas als de database
+    // met de nieuwe foto is bijgewerkt, anders zijn we ze allebei kwijt.
     const oldPublicId = event.image;
     const publicId = newImage ? await this.uploadToCloudinary(newImage) : event.image;
 

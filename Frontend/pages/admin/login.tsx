@@ -1,4 +1,4 @@
-import { AdminLoginContent } from "@/components/templates/AdminLoginContent";
+import { AdminLoginContent } from "@/components/pages/admin/AdminLoginContent";
 
 export default function AdminLoginPage() {
   return <AdminLoginContent />;

@@ -1,8 +1,10 @@
-// Single source of truth for app types. Add new types here.
-// Everything is a `type` alias: this app uses only object shapes and unions, for
-// which `type` and `interface` are interchangeable (no declaration merging needed).
+// Alle gegevensvormen van de site op één plek. Zoek je hoe een team, evenement
+// of album eruitziet, dan vind je het hier. Voeg nieuwe vormen hier ook toe.
+//
+// De meeste komen rechtstreeks overeen met een tabel in Supabase (zie
+// supabase/migrations); de uitzonderingen staan er per stuk bij.
 
-// --- Sponsors ---
+// --- Sponsors (tabel `sponsors`) ---
 export type Sponsor = {
   id?: number;
   name: string;
@@ -10,62 +12,63 @@ export type Sponsor = {
   website_url: string | null;
 };
 
-// --- Memberships ---
+// --- Lidgelden (tabel `membership_fees`) ---
 export type MembershipFee = {
   id?: number;
   name: string;
   description: string;
-  /** Price in whole euros (integer in the database). */
+  /** Prijs in hele euro's. */
   price: number;
   benefits: string[];
 };
 
-// --- Board ---
+// --- Bestuursleden (tabel `board_members`) ---
 export type BoardMember = {
   id?: number;
   name: string;
   function: string;
   email: string;
-  /** Cloudinary public id. */
+  /** Profielfoto in Cloudinary. */
   profile_picture: string;
 };
 
-// --- Site images ---
+// --- Instelbare foto's op vaste plekken (tabel `site_images`) ---
 export type SiteImage = {
   id?: number;
-  /** Human-friendly label, derived from the chosen slot (see SITE_IMAGE_SLOTS). */
+  /** Leesbare naam, volgt automatisch uit de gekozen plek (zie data/siteImageSlots). */
   name: string;
-  /** Slot key identifying the spot on the site (see SITE_IMAGE_SLOTS). */
+  /** Sleutel van de plek op de site, bv. "home-hero" (zie data/siteImageSlots). */
   page: string;
-  /** Cloudinary public id. */
+  /** De foto zelf, in Cloudinary. */
   image: string;
 };
 
-/** A predefined spot on the site that can hold a managed image (see SITE_IMAGE_SLOTS). */
+/** Een vaste plek op de site waar een beheerder een foto kan instellen. */
 export type SiteImageSlot = {
-  /** Value stored in `page`; consumers fetch their image by this key. */
+  /** Wordt opgeslagen in `page`; de pagina vraagt haar foto met deze sleutel op. */
   page: string;
-  /** Human-friendly label shown in the admin panel and stored as `name`. */
+  /** Wat de beheerder in de keuzelijst ziet. Wordt ook als `name` bewaard. */
   label: string;
 };
 
-// --- Albums & gallery ---
+// --- Albums en galerij (tabellen `albums` en `slideshow_images`) ---
 export type Album = {
   id?: number;
   name: string;
-  /** Cloudinary public id of the cover image (kept full quality for the slideshow). */
+  /** De cover, in Cloudinary. Blijft op volle kwaliteit voor de diavoorstelling. */
   cover_image: string;
-  /** Storage paths (keys) of the album's images/videos in the `albums` bucket. */
+  /** De foto's en filmpjes zelf. Die staan NIET in Cloudinary maar in Supabase
+   *  Storage, in de map `albums`. Alleen de cover hierboven zit in Cloudinary. */
   images: string[];
-  /** ISO date (date in the database), e.g. "2026-03-22". */
+  /** Datum van het album, bv. "2026-03-22". */
   date: string;
-  /** Comma-separated category tags (see GalleryTag). */
+  /** Categorieën, gescheiden door komma's, bv. "jeugd,wedstrijden". */
   tags: string;
 };
 
 export type SlideshowImage = {
   id?: number;
-  /** Storage key (in the `albums` bucket) of an album photo shown in the gallery hero slideshow. */
+  /** Verwijst naar een albumfoto in Supabase Storage die in de diavoorstelling hoort. */
   image_path: string;
 };
 
@@ -78,7 +81,7 @@ export type MediaItem = {
   caption: string;
 };
 
-/** An album mapped onto the shape the gallery UI renders (see albumToGallery). */
+/** Een album zoals de galerijpagina het toont (zie data/galleriesData). */
 export type MediaGallery = {
   id: string;
   title: string;
@@ -88,10 +91,10 @@ export type MediaGallery = {
   media: MediaItem[];
 };
 
-// --- Teams ---
+// --- Teams (tabellen `teams`, `players`, `staff`, `training_days`) ---
 export type PlayerPosition = "Receptie Hoek" | "Opposite" | "Spelverdeler" | "Midden" | "Libero" | "All Round";
 export type StaffRole = "Coach" | "Assistent-Coach" | "Trainer";
-/** Section the team is grouped under on the public Teams page. */
+/** Onder welk kopje het team op de teampagina komt te staan. */
 export type Division = "jeugd" | "dames" | "heren" | "recreatie";
 
 export type Player = {
@@ -106,16 +109,16 @@ export type StaffMember = {
   team_id?: number;
   name: string;
   role: StaffRole;
-  /** Cloudinary public id, or null when the staff member has no photo. */
+  /** Foto in Cloudinary, of null als het staflid er geen heeft. */
   photo: string | null;
 };
 
 export type TrainingDay = {
   id?: number;
   team_id?: number;
-  /** Weekday in Dutch, e.g. "Maandag". */
+  /** Dag van de week, bv. "Maandag". */
   day: string;
-  /** Free-form time range, e.g. "19:00 - 21:00". */
+  /** Vrij in te vullen uur, bv. "19:00 - 21:00". */
   time: string;
 };
 
@@ -123,43 +126,47 @@ export type Team = {
   id?: number;
   name: string;
   description: string | null;
-  /** Section the team is grouped under on the public Teams page. */
+  /** Onder welk kopje het team op de teampagina komt te staan. */
   division: Division;
-  /** Cloudinary public id of the team photo, or null when none. */
+  /** Teamfoto in Cloudinary, of null als er geen is. */
   photo_url: string | null;
-  /** VolleyAdmin series code (e.g. "LHP1"); null when the team has no competition feed. */
+  /** De reeks bij de bond, bv. "LHP1". Leeg = geen wedstrijden en geen rangschikking tonen. */
   reeks: string | null;
-  /** stamnummer the team plays under; null falls back to the club default (L-0759). */
+  /** Onder welk clubnummer het team speelt. Leeg = dat van Fit Ham zelf (L-0759). */
   volley_club_id: string | null;
   players: Player[];
   staff: StaffMember[];
   training_days: TrainingDay[];
 };
 
-// --- Events ---
+// --- Evenementen (tabel `events`) ---
 export type ClubEvent = {
   id?: number;
   title: string;
   description: string;
   location: string;
-  /** ISO timestamp (timestamptz in the database). */
+  /** Wanneer het evenement begint. */
   start_date: string;
-  /** Optional end of the event. */
+  /** Wanneer het gedaan is. Mag leeg blijven. */
   end_date: string | null;
-  /** Cloudinary public id. */
+  /** De affiche van het evenement, in Cloudinary. */
   image: string;
+  /** Aangevinkt = dit evenement krijgt de grote kaart bovenaan (en op de homepagina). */
   highlighted: boolean;
-  /** Linked photo album (albums.id), or null when the event has none. */
+  /** Gekoppeld fotoalbum, of null als er geen album bij hoort. */
   album_id: number | null;
-  /** Media count of the linked album; set by fetchEvents (0 when unlinked/empty). Display-only. */
+  /** Aantal foto's in dat album. Staat niet in de database; wordt bij het ophalen
+   *  berekend, puur om te tonen of er iets te bekijken valt. */
   albumMediaCount?: number;
 };
 
-// --- Admin dashboard ---
+// --- Beheerpaneel ---
 export type TabType = "teams" | "photos" | "events" | "memberships" | "sponsors" | "homepage" | "contact";
 
-// --- VolleyAdmin (live competition data) ---
-/** One match from the club calendar (wedstrijden_xml). */
+// --- VolleyAdmin: wedstrijden en rangschikking van de bond.
+// Komt NIET uit onze database, maar live van volleyadmin2.be (zie
+// repository/volleyRepository). De veldnamen zijn die van de bond zelf. ---
+/** Eén wedstrijd uit de kalender van de bond. */
 export type VolleyMatch = {
   /** dd/mm/yyyy */
   datum: string;
@@ -168,17 +175,17 @@ export type VolleyMatch = {
   reeks: string;
   thuisploeg: string;
   bezoekersploeg: string;
-  /** Empty before the match is played, e.g. "3-1" afterwards. */
+  /** Leeg zolang er niet gespeeld is, daarna bv. "3-1". */
   uitslag: string;
-  /** Venue, e.g. "Kwaadmechelen, Sporthal t Vlietje". */
+  /** De zaal, bv. "Kwaadmechelen, Sporthal t Vlietje". */
   sporthal: string;
   stamnummer_thuisclub: string;
   stamnummer_bezoekersclub: string;
-  /** Epoch ms of kickoff, or 0 when the date/time could not be parsed. */
+  /** Het beginuur als getal, om mee te sorteren. 0 als de datum onleesbaar was. */
   timestamp: number;
 };
 
-/** One row of a series' standings (rangschikking_xml). */
+/** Eén rij uit de rangschikking van een reeks. */
 export type VolleyRankingRow = {
   volgorde: string;
   ploegnaam: string;
@@ -186,11 +193,11 @@ export type VolleyRankingRow = {
   aantalGewonnenSets: string;
   aantalVerlorenSets: string;
   puntentotaal: string;
-  /** True when this row is a Fit V.B.C. Ham team (used to highlight it). */
+  /** Waar als deze rij een ploeg van Fit Ham is; die lichten we op in de tabel. */
   isHam: boolean;
 };
 
-// --- Site search ---
+// --- Zoeken op de site (geen database: zie data/searchData.ts) ---
 export type SearchableContent = {
   page: string;
   path: string;
@@ -198,4 +205,15 @@ export type SearchableContent = {
     title?: string;
     content: string;
   }[];
+};
+
+/** Eén treffer van het zoekvenster in de header (zie lib/siteSearch). */
+export type SearchResult = {
+  page: string;
+  path: string;
+  sectionTitle?: string;
+  /** Stukje tekst rond de treffer, met "..." aan de randen. */
+  snippet: string;
+  /** Positie van de treffer in de tekst; wordt gebruikt om te sorteren op relevantie. */
+  matchIndex: number;
 };

@@ -19,9 +19,12 @@ function mediaTypeFor(path: string): MediaItem["type"] {
 }
 
 /**
- * Maps an `albums` table row onto the shape the gallery UI renders. The cover is a
- * Cloudinary public id (resolved via `getCoverUrl`); the media are Supabase Storage
- * keys (resolved via `getMediaUrl`). The date is formatted in Dutch.
+ * Vertaalt een rij uit de tabel `albums` naar wat de galerijpagina toont.
+ *
+ * Let op de twee verschillende opslagplaatsen: de cover staat in Cloudinary
+ * (vandaar getCoverUrl), de foto's en filmpjes zelf staan in Supabase Storage
+ * in de map `albums` (vandaar getMediaUrl). De datum wordt hier in het
+ * Nederlands gezet.
  */
 export function albumToGallery(
   album: Album,
@@ -45,7 +48,7 @@ export function albumToGallery(
     caption: album.name,
   }));
 
-  // Fall back to the cover so the viewer always has at least one item to show.
+  // Leeg album? Toon dan de cover, zodat de viewer nooit helemaal leeg is.
   if (media.length === 0) {
     media.push({ type: "image", url: getCoverUrl(album.cover_image), caption: album.name });
   }

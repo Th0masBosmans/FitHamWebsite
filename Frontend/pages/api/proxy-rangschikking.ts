@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-// Server-side proxy to VolleyAdmin's standings XML (no CORS on the browser).
-// Mirrors the kiosk's proxy so the website team page can fetch live rankings.
+// Hetzelfde verhaal als proxy-matches, maar dan voor de rangschikking van een
+// reeks. Ook dit moet via de server omdat de browser VolleyAdmin niet
+// rechtstreeks mag aanspreken. De tabel op de teampagina komt hiervandaan.
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { stamnummer, reeks } = req.query;
 

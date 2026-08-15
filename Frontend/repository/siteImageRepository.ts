@@ -54,7 +54,8 @@ class SiteImageRepository {
       .single();
 
     if (error || !data) {
-      // Insert failed: remove the just-uploaded image so Cloudinary stays unchanged.
+      // Toevoegen mislukt: de zonet geuploade foto weer weghalen, zodat er geen
+      // losse foto in Cloudinary achterblijft.
       await this.deleteFromCloudinary(publicId).catch((error) => console.error("Cloudinary rollback failed:", error));
       if (error) throw error;
       throw new Error("Kon de afbeelding niet toevoegen, probeer opnieuw.");
@@ -64,7 +65,8 @@ class SiteImageRepository {
   }
 
   async updateSiteImage(id: number, siteImage: Omit<SiteImage, "id">, newImage?: File): Promise<SiteImage> {
-    // siteImage.image holds the current public id; only replace it once the DB update succeeds.
+    // Hierin zit nog de oude foto. Die verwijderen we pas als de database
+    // met de nieuwe foto is bijgewerkt, anders zijn we ze allebei kwijt.
     const oldPublicId = siteImage.image;
     const publicId = newImage ? await this.uploadToCloudinary(newImage) : siteImage.image;
 

@@ -1,4 +1,11 @@
-// The database stores a single timestamptz; the UI shows date and start time separately.
+// Alles wat met datums van evenementen te maken heeft.
+//
+// In de database staat één tijdstip per evenement (start_date, en optioneel
+// end_date). De site toont dat op veel verschillende manieren: als dagnummer op
+// de tijdlijn, als "zaterdag 14 maart 2026", als beginuur, ... Die omzettingen
+// staan allemaal hier, zodat de datums er overal hetzelfde uitzien.
+//
+// Gebruikt door sections/events/* en sections/home/NextEventCountdown.
 export function formatEventDate(iso: string): string {
   return new Date(iso).toLocaleDateString("nl-BE", { day: "numeric", month: "long", year: "numeric" });
 }
@@ -15,7 +22,7 @@ export function formatEventMonthShort(iso: string): string {
   return new Date(iso).toLocaleDateString("nl-BE", { month: "short" }).replace(".", "");
 }
 
-/** Month-group label for the timeline; the year is added only when it differs from today's. */
+/** Kopje boven een maand in de tijdlijn. Het jaartal komt er alleen bij als het niet dit jaar is. */
 export function formatEventMonthLabel(iso: string): string {
   const date = new Date(iso);
   const month = date.toLocaleDateString("nl-BE", { month: "long" });
@@ -40,20 +47,21 @@ type CalendarEvent = {
   end_date: string | null;
 };
 
-/** ISO timestamp → iCalendar "YYYYMMDDTHHMMSSZ" UTC format. */
+/** Zet een tijdstip om naar de schrijfwijze die agenda-bestanden verwachten. */
 const toCalendarDate = (iso: string): string =>
   new Date(iso).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
 
-/** Backslashes, semicolons, commas and newlines are all delimiters in a property value. */
+/** Tekens als ; en , hebben een eigen betekenis in een agenda-bestand, dus die moeten ontsnapt worden. */
 const escapeCalendarText = (value: string): string =>
   value.replace(/([\\;,])/g, "\\$1").replace(/\r?\n/g, "\\n");
 
 /**
- * A downloadable .ics file for the event (2-hour default duration when it has
- * no end). Using an .ics data URL keeps it generic: it opens in whatever
- * calendar app the visitor has (Google, Apple, Outlook, …) on whatever device
- * they are on, rather than forcing one provider. Same approach as the match
- * card on the team pages.
+ * Maakt een downloadbaar agenda-bestand (.ics) van een evenement, voor de knop
+ * "Zet in agenda". Heeft het evenement geen einduur, dan rekenen we 2 uur.
+ *
+ * Bewust een .ics-bestand en geen link naar Google Agenda: zo opent het in de
+ * agenda-app die de bezoeker zelf gebruikt (Google, Apple, Outlook, ...).
+ * De wedstrijdkaart op een teampagina doet hetzelfde.
  */
 export function eventCalendarFileUrl(event: CalendarEvent): string {
   const end = event.end_date ?? new Date(new Date(event.start_date).getTime() + 2 * 60 * 60 * 1000).toISOString();
@@ -77,7 +85,7 @@ export function eventCalendarFileUrl(event: CalendarEvent): string {
   return `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
 }
 
-/** Filename for the downloaded .ics: the event title, stripped to something safe. */
+/** Bestandsnaam van de download: de titel van het evenement, ontdaan van rare tekens. */
 export function eventCalendarFileName(event: { title: string }): string {
   const slug = event.title
     .toLowerCase()

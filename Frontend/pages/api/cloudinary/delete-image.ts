@@ -2,10 +2,14 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import crypto from "crypto";
 import { isAdminRequest } from "@/lib/requireAdmin";
 
-// Deletes an image from Cloudinary. Runs server-side so the API secret is never
-// exposed to the browser. Cloudinary's destroy endpoint requires a SHA-1 signature
-// over the request params concatenated with the API secret.
-// Admin-only: an open endpoint would let anyone delete any asset by public_id.
+// Verwijdert een foto uit Cloudinary.
+//
+// Draait op de server om dezelfde reden als sign-upload: het geheime
+// Cloudinary-wachtwoord mag de browser nooit zien. Alleen ingelogde beheerders
+// mogen hier langs, anders kon iedereen onze foto's wissen.
+//
+// Wordt aangeroepen door repository/cloudinaryRepository, telkens wanneer een
+// beheerder iets verwijdert of een foto vervangt.
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -48,8 +52,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const result = (await response.json()) as { result?: string };
 
-  // Cloudinary returns 200 with { result: "not found" } when the asset is already gone,
-  // which we treat as success so a missing image doesn't block deleting the DB row.
+  // Is de foto er al niet meer, dan meldt Cloudinary "not found". Dat rekenen we
+  // als gelukt: een ontbrekende foto mag nooit beletten dat de rij in de
+  // database verwijderd wordt.
   if (!response.ok || (result.result !== "ok" && result.result !== "not found")) {
     return res.status(502).json({ error: "Verwijderen uit Cloudinary mislukt", detail: result });
   }

@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { ContactContent } from "@/components/templates/ContactContent";
+import { ContactContent } from "@/components/pages/public/ContactContent";
 
 export default function ContactPage() {
   return (

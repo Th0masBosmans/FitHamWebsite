@@ -1,4 +1,4 @@
-import { MembershipContent } from "@/components/templates/MembershipContent";
+import { MembershipContent } from "@/components/pages/public/MembershipContent";
 
 export default function TicketsPage() {
   return <MembershipContent />;

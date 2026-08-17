@@ -107,9 +107,11 @@ album of maakt er ter plekke een nieuw aan.
 - De tussentitel "Events"
 
 ### `lib/eventFormat.ts`
-Alle datumopmaak, in het Nederlands (`nl-BE`): de dagnummers op de tijdlijn, de
-maandkopjes, de volledige datum, het beginuur. Het jaartal komt alleen bij een
-maandkopje als het niet dit jaar is.
+Alle datumopmaak, in het Nederlands (`nl-BE`): het dagnummer en de maand op het
+gele blokje, de weekdag, de volledige datum en het uur.
+
+`formatEventMonthLabel` staat er ook in maar wordt nergens gebruikt: de tijdlijn
+groepeert niet per maand. Geschreven voor een indeling die er (nog) niet is.
 
 ### `sections/events/EventsTimeline.tsx`
 De instellingen van de animatie: wanneer de bal begint te rollen, hoe snel de

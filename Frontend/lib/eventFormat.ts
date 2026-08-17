@@ -22,7 +22,12 @@ export function formatEventMonthShort(iso: string): string {
   return new Date(iso).toLocaleDateString("nl-BE", { month: "short" }).replace(".", "");
 }
 
-/** Kopje boven een maand in de tijdlijn. Het jaartal komt er alleen bij als het niet dit jaar is. */
+/**
+ * Maandnaam, met het jaartal erbij als het niet dit jaar is.
+ *
+ * LET OP: wordt momenteel nergens gebruikt. De tijdlijn groepeert niet per
+ * maand; dit is geschreven voor een indeling die er (nog) niet is.
+ */
 export function formatEventMonthLabel(iso: string): string {
   const date = new Date(iso);
   const month = date.toLocaleDateString("nl-BE", { month: "long" });

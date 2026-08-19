@@ -1,17 +1,12 @@
-# Lidmaatschap — `/membership` (en `/tickets`)
+# Lidmaatschap — `/membership`
 
 De lidgelden en het inschrijvingsformulier.
-
-> `/tickets` toont **exact dezelfde pagina** als `/membership`. Beide adressen
-> laden `MembershipContent`. Waarschijnlijk een overblijfsel; wil je er een
-> echte ticketpagina van maken, dan pas je `Frontend/pages/tickets.tsx` aan.
 
 ## Welke bestanden
 
 | Bestand | Wat het doet |
 | --- | --- |
 | `Frontend/pages/membership.tsx` | Het adres |
-| `Frontend/pages/tickets.tsx` | Tweede adres naar dezelfde pagina |
 | `Frontend/components/pages/public/MembershipContent.tsx` | Zet de pagina samen |
 | `Frontend/components/sections/membership/PlanCard.tsx` | Eén lidgeld-kaartje |
 | `Frontend/components/sections/membership/MembershipInfo.tsx` | De blokken eronder |
@@ -57,21 +52,15 @@ formulier → /api/registration → Gmail → clubmailbox
 Zelfde instellingen uit `.env` als bij contact: `SMTP_USER`, `SMTP_PASS`,
 `CONTACT_TO`. Er wordt niets bewaard.
 
-### Jeugd of volwassene
+### De velden
 
-Het formulier heeft twee gedaantes, gestuurd door `isYouth`:
+Eén vaste gedaante voor iedereen: e-mail, voornaam, naam, geboortedatum en een
+vrij tekstvak voor eerdere volleybalervaring. Alles is verplicht.
 
-| | Volwassene | Jeugd |
-| --- | --- | --- |
-| E-mail van de speler | gevraagd | niet gevraagd |
-| Ervaring | vrij in te vullen tekst | alleen ja/nee |
-| Gegevens ouder | niet gevraagd | gevraagd, met e-mail |
-| Antwoord gaat naar | de speler | de ouder |
-
-> ⚠️ `MembershipContent.tsx` geeft **altijd `isYouth={false}`** door. De
-> jeugdversie van het formulier bestaat dus wel, maar wordt nooit getoond. Wil je
-> die gebruiken, dan moet je per lidgeld bepalen of het om jeugd gaat en dat
-> doorgeven.
+Er was ooit een aparte jeugdvariant (ja/nee in plaats van een tekstvak, plus de
+gegevens van een ouder), maar die werd nooit getoond en is verwijderd. Wil je ze
+terug, dan moet je ze opnieuw bouwen — in zowel het formulier als
+`/api/registration`.
 
 ### De leeftijd
 
@@ -106,7 +95,6 @@ De tekst van dat bericht staat als `PROEFTRAINING_MESSAGE` bovenaan het bestand.
 
 ### `pages/public/MembershipContent.tsx`
 - De titel "Word nu Lid!" en de ondertitel
-- Dat `isYouth` altijd `false` is
 
 ### `sections/membership/MembershipInfo.tsx`
 - De volledige tekst van beide blokken
@@ -114,9 +102,7 @@ De tekst van dat bericht staat als `PROEFTRAINING_MESSAGE` bovenaan het bestand.
 - "Je kan tot 3 maal toe gratis proef trainen!"
 
 ### `sections/membership/RegistrationModal.tsx`
-De veldnamen, de meldingen na het versturen, en de twee zinnetjes die als
-ervaring meegestuurd worden bij jeugd ("Ja, heeft al eerder gevolleybald" /
-"Nee, nog niet eerder gevolleybald").
+De veldnamen, de voorbeeldtekst in het ervaringsvak en de meldingen na het versturen.
 
 ---
 

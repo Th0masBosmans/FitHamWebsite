@@ -102,8 +102,6 @@ rechtstreeks mag aanspreken.
 - Ploegen van Fit Ham worden in de rangschikking opgelicht. Dat gebeurt door in
   de ploegnaam naar "ham" of "fit" te zoeken — dus een tegenstander met "ham" in
   de naam zou ook oplichten.
-- `isThisWeek()` wordt geëxporteerd uit `volleyRepository.ts` maar nergens meer
-  gebruikt.
 
 ---
 

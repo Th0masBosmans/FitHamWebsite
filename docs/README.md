@@ -11,7 +11,7 @@ bestanden uit `public/` gebruikt worden.
 | Galerij | `/galerij` | [galerij.md](galerij.md) |
 | Evenementen | `/events` | [evenementen.md](evenementen.md) |
 | Contact | `/contact` | [contact.md](contact.md) |
-| Lidmaatschap | `/membership`, `/tickets` | [lidmaatschap.md](lidmaatschap.md) |
+| Lidmaatschap | `/membership` | [lidmaatschap.md](lidmaatschap.md) |
 | Sponsors | `/sponsors` | [sponsors.md](sponsors.md) |
 | Beheerpaneel | `/admin/*` | [beheer.md](beheer.md) |
 
@@ -123,7 +123,7 @@ een nieuw bestand met **dezelfde naam** neer.
 | `VolleybalIcon.png` | De bal die langs de tijdlijn rolt | Evenementenpagina |
 | `MenSilhouette.png` | Vervangfoto als een herenteam geen foto heeft | Teams |
 | `WomenSilhouette.png` | Vervangfoto als een damesteam geen foto heeft | Teams |
-| `twizziticon.png` | Icoontje op de Twizzit-knop | Teams |
+| `twizziticon.png` | Icoontje op de Twizzit-knop | Teams, Home (Volg Ons) |
 | `Verzekering.pdf` | De verzekeringspapieren om te downloaden | Lidmaatschap |
 | `Webshop/merch-shirt.png` | Shirt | Home, webshopblok |
 | `Webshop/merch-shorts.png` | Short | Home, webshopblok |
@@ -137,10 +137,8 @@ als er in het beheerpaneel géén herobanner is ingesteld — maar het bestaat n
 in `public/assets/`. Zolang er wel een banner ingesteld staat merk je er niets
 van. Zie [home.md](home.md).
 
-**`ProfilePictures/` wordt niet meer gebruikt.** De drie foto's daarin
-(`DimiProfile.png`, `JasperProfile.jpg`, `JolienProfile.webp`) zijn overblijfsels
-van vroeger. De foto's van het bestuur komen nu uit Cloudinary en worden in het
-beheerpaneel geüpload. Deze map mag weg.
+De foto's van het bestuur komen uit Cloudinary en worden in het beheerpaneel
+geüpload; er staat daarvoor niets in `public/`.
 
 ---
 

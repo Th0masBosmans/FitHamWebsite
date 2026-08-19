@@ -135,12 +135,6 @@ export const pickWeekMatch = (matches: VolleyMatch[]): VolleyMatch | null => {
   return dated.find((m) => m.timestamp >= now) ?? dated[dated.length - 1];
 };
 
-/** Valt deze wedstrijd in de huidige week? */
-export const isThisWeek = (match: VolleyMatch): boolean => {
-  const { start, end } = weekRange();
-  return match.timestamp >= start && match.timestamp <= end;
-};
-
 /** De setstand thuis/uit. Vóór de wedstrijd is dat "0" - "0". */
 export const matchScore = (match: VolleyMatch): { home: string; away: string } => {
   const [home, away] = match.uitslag.split("-").map((p) => p.trim());

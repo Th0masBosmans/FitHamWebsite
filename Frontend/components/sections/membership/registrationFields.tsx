@@ -43,24 +43,20 @@ export function Field({
   );
 }
 
-/** Voornaam + naam naast elkaar; komt zowel bij de speler als bij de ouder voor. */
+/** Voornaam + naam naast elkaar. */
 export function NameFields({
-  firstNameField,
-  lastNameField,
   firstName,
   lastName,
   onChange,
 }: {
-  firstNameField: string;
-  lastNameField: string;
   firstName: string;
   lastName: string;
   onChange: FieldChange;
 }) {
   return (
     <div className="grid grid-cols-2 gap-3">
-      <Field label="Voornaam *" name={firstNameField} value={firstName} onChange={onChange} />
-      <Field label="Naam *" name={lastNameField} value={lastName} onChange={onChange} />
+      <Field label="Voornaam *" name="playerFirstName" value={firstName} onChange={onChange} />
+      <Field label="Naam *" name="playerLastName" value={lastName} onChange={onChange} />
     </div>
   );
 }
@@ -96,58 +92,28 @@ export function BirthDateField({
   );
 }
 
-/**
- * Ervaringsvraag. Bij jeugd volstaat ja/nee; volwassenen typen zelf uit wat ze
- * al gespeeld hebben.
- */
+/** Vrij tekstvak waarin de inschrijver zijn eerdere volleybalervaring beschrijft. */
 export function ExperienceField({
-  isYouth,
-  hasExperience,
   description,
   onChange,
 }: {
-  isYouth: boolean;
-  hasExperience: string;
   description: string;
   onChange: FieldChange;
 }) {
   return (
     <div>
       <label className="block text-[var(--color-primary-brand)]/70 label-regular mb-2 font-semibold">
-        {isYouth ? "Eerder gevolleybald? *" : "Eerdere volleybalervaring *"}
+        Eerdere volleybalervaring *
       </label>
-
-      {isYouth ? (
-        <div className="flex gap-4">
-          {[
-            { value: "ja", label: "Ja" },
-            { value: "nee", label: "Nee" },
-          ].map((option) => (
-            <label key={option.value} className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="hasExperience"
-                value={option.value}
-                checked={hasExperience === option.value}
-                onChange={onChange}
-                required
-                className="w-4 h-4 text-[var(--color-primary-brand)] focus:ring-[var(--color-primary-brand)]"
-              />
-              <span className="text-[var(--color-primary-brand)] font-semibold">{option.label}</span>
-            </label>
-          ))}
-        </div>
-      ) : (
-        <textarea
-          name="experienceDescription"
-          value={description}
-          onChange={onChange}
-          required
-          rows={3}
-          placeholder="Beschrijf je eerdere volleybalervaring..."
-          className={`${inputClasses} resize-none`}
-        />
-      )}
+      <textarea
+        name="experienceDescription"
+        value={description}
+        onChange={onChange}
+        required
+        rows={3}
+        placeholder="Beschrijf je eerdere volleybalervaring..."
+        className={`${inputClasses} resize-none`}
+      />
     </div>
   );
 }

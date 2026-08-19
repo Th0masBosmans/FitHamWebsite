@@ -48,18 +48,31 @@ export function SocialMediaSection() {
         </motion.a>
 
         <motion.a
-          href="https://www.tiktok.com/"
+          href="https://twizzit.com/fitham"
           target="_blank"
           rel="noopener noreferrer"
           className={socialLinkClasses}
           whileHover={{ rotate: 2 }}
           whileTap={{ scale: 0.95 }}
         >
-          <svg viewBox="0 0 24 24" fill="currentColor" className={socialIconClasses}>
-            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
-          </svg>
+          {/* Het Twizzit-icoontje is een witte PNG: via een mask kleuren we het in het merkblauw */}
+          <span
+            aria-hidden
+            className={socialIconClasses}
+            style={{
+              backgroundColor: "var(--color-primary-brand)",
+              maskImage: "url(/twizziticon.png)",
+              WebkitMaskImage: "url(/twizziticon.png)",
+              maskSize: "contain",
+              WebkitMaskSize: "contain",
+              maskPosition: "center",
+              WebkitMaskPosition: "center",
+              maskRepeat: "no-repeat",
+              WebkitMaskRepeat: "no-repeat",
+            }}
+          />
           <span className={socialLabelClasses}>
-            TikTok
+            Twizzit
           </span>
         </motion.a>
       </div>

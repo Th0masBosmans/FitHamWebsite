@@ -14,9 +14,6 @@ type RegistrationBody = {
   birthDate?: string;
   email?: string;
   experience?: string;
-  parentFirstName?: string;
-  parentLastName?: string;
-  parentEmail?: string;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -28,8 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const firstName = body.playerFirstName?.trim();
   const lastName = body.playerLastName?.trim();
-  // Bij jeugd antwoordt het bestuur aan de ouder, anders aan de speler zelf.
-  const replyEmail = (body.parentEmail || body.email)?.trim();
+  const replyEmail = body.email?.trim();
 
   if (!firstName || !lastName || !body.birthDate || !replyEmail) {
     return res.status(400).json({ error: "Vul alle verplichte velden in" });
@@ -47,7 +43,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const category = body.planName?.trim() || "Onbekend";
   const fullName = `${firstName} ${lastName}`;
-  const parentName = [body.parentFirstName?.trim(), body.parentLastName?.trim()].filter(Boolean).join(" ");
   const experienceText = body.experience?.trim() || "Niet ingevuld";
 
   const rows: MailRow[] = [
@@ -57,10 +52,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     ["Leeftijd", `${age} jaar`],
     ["E-mail (antwoord hierop)", replyEmail],
   ];
-
-  if (parentName) {
-    rows.push(["Ouder / voogd", parentName]);
-  }
 
   try {
     await mail.transporter.sendMail({

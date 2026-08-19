@@ -56,7 +56,6 @@ export function MembershipContent() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           teamName={selectedPlan.name}
-          isYouth={false}
         />
       )}
     </div>

@@ -93,9 +93,8 @@ bezoeker.
 
 Zijn er nog geen bestuursleden, dan verdwijnt het hele blok.
 
-> De map `public/ProfilePictures/` bevat nog drie oude foto's, maar die worden
-> **niet** meer gebruikt. Bestuursfoto's komen uit Cloudinary en worden in het
-> beheerpaneel (tab **Contact**) geüpload.
+> Bestuursfoto's komen uit Cloudinary en worden in het beheerpaneel
+> (tab **Contact**) geüpload.
 
 ---
 
@@ -122,4 +121,4 @@ kleuren van de website niet kennen.
 ## Bestanden uit `public/`
 
 Geen enkel bestand specifiek voor deze pagina. De profielfoto's komen uit
-Cloudinary; `ProfilePictures/` is niet in gebruik.
+Cloudinary.

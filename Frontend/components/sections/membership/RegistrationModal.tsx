@@ -16,8 +16,6 @@ type RegistrationModalProps = {
   onClose: () => void;
   /** Naam van het gekozen lidgeld, komt in de mail als categorie. */
   teamName: string;
-  /** Bij jeugd vragen we ook de gegevens van de ouder. */
-  isYouth: boolean;
 };
 
 type SubmitStatus = "idle" | "sending" | "success" | "error";
@@ -26,15 +24,11 @@ const emptyForm = {
   playerFirstName: "",
   playerLastName: "",
   birthDate: "",
-  hasExperience: "",
   experienceDescription: "",
-  parentFirstName: "",
-  parentLastName: "",
-  parentEmail: "",
   email: "",
 };
 
-export function RegistrationModal({ isOpen, onClose, teamName, isYouth }: RegistrationModalProps) {
+export function RegistrationModal({ isOpen, onClose, teamName }: RegistrationModalProps) {
   const [formData, setFormData] = useState(emptyForm);
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -62,15 +56,7 @@ export function RegistrationModal({ isOpen, onClose, teamName, isYouth }: Regist
           playerLastName: formData.playerLastName,
           birthDate: formData.birthDate,
           email: formData.email,
-          // Jeugd antwoordt met ja/nee, volwassenen met een vrije tekst.
-          experience: isYouth
-            ? formData.hasExperience === "ja"
-              ? "Ja, heeft al eerder gevolleybald"
-              : "Nee, nog niet eerder gevolleybald"
-            : formData.experienceDescription,
-          parentFirstName: formData.parentFirstName,
-          parentLastName: formData.parentLastName,
-          parentEmail: formData.parentEmail,
+          experience: formData.experienceDescription,
         }),
       });
 
@@ -122,18 +108,13 @@ export function RegistrationModal({ isOpen, onClose, teamName, isYouth }: Regist
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
               <div>
                 <h3 className="text-[var(--color-primary-brand)] mb-4 label-large font-bold">
-                  {isYouth ? "Gegevens Speler" : "Jouw Gegevens"}
+                  Jouw Gegevens
                 </h3>
 
                 <div className="space-y-4">
-                  {/* Bij jeugd loopt het mailverkeer via de ouder, dus vragen we hier geen e-mail. */}
-                  {!isYouth && (
-                    <Field label="Email *" name="email" type="email" value={formData.email} onChange={handleChange} />
-                  )}
+                  <Field label="Email *" name="email" type="email" value={formData.email} onChange={handleChange} />
 
                   <NameFields
-                    firstNameField="playerFirstName"
-                    lastNameField="playerLastName"
                     firstName={formData.playerFirstName}
                     lastName={formData.playerLastName}
                     onChange={handleChange}
@@ -141,39 +122,9 @@ export function RegistrationModal({ isOpen, onClose, teamName, isYouth }: Regist
 
                   <BirthDateField value={formData.birthDate} age={age} onChange={handleChange} />
 
-                  <ExperienceField
-                    isYouth={isYouth}
-                    hasExperience={formData.hasExperience}
-                    description={formData.experienceDescription}
-                    onChange={handleChange}
-                  />
+                  <ExperienceField description={formData.experienceDescription} onChange={handleChange} />
                 </div>
               </div>
-
-              {isYouth && (
-                <div>
-                  <h3 className="text-[var(--color-primary-brand)] mb-4 label-large font-bold">
-                    Gegevens Ouder(s)
-                  </h3>
-
-                  <div className="space-y-4">
-                    <NameFields
-                      firstNameField="parentFirstName"
-                      lastNameField="parentLastName"
-                      firstName={formData.parentFirstName}
-                      lastName={formData.parentLastName}
-                      onChange={handleChange}
-                    />
-                    <Field
-                      label="Email *"
-                      name="parentEmail"
-                      type="email"
-                      value={formData.parentEmail}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-              )}
 
               <div className="flex gap-3 pt-4">
                 <button

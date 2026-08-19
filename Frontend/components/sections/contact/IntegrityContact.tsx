@@ -41,7 +41,7 @@ export function IntegrityContact() {
             API staat voor <strong className="font-extrabold">Aanspreekpunt Integriteit</strong>. Dit is
             de vertrouwenspersoon binnen onze club bij wie je terecht kan met vragen, twijfels of
             meldingen over grensoverschrijdend gedrag. Zij luistert in alle vertrouwen, denkt met je
-            mee en helpt je verder. Dit kan volledig anoniem als je je hier comfortabeler bij voelt.
+            mee en helpt je verder.
           </p>
           <p className="text-(--color-primary-brand) leading-relaxed mb-4 lg:mb-6 body-large font-medium">
             Bij Fit Ham is er <strong className="font-extrabold">geen plaats</strong> voor discriminatie,

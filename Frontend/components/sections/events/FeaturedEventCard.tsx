@@ -9,6 +9,7 @@ import {
   formatEventDay,
   formatEventMonthShort,
   formatEventTimeRange,
+  formatEventWeekday,
   eventCalendarFileName,
   eventCalendarFileUrl,
 } from "@/lib/eventFormat";
@@ -143,8 +144,13 @@ export function FeaturedEventCard({
           Uitgelicht
         </span>
 
-        {/* De basis, altijd op de affiche: titel, uur en plaats */}
-        <div className="col-start-1 row-start-1 z-10 flex flex-col gap-3 self-end p-5 sm:pb-3 lg:gap-3.5 lg:p-7 lg:pb-3.5">
+        {/* De basis, altijd op de affiche: titel, uur en plaats.
+
+            self-end zet dit blok op een gsm onderaan de affiche (in het raster is
+            dat de verticale as), maar vanaf tablet is de kaart een kolom en zou
+            diezelfde regel het blok naar rechts duwen en laten krimpen. Vandaar
+            sm:self-stretch: daar hoort het gewoon over de volle breedte links. */}
+        <div className="col-start-1 row-start-1 z-10 flex flex-col gap-3 self-end p-5 sm:self-stretch sm:pb-3 lg:gap-3.5 lg:p-7 lg:pb-3.5">
           <h2 className="text-white title-section drop-shadow-lg">{event.title}</h2>
 
           {/* Geen datumlabel hier: het gele blokje in de hoek toont de datum al.
@@ -153,6 +159,9 @@ export function FeaturedEventCard({
           <div className="flex flex-wrap gap-1.5 sm:gap-2">
             <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-white/15 backdrop-blur-md px-2.5 py-1 shadow-sm text-white label-small font-semibold sm:px-3 sm:py-1.5">
               <Clock className="h-3.5 w-3.5 shrink-0 text-[var(--color-accent)]" />
+              {/* Op een gsm laten we de dag van de week weg, anders passen het uur
+                  en de plaats niet naast elkaar; vanaf tablet is er ruimte zat. */}
+              <span className="hidden capitalize sm:inline">{formatEventWeekday(event.start_date)} </span>
               {formatEventTimeRange(event.start_date, event.end_date)}
             </span>
             <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-white/15 backdrop-blur-md px-2.5 py-1 shadow-sm text-white label-small font-semibold sm:px-3 sm:py-1.5">

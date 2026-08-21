@@ -119,24 +119,38 @@ export function EventsTimeline({ upcoming, past }: { upcoming: ClubEvent[]; past
                     />
                     {/* De kaart heeft standaard geen rand; er verschijnt een gele
                         zodra de bal erbij komt, en die verdwijnt weer als je
-                        omhoog scrolt. De bal loopt altijd rond het midden van het
-                        scherm mee, dus laten we de rand kleuren zodra de helft van
-                        de kaart in de bovenste schermhelft staat: dat is net het
-                        moment waarop de bal het midden van de kaart passeert,
-                        gelijk met de stip op de lijn. Die regel hangt niet aan de
-                        hoogte van de kaart vast en klopt dus even goed op een gsm,
-                        waar elke affiche haar eigen hoogte heeft.
+                        omhoog scrolt. Er staan twee versies onder elkaar omdat het
+                        moment verschilt: op mobiel wacht de rand tot de bal
+                        onderaan de kaart is, op desktop kleurt ze precies wanneer
+                        de bal het midden van de kaart passeert, gelijk met de stip
+                        op de lijn.
+
+                        De 9999px bovenaan de kijkrand houdt die kleur vast: een
+                        kaart die je al voorbij bent telt zo nog altijd als "in
+                        beeld", dus blijft ze geel terwijl je verder naar beneden
+                        scrolt. Pas als je terugscrolt en de bal er weer boven
+                        staat, valt ze terug naar blauw. Zonder die marge doofde de
+                        rand weer uit zodra de kaart bovenaan het scherm verdween.
 
                         z-20 is nodig omdat het tekstvlak in de kaart op z-10 zit:
                         zonder dat zou dat vlak, dat op een gsm een eigen kleur
-                        heeft, de rand onderaan gewoon overschilderen. */}
+                        heeft en bij het openklappen onder de affiche groeit, de
+                        rand daar gewoon overschilderen. */}
                     <motion.div
                       aria-hidden
                       initial={{ opacity: 0 }}
                       whileInView={{ opacity: 1 }}
-                      viewport={{ amount: 0.5, margin: "0px 0px -50% 0px" }}
+                      viewport={{ margin: "9999px 0px -90% 0px" }}
                       transition={{ duration: 0.3, ease: "easeOut" }}
-                      className="pointer-events-none absolute inset-0 z-20 rounded-2xl border-[3px] border-[var(--color-accent)] shadow-[0_0_16px_rgba(250,204,21,0.45)] transition-transform duration-300 ease-out group-hover/card:-translate-y-1"
+                      className="pointer-events-none absolute inset-0 z-20 rounded-2xl border-[3px] border-[var(--color-accent)] shadow-[0_0_16px_rgba(250,204,21,0.45)] transition-transform duration-300 ease-out group-hover/card:-translate-y-1 lg:hidden"
+                    />
+                    <motion.div
+                      aria-hidden
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      viewport={{ amount: 0.5, margin: "9999px 0px -50% 0px" }}
+                      transition={{ duration: 0.3, ease: "easeOut" }}
+                      className="pointer-events-none absolute inset-0 z-20 hidden rounded-2xl border-[3px] border-[var(--color-accent)] shadow-[0_0_16px_rgba(250,204,21,0.45)] transition-transform duration-300 ease-out group-hover/card:-translate-y-1 lg:block"
                     />
                   </motion.div>
                 </div>

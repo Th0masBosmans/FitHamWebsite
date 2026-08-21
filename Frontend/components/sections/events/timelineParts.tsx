@@ -88,11 +88,13 @@ export function EventNode() {
       <div className="relative h-full w-full">
         {/* Blauwe stip, tot de bal er voorbij is */}
         <div className="absolute inset-0 rounded-full border border-white/40 bg-[var(--color-primary-brand-darker)] shadow-md lg:border-2" />
-        {/* Gele stip die er bij het passeren van de bal overheen vervaagt */}
+        {/* Gele stip die er bij het passeren van de bal overheen vervaagt. De
+            9999px bovenaan de kijkrand houdt die kleur vast zolang je naar
+            beneden blijft scrollen; terugscrollen maakt de stip weer blauw. */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ margin: "0px 0px -50% 0px" }}
+          viewport={{ margin: "9999px 0px -50% 0px" }}
           transition={{ duration: 0.3, ease: "easeOut" }}
           className="absolute inset-0 rounded-full border border-white/40 bg-[var(--color-accent)] shadow-[0_0_12px_rgba(250,204,21,0.7)] lg:border-2"
         />

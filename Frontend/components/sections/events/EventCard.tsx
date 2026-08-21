@@ -112,9 +112,14 @@ export function EventCard({
       )}
 
       {/* De basis op de affiche: titel, uur en plaats. Op een gsm altijd te zien;
-          vanaf tablet mee verstopt tot je over de kaart gaat. */}
+          vanaf tablet mee verstopt tot je over de kaart gaat.
+
+          self-end zet dit blok op een gsm onderaan de affiche (in het raster is
+          dat de verticale as), maar vanaf tablet is de kaart een kolom en zou
+          diezelfde regel het blok naar rechts duwen en laten krimpen. Vandaar
+          sm:self-stretch: daar hoort het gewoon over de volle breedte links. */}
       <div
-        className={`col-start-1 row-start-1 z-10 grid self-end transition-[grid-template-rows] duration-300 ease-out ${
+        className={`col-start-1 row-start-1 z-10 grid self-end transition-[grid-template-rows] duration-300 ease-out sm:self-stretch ${
           open ? "sm:grid-rows-[1fr]" : "sm:grid-rows-[0fr]"
         } sm:group-hover:grid-rows-[1fr]`}
       >

@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Camera, CalendarPlus, Clock, MapPin, Sparkles } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
 import { EventRepository, type ClubEvent } from "@/repository/eventRepository";
+import { useIsDesktop } from "@/lib/useIsDesktop";
 import {
   formatEventDay,
   formatEventMonthShort,
@@ -33,51 +33,66 @@ function DatePlate({ iso }: { iso: string }) {
 }
 
 /**
- * Een evenementkaartje op de tijdlijn. Standaard zie je alleen de affiche en het
- * gele datumblokje; ga je erover met de muis (of tik je erop), dan schuift van
- * onderen een paneeltje omhoog met de titel, de details en de agenda-knop.
+ * Een evenementkaartje op de tijdlijn.
+ *
+ * Op de affiche staat de basis: de titel, het uur en de plaats. De rest — de
+ * omschrijving en de knop eronder — zit verstopt tot je met de muis over de
+ * kaart gaat (vanaf tablet) of erop tikt (op een gsm).
+ *
+ * Het verschil tussen de twee zit in de hoogte. Vanaf tablet heeft de kaart een
+ * vaste hoogte, vult de affiche ze helemaal op en ligt alle tekst erover: de
+ * basis is dan mee verstopt en schuift van onderen omhoog. Op een gsm staat de
+ * affiche volledig in beeld, blijft de basis er altijd op staan en groeit de
+ * kaart naar beneden: de rest klapt open in een vlak onder de foto.
  *
  * Voorbije evenementen zijn kleiner en wat gedempt, en krijgen geen agenda-knop.
  */
 export function EventCard({
   event,
-  index = 0,
   past = false,
   onOpen,
 }: {
   event: ClubEvent;
-  index?: number;
   past?: boolean;
   /** Als dit meegegeven is, opent een klik het detailvenster in plaats van het paneeltje open te klappen. */
   onOpen?: () => void;
 }) {
-  const reduceMotion = useReducedMotion();
   const [open, setOpen] = useState(false);
+  // Vanaf tablet opent een klik het detailvenster; op een gsm klapt een tik de
+  // kaart open, want daar staat alle info al op en onder de affiche zelf.
+  const isWide = useIsDesktop(640);
+
+  const hasPhotos = past && event.album_id != null && (event.albumMediaCount ?? 0) > 0;
+  // Bij een voorbij evenement zonder omschrijving en zonder album valt er niets
+  // open te klappen; dan tonen we ook het pijltje niet.
+  const hasMore = Boolean(event.description) || hasPhotos || !past;
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.4, delay: reduceMotion ? 0 : (index % 3) * 0.08, ease: "easeOut" }}
-      onClick={() => (onOpen ? onOpen() : setOpen((value) => !value))}
-      className={`group relative cursor-pointer overflow-hidden rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
-        past ? "h-72" : "h-[26rem]"
+    <article
+      onClick={() => (onOpen && isWide ? onOpen() : setOpen((value) => !value))}
+      className={`group relative grid grid-cols-1 cursor-pointer overflow-hidden rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 sm:flex sm:flex-col sm:justify-end ${
+        past ? "h-auto sm:h-72" : "h-auto sm:h-[26rem]"
       }`}
     >
+      {/* De affiche. Op een gsm bepaalt zij de hoogte van de kaart zodat ze
+          volledig te zien is; vanaf tablet vult ze de kaart op als achtergrond. */}
       <img
         src={eventRepository.getEventImageUrl(event.image)}
         alt={event.title}
         loading="lazy"
-        className={`absolute inset-0 h-full w-full object-cover transition-all duration-500 group-hover:scale-105 ${
+        className={`col-start-1 row-start-1 block h-auto w-full transition-all duration-500 sm:absolute sm:inset-0 sm:h-full sm:object-cover sm:group-hover:scale-105 ${
           past ? "brightness-[0.82] group-hover:brightness-100" : ""
         }`}
       />
 
-      {/* Lichte waas zodat de foto centraal blijft; donkerder waar tekst komt */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-primary-brand-darker)]/45 via-transparent to-transparent" />
+      {/* Waas onderaan de affiche zodat de titel, het uur en de plaats leesbaar
+          blijven. Op een gsm mag die donkerder: daar staat de tekst er altijd op. */}
+      <div className="col-start-1 row-start-1 bg-gradient-to-t from-[var(--color-primary-brand-darker)]/85 via-[var(--color-primary-brand-darker)]/20 to-transparent sm:absolute sm:inset-0 sm:from-[var(--color-primary-brand-darker)]/45 sm:via-transparent" />
+
+      {/* Extra donkere waas terwijl het paneeltje over de affiche schuift. Enkel
+          vanaf tablet: op een gsm ligt de rest onder de foto, niet erover. */}
       <div
-        className={`absolute inset-0 bg-gradient-to-t from-[var(--color-primary-brand-darker)]/95 via-[var(--color-primary-brand-darker)]/40 to-black/15 transition-opacity duration-300 ${
+        className={`hidden sm:block sm:absolute sm:inset-0 bg-gradient-to-t from-[var(--color-primary-brand-darker)]/95 via-[var(--color-primary-brand-darker)]/40 to-black/15 transition-opacity duration-300 ${
           open ? "opacity-100" : "opacity-0"
         } group-hover:opacity-100`}
       />
@@ -96,67 +111,91 @@ export function EventCard({
         </div>
       )}
 
-      {/* Verborgen paneeltje onderaan: schuift omhoog bij hover of tik */}
+      {/* De basis op de affiche: titel, uur en plaats. Op een gsm altijd te zien;
+          vanaf tablet mee verstopt tot je over de kaart gaat. */}
       <div
-        className={`absolute inset-x-0 bottom-0 z-10 grid transition-[grid-template-rows] duration-300 ease-out ${
-          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-        } group-hover:grid-rows-[1fr]`}
+        className={`col-start-1 row-start-1 z-10 grid self-end transition-[grid-template-rows] duration-300 ease-out ${
+          open ? "sm:grid-rows-[1fr]" : "sm:grid-rows-[0fr]"
+        } sm:group-hover:grid-rows-[1fr]`}
       >
         <div
           className={`min-h-0 overflow-hidden transition-opacity duration-300 ${
-            open ? "opacity-100" : "opacity-0"
-          } group-hover:opacity-100`}
+            open ? "sm:opacity-100" : "sm:opacity-0"
+          } sm:group-hover:opacity-100`}
         >
-          <div className="flex flex-col gap-2.5 p-4">
+          <div className="flex flex-col gap-2 p-4 sm:pb-2.5">
             <h3 className="text-white label-large font-black italic uppercase tracking-tight leading-tight drop-shadow-lg">
               {event.title}
             </h3>
 
-            {event.description && (
-              <p className={`text-white/85 body-small leading-relaxed ${past ? "line-clamp-2" : "line-clamp-3"}`}>
-                {event.description}
-              </p>
-            )}
-
-            {/* Uur en plaats onderaan, met het linkje naar de foto's rechts
-                (zelfde indeling als in het detailvenster). */}
+            {/* Het uur en de plaats horen naast elkaar te staan. Op een gsm laten
+                we de dag van de week weg en maken we de pilletjes wat smaller,
+                anders passen ze samen niet op één regel. */}
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur-md px-3 py-1 shadow-sm text-white label-small font-semibold">
+              <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-white/15 backdrop-blur-md px-2.5 py-1 shadow-sm text-white label-small font-semibold sm:px-3">
                 <Clock className="h-3.5 w-3.5 shrink-0 text-[var(--color-accent)]" />
-                <span className="capitalize">{formatEventWeekday(event.start_date)}</span>{" "}
+                <span className="hidden capitalize sm:inline">{formatEventWeekday(event.start_date)} </span>
                 {formatEventTimeRange(event.start_date, event.end_date)}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur-md px-3 py-1 shadow-sm text-white label-small font-semibold">
+              <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-white/15 backdrop-blur-md px-2.5 py-1 shadow-sm text-white label-small font-semibold sm:px-3">
                 <MapPin className="h-3.5 w-3.5 shrink-0 text-[var(--color-accent)]" />
                 {event.location}
               </span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-              {past && event.album_id != null && (event.albumMediaCount ?? 0) > 0 && (
+      {/* De rest: omschrijving en knop. Op een gsm klapt dit open in een gekleurd
+          vlak onder de foto; vanaf tablet hoort het bij het paneeltje op de foto. */}
+      {hasMore && (
+        <div
+          className={`col-start-1 row-start-2 z-10 grid transition-[grid-template-rows] duration-300 ease-out ${
+            open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          } sm:group-hover:grid-rows-[1fr]`}
+        >
+          <div
+            className={`min-h-0 overflow-hidden transition-opacity duration-300 ${
+              open ? "opacity-100" : "opacity-0"
+            } sm:group-hover:opacity-100`}
+          >
+            <div className="flex flex-col items-start gap-2.5 bg-[var(--color-primary-brand-darker)] px-4 pb-4 pt-3 sm:bg-transparent sm:pt-0">
+              {event.description && (
+                <p
+                  className={`text-white/85 body-small leading-relaxed ${
+                    past ? "sm:line-clamp-2" : "sm:line-clamp-3"
+                  }`}
+                >
+                  {event.description}
+                </p>
+              )}
+
+              {hasPhotos && (
                 <Link
                   href={`/galerij?album=${event.album_id}`}
                   onClick={(clickEvent) => clickEvent.stopPropagation()}
-                  className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur-md text-white px-4 py-1.5 shadow-lg label-small font-extrabold uppercase tracking-wide transition-all hover:bg-white/30 hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur-md text-white px-4 py-1.5 shadow-lg label-small font-extrabold uppercase tracking-wide transition-all hover:bg-white/30 hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white"
                 >
                   <Camera className="h-3.5 w-3.5" />
                   Foto's
                 </Link>
               )}
-            </div>
 
-            {!past && (
-              <a
-                href={eventCalendarFileUrl(event)}
-                download={eventCalendarFileName(event)}
-                onClick={(clickEvent) => clickEvent.stopPropagation()}
-                className="self-start inline-flex items-center gap-1.5 rounded-full bg-[var(--color-accent)] text-[var(--color-primary-brand)] px-4 py-1.5 label-small font-extrabold uppercase tracking-wide shadow-lg transition-all hover:bg-white hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white"
-              >
-                <CalendarPlus className="h-3.5 w-3.5" />
-                Zet in agenda
-              </a>
-            )}
+              {!past && (
+                <a
+                  href={eventCalendarFileUrl(event)}
+                  download={eventCalendarFileName(event)}
+                  onClick={(clickEvent) => clickEvent.stopPropagation()}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-accent)] text-[var(--color-primary-brand)] px-4 py-1.5 label-small font-extrabold uppercase tracking-wide shadow-lg transition-all hover:bg-white hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white"
+                >
+                  <CalendarPlus className="h-3.5 w-3.5" />
+                  Zet in agenda
+                </a>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </motion.article>
+      )}
+    </article>
   );
 }

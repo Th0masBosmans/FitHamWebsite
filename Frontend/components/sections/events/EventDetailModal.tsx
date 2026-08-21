@@ -73,11 +73,11 @@ export function EventDetailModal({ event, past, onClose }: EventDetailModalProps
 
             <div className="relative max-h-[90vh] overflow-y-auto">
               {/* De affiche van het evenement */}
-              <div className="relative h-60 w-full sm:h-72">
+              <div className="relative w-full sm:h-72">
                 <img
                   src={eventRepository.getEventImageUrl(event.image)}
                   alt={event.title}
-                  className={`h-full w-full object-cover ${past ? "brightness-90" : ""}`}
+                  className={`h-auto w-full sm:h-full sm:object-cover ${past ? "brightness-90" : ""}`}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-primary-brand-darker)] via-[var(--color-primary-brand-darker)]/30 to-transparent" />
 

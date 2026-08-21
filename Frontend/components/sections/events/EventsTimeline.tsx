@@ -101,37 +101,44 @@ export function EventsTimeline({ upcoming, past }: { upcoming: ClubEvent[]; past
               <div className={`relative ${stagger}`}>
                 <EventNode />
                 <div className={`lg:w-1/2 ${onLeft ? "lg:pr-10" : "lg:ml-auto lg:pl-10"}`}>
-                  <div className="group/card relative">
+                  {/* Het opkomen van de kaart zit hier en niet in EventCard zelf:
+                      de gele rand hieronder is een broertje van de kaart en geen
+                      kind, dus moet ze mee verschuiven. Deden we dat niet, dan
+                      hing de rand tijdens het opkomen 24px hoger dan de kaart. */}
+                  <motion.div
+                    className="group/card relative"
+                    initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                  >
                     <EventCard
                       event={item.event}
-                      index={0}
                       past={item.past}
                       onOpen={() => setSelected({ event: item.event, past: item.past })}
                     />
                     {/* De kaart heeft standaard geen rand; er verschijnt een gele
                         zodra de bal erbij komt, en die verdwijnt weer als je
-                        omhoog scrolt. Er staan twee versies onder elkaar omdat het
-                        moment verschilt: op mobiel wacht de rand tot de bal
-                        onderaan de kaart is, op desktop kleurt ze precies wanneer
-                        de bal het midden van de kaart passeert, gelijk met de stip
-                        op de lijn. */}
-                    <motion.div
-                      aria-hidden
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      viewport={{ margin: "0px 0px -90% 0px" }}
-                      transition={{ duration: 0.3, ease: "easeOut" }}
-                      className="pointer-events-none absolute inset-0 rounded-2xl border-[3px] border-[var(--color-accent)] shadow-[0_0_16px_rgba(250,204,21,0.45)] transition-transform duration-300 ease-out group-hover/card:-translate-y-1 lg:hidden"
-                    />
+                        omhoog scrolt. De bal loopt altijd rond het midden van het
+                        scherm mee, dus laten we de rand kleuren zodra de helft van
+                        de kaart in de bovenste schermhelft staat: dat is net het
+                        moment waarop de bal het midden van de kaart passeert,
+                        gelijk met de stip op de lijn. Die regel hangt niet aan de
+                        hoogte van de kaart vast en klopt dus even goed op een gsm,
+                        waar elke affiche haar eigen hoogte heeft.
+
+                        z-20 is nodig omdat het tekstvlak in de kaart op z-10 zit:
+                        zonder dat zou dat vlak, dat op een gsm een eigen kleur
+                        heeft, de rand onderaan gewoon overschilderen. */}
                     <motion.div
                       aria-hidden
                       initial={{ opacity: 0 }}
                       whileInView={{ opacity: 1 }}
                       viewport={{ amount: 0.5, margin: "0px 0px -50% 0px" }}
                       transition={{ duration: 0.3, ease: "easeOut" }}
-                      className="pointer-events-none absolute inset-0 hidden rounded-2xl border-[3px] border-[var(--color-accent)] shadow-[0_0_16px_rgba(250,204,21,0.45)] transition-transform duration-300 ease-out group-hover/card:-translate-y-1 lg:block"
+                      className="pointer-events-none absolute inset-0 z-20 rounded-2xl border-[3px] border-[var(--color-accent)] shadow-[0_0_16px_rgba(250,204,21,0.45)] transition-transform duration-300 ease-out group-hover/card:-translate-y-1"
                     />
-                  </div>
+                  </motion.div>
                 </div>
               </div>
             </Fragment>

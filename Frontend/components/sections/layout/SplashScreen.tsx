@@ -4,8 +4,6 @@ import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 
 const FADE_DURATION = 500;
-// Minimale duur, zodat een snelle laadbeurt niet als een flits overkomt
-const MIN_VISIBLE = 600;
 // Noodrem: laat de bezoeker nooit vastzitten als er iets blijft hangen
 const MAX_VISIBLE = 5000;
 
@@ -14,21 +12,16 @@ export function SplashScreen() {
   const [shouldRender, setShouldRender] = useState(true);
 
   useEffect(() => {
-    const start = Date.now();
     const timers: ReturnType<typeof setTimeout>[] = [];
     let dismissed = false;
 
+    // Verdwijnt zodra de pagina klaar is; geen minimale duur
     const dismiss = () => {
       if (dismissed) return;
       dismissed = true;
 
-      const remaining = Math.max(0, MIN_VISIBLE - (Date.now() - start));
-      timers.push(
-        setTimeout(() => {
-          setIsVisible(false);
-          timers.push(setTimeout(() => setShouldRender(false), FADE_DURATION));
-        }, remaining)
-      );
+      setIsVisible(false);
+      timers.push(setTimeout(() => setShouldRender(false), FADE_DURATION));
     };
 
     const windowLoaded =
@@ -68,21 +61,6 @@ export function SplashScreen() {
           src="/FitHamLogo.png"
           alt="Fit Ham"
           className="w-28 sm:w-36 h-auto object-contain"
-        />
-
-        {/* Kloppende gloed achter het logo */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{
-            opacity: [0.3, 0.6, 0.3],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute inset-0 bg-[var(--color-accent)] blur-3xl -z-10 rounded-full"
         />
       </motion.div>
 

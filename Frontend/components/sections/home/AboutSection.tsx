@@ -20,12 +20,12 @@ export function AboutSection() {
             className="text-(--color-primary-brand) mb-2 lg:mb-3 title-section text-center"
             style={{ fontWeight: "var(--font-weight-extrabold)" }}
           >
-            Welkom bij FIT Ham!
+            Welkom bij Fit Ham!
           </h3>
           <p
             className="text-[var(--color-primary-brand)] leading-relaxed mb-4 lg:mb-6 body-large font-medium"
           >
-            Bij FIT Ham zijn we meer dan een volleybalclub. We zijn een warme club waar{" "}
+            Bij Fit Ham zijn we meer dan een volleybalclub. We zijn een warme club waar{" "}
             <strong className="font-bold">sport, plezier en verbondenheid</strong> centraal staan.
           </p>
           <p
@@ -43,8 +43,8 @@ export function AboutSection() {
           <p
             className="text-[var(--color-primary-brand)] leading-relaxed body-large font-bold"
           >
-            FIT Ham is een plek waar iedereen welkom is, zich thuis voelt en samen sterker wordt.
-            Samen spelen. Samen groeien. Samen FIT Ham.
+            Fit Ham is een plek waar iedereen welkom is, zich thuis voelt en samen sterker wordt.
+            Samen spelen. Samen groeien. Samen Fit Ham.
           </p>
         </div>
       </motion.div>

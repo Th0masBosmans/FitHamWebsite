@@ -59,7 +59,9 @@ Loopt via `Frontend/repository/volleyRepository.ts` en de twee tussenroutes
 `Frontend/pages/api/proxy-matches.ts` en `proxy-rangschikking.ts` (de browser
 mag VolleyAdmin niet rechtstreeks aanspreken).
 
-Alleen zichtbaar bij teams waar de beheerder een **reeks** heeft ingevuld.
+Alleen zichtbaar bij teams waar de beheerder een **reeks** heeft ingevuld. De
+beker heeft bij de bond een eigen reekscode en staat dus in een apart veld,
+**bekerreeks**; blijft dat leeg, dan zijn de bekerwedstrijden niet te zien.
 
 ### En wat er in géén van de drie zit
 

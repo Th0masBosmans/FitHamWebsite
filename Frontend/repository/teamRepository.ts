@@ -7,7 +7,7 @@ export type { Team, Player, StaffMember, TrainingDay, Division };
 const PLAYER_COLUMNS = "id, team_id, name, position, sort_order";
 const STAFF_COLUMNS = "id, team_id, name, role, photo, sort_order";
 const TRAINING_COLUMNS = "id, team_id, day, time, sort_order";
-const TEAM_COLUMNS = `id, name, description, division, photo_url, reeks, volley_club_id, sort_order, players(${PLAYER_COLUMNS}), staff(${STAFF_COLUMNS}), training_days(${TRAINING_COLUMNS})`;
+const TEAM_COLUMNS = `id, name, description, division, photo_url, reeks, beker_reeks, volley_club_id, sort_order, players(${PLAYER_COLUMNS}), staff(${STAFF_COLUMNS}), training_days(${TRAINING_COLUMNS})`;
 
 // Alles rond teams zit in dit ene bestand: het team zelf plus zijn spelers,
 // staf en trainingsuren. Die laatste drie staan in eigen tabellen, maar horen bij
@@ -64,15 +64,15 @@ class TeamRepository {
   // --- Teams zelf ---
 
   async postTeam(
-    team: { name: string; description: string | null; division: Division; reeks: string | null; volley_club_id: string | null },
+    team: { name: string; description: string | null; division: Division; reeks: string | null; beker_reeks: string | null; volley_club_id: string | null },
     photoFile?: File
   ): Promise<Team> {
     const publicId = photoFile ? await this.cloudinary.uploadToCloudinary(photoFile, 300) : null;
 
     const { data, error } = await supabase
       .from("teams")
-      .insert({ name: team.name, description: team.description, division: team.division, photo_url: publicId, reeks: team.reeks, volley_club_id: team.volley_club_id })
-      .select("id, name, description, division, photo_url, reeks, volley_club_id, sort_order")
+      .insert({ name: team.name, description: team.description, division: team.division, photo_url: publicId, reeks: team.reeks, beker_reeks: team.beker_reeks, volley_club_id: team.volley_club_id })
+      .select("id, name, description, division, photo_url, reeks, beker_reeks, volley_club_id, sort_order")
       .single();
 
     if (error || !data) {
@@ -86,7 +86,7 @@ class TeamRepository {
 
   async updateTeam(
     id: number,
-    team: { name: string; description: string | null; division: Division; photo_url: string | null; reeks: string | null; volley_club_id: string | null },
+    team: { name: string; description: string | null; division: Division; photo_url: string | null; reeks: string | null; beker_reeks: string | null; volley_club_id: string | null },
     newPhoto?: File
   ): Promise<Omit<Team, "players" | "staff" | "training_days">> {
     const oldPublicId = team.photo_url;
@@ -94,9 +94,9 @@ class TeamRepository {
 
     const { data, error } = await supabase
       .from("teams")
-      .update({ name: team.name, description: team.description, division: team.division, photo_url: publicId, reeks: team.reeks, volley_club_id: team.volley_club_id })
+      .update({ name: team.name, description: team.description, division: team.division, photo_url: publicId, reeks: team.reeks, beker_reeks: team.beker_reeks, volley_club_id: team.volley_club_id })
       .eq("id", id)
-      .select("id, name, description, division, photo_url, reeks, volley_club_id, sort_order")
+      .select("id, name, description, division, photo_url, reeks, beker_reeks, volley_club_id, sort_order")
       .single();
 
     if (error || !data) {

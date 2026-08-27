@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPin, Calendar } from "lucide-react";
+import { MapPin, Calendar, Trophy } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { matchScore, type VolleyMatch } from "@/repository/volleyRepository";
 
@@ -24,6 +24,7 @@ const toCalendarDate = (ms: number): string =>
  * als bij evenementen, zie lib/eventFormat.
  */
 const calendarFileUrl = (match: VolleyMatch): string => {
+  const soort = match.isBeker ? "Bekerwedstrijd" : "Volleybalwedstrijd";
   const ics = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
@@ -33,14 +34,36 @@ const calendarFileUrl = (match: VolleyMatch): string => {
     `DTSTAMP:${toCalendarDate(Date.now())}`,
     `DTSTART:${toCalendarDate(match.timestamp)}`,
     `DTEND:${toCalendarDate(match.timestamp + 2 * 60 * 60 * 1000)}`,
-    `SUMMARY:${match.thuisploeg} - ${match.bezoekersploeg}`,
+    `SUMMARY:${match.isBeker ? "Beker: " : ""}${match.thuisploeg} - ${match.bezoekersploeg}`,
     `LOCATION:${match.sporthal || ""}`,
-    "DESCRIPTION:Volleybalwedstrijd via FitHam",
+    `DESCRIPTION:${soort} via FitHam`,
     "END:VEVENT",
     "END:VCALENDAR",
   ].join("\r\n");
   return `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
 };
+
+/**
+ * Merkt een bekerwedstrijd aan met een bekertje in de rechterbovenhoek.
+ * Competitiewedstrijden krijgen niets: die zijn de gewone gang van zaken, de
+ * beker is het buitenbeentje.
+ *
+ * Het staat los van de inhoud (`absolute`) en op de hoek van de kaart, zodat de
+ * datum, de zaal en de ploegnamen op precies dezelfde plek blijven staan als bij
+ * een gewone wedstrijd, hoe lang de naam van de sporthal ook is.
+ */
+function BekerBadge() {
+  return (
+    <span
+      role="img"
+      aria-label="Bekerwedstrijd"
+      title="Bekerwedstrijd"
+      className="absolute -right-2 -top-2 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--color-accent)] text-[var(--color-primary-brand)] shadow-lg"
+    >
+      <Trophy className="h-5 w-5" />
+    </span>
+  );
+}
 
 /** "Volgende Wedstrijd" column: the upcoming/most-recent match from VolleyAdmin. */
 export function NextMatchCard({ match, loading }: { match: VolleyMatch | null; loading: boolean }) {
@@ -50,17 +73,19 @@ export function NextMatchCard({ match, loading }: { match: VolleyMatch | null; l
       {loading ? (
         <div className="h-44 flex-1 animate-pulse rounded-2xl border-2 border-white/50 bg-white/60 shadow-xl" />
       ) : match ? (
-        <div className="flex flex-1 flex-col rounded-2xl border-2 border-white/50 bg-white/90 p-6 shadow-xl">
+        <div className="relative flex flex-1 flex-col rounded-2xl border-2 border-white/50 bg-white/90 p-6 shadow-xl">
+          {match.isBeker && <BekerBadge />}
+
           <div className="flex flex-1 flex-col justify-between gap-4">
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               {match.timestamp ? (
                 <a
                   href={calendarFileUrl(match)}
                   download="wedstrijd.ics"
-                  className="group flex cursor-pointer items-start gap-3"
+                  className="group flex cursor-pointer items-center gap-3"
                   aria-label="Voeg wedstrijd toe aan agenda"
                 >
-                  <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary-brand)] transition-all group-hover:scale-110 group-hover:bg-[var(--color-primary-brand-darker)]">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary-brand)] transition-all group-hover:scale-110 group-hover:bg-[var(--color-primary-brand-darker)]">
                     <Calendar className="h-5 w-5 text-white" />
                   </div>
                   <div className="min-w-0">
@@ -71,8 +96,8 @@ export function NextMatchCard({ match, loading }: { match: VolleyMatch | null; l
                   </div>
                 </a>
               ) : (
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary-brand)]">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary-brand)]">
                     <Calendar className="h-5 w-5 text-white" />
                   </div>
                   <div className="min-w-0">
@@ -86,10 +111,10 @@ export function NextMatchCard({ match, loading }: { match: VolleyMatch | null; l
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(match.sporthal)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-start gap-3"
+                  className="group flex items-center gap-3"
                   aria-label={`Open ${match.sporthal} in Google Maps`}
                 >
-                  <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary-brand)] transition-all group-hover:scale-110 group-hover:bg-[var(--color-primary-brand-darker)]">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary-brand)] transition-all group-hover:scale-110 group-hover:bg-[var(--color-primary-brand-darker)]">
                     <MapPin className="h-5 w-5 text-white" />
                   </div>
                   <div className="min-w-0">

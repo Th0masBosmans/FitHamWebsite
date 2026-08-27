@@ -51,14 +51,15 @@ const eachBlock = (xml: string, tag: string): string[] => {
   return blocks;
 };
 
-const parseMatches = (xml: string): VolleyMatch[] =>
+const parseMatches = (xml: string, bekerReeksen: Set<string>): VolleyMatch[] =>
   eachBlock(xml, "wedstrijd").map((block) => {
     const datum = tagValue(block, "datum");
     const aanvangsuur = tagValue(block, "aanvangsuur");
+    const reeks = tagValue(block, "reeks");
     return {
       datum,
       aanvangsuur,
-      reeks: tagValue(block, "reeks"),
+      reeks,
       thuisploeg: cleanTeamName(tagValue(block, "thuisploeg")),
       bezoekersploeg: cleanTeamName(tagValue(block, "bezoekersploeg")),
       uitslag: tagValue(block, "uitslag"),
@@ -66,6 +67,7 @@ const parseMatches = (xml: string): VolleyMatch[] =>
       stamnummer_thuisclub: tagValue(block, "stamnummer_thuisclub"),
       stamnummer_bezoekersclub: tagValue(block, "stamnummer_bezoekersclub"),
       timestamp: toTimestamp(datum, aanvangsuur),
+      isBeker: bekerReeksen.has(reeks.toUpperCase()),
     };
   });
 
@@ -98,6 +100,19 @@ const fetchXML = async (proxyPath: string): Promise<string> => {
  */
 const mapSeriesForStandings = (reeks: string): string =>
   ({ "VDP2-B": "LDM1", "VDP4-B": "LDM2" } as Record<string, string>)[reeks] || reeks;
+
+/**
+ * De bekerreeksen van een team staan als één tekstveld in de database, met
+ * komma's ertussen ("BVLPHG, IBH"), want een ploeg kan in meer dan één beker
+ * uitkomen. Dit maakt er een lijstje van om in op te zoeken.
+ */
+const parseBekerReeksen = (bekerReeks: string | null | undefined): Set<string> =>
+  new Set(
+    (bekerReeks ?? "")
+      .split(",")
+      .map((code) => code.trim().toUpperCase())
+      .filter(Boolean)
+  );
 
 // --- Uitzoeken welke wedstrijd we tonen ------------------------------------
 
@@ -157,14 +172,29 @@ class VolleyRepository {
     }
   }
 
-  /** Alle wedstrijden van de club in één reeks. */
-  async fetchMatches(reeks: string, clubId: string = DEFAULT_CLUB_ID): Promise<VolleyMatch[]> {
-    if (!reeks) return [];
+  /**
+   * De wedstrijden van één ploeg: die van de competitiereeks `reeks`, plus die
+   * van de bekerreeksen in `bekerReeks` (komma's ertussen, mag leeg blijven).
+   *
+   * De bond geeft de hele clubkalender in één keer terug, competitie en beker
+   * door elkaar. Bekerwedstrijden staan daarin onder een eigen reekscode
+   * ("BVLPHG", "IBH", ...) die niets met de competitiereeks te maken heeft;
+   * daarom moet die apart meegegeven worden, anders vallen ze hier weg.
+   */
+  async fetchMatches(
+    reeks: string,
+    clubId: string = DEFAULT_CLUB_ID,
+    bekerReeks: string | null = null
+  ): Promise<VolleyMatch[]> {
+    const bekerReeksen = parseBekerReeksen(bekerReeks);
+    if (!reeks && bekerReeksen.size === 0) return [];
     try {
       const xml = await fetchXML(
         `/api/proxy-matches?stamnummer=${encodeURIComponent(clubId)}`
       );
-      return parseMatches(xml).filter((match) => match.reeks === reeks);
+      return parseMatches(xml, bekerReeksen).filter(
+        (match) => match.reeks === reeks || match.isBeker
+      );
     } catch (error) {
       console.error(`Failed to fetch matches for ${clubId}:`, error);
       return [];

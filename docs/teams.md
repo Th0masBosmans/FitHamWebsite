@@ -50,7 +50,7 @@ Vier tabellen, allemaal opgehaald in één keer door `teamRepository.fetchTeam()
 
 | Tabel | Wat erin zit |
 | --- | --- |
-| `teams` | Naam, omschrijving, afdeling, foto, reeks, clubnummer |
+| `teams` | Naam, omschrijving, afdeling, foto, reeks, bekerreeks, clubnummer |
 | `players` | De spelers, met hun positie |
 | `staff` | Coaches en trainers, met foto |
 | `training_days` | Dag + uur van elke training |
@@ -72,6 +72,32 @@ Dit werkt alleen als de beheerder bij het team een **reeks** heeft ingevuld
 Optioneel kan er ook een **clubnummer** ingevuld worden; is dat leeg, dan
 gebruiken we dat van Fit Ham zelf: `L-0759`.
 
+### Bekerwedstrijden
+
+De bond geeft de hele clubkalender in één keer terug, competitie en beker door
+elkaar. Bekerwedstrijden staan daarin onder een **eigen reekscode** die niets
+met de competitiereeks te maken heeft: `BVLPHG`, `BVLPD-C`, `IBH`, `BVLU19M`, …
+Die code valt er ook niet uit af te leiden, en de ploegnaam alleen volstaat
+evenmin — zowel de heren als de dames spelen als "Fit V.B.C. Ham A".
+
+Daarom is er een tweede veld naast de reeks: **bekerreeks**. Vult de beheerder
+dat niet in, dan komen de bekerwedstrijden van dat team niet op de site. Speelt
+een ploeg in meer dan één beker (de heren spelen zowel de Beker van Limburg als
+de interprovinciale beker), dan mag er een lijstje met komma's in:
+`BVLPHG, IBH`.
+
+Binnen één bekerreeks speelt hoogstens één ploeg van de club, dus de code alleen
+volstaat om de juiste wedstrijden eruit te halen.
+
+De **rangschikking** blijft die van de competitiereeks. Bekerpoules hebben bij de
+bond wel een eigen standen­tabel, maar die tonen we (nog) niet.
+
+Bij een bekerwedstrijd staat er een geel **bekertje** in de rechterbovenhoek van
+de wedstrijdkaart. Competitiewedstrijden krijgen niets. Het bekertje ligt op de
+hoek van de kaart en staat los van de inhoud, zodat de datum, de zaal en de
+ploegnamen bij beide soorten op precies dezelfde plek blijven staan. Hetzelfde
+onderscheid staat in het agenda-bestand dat de knop maakt.
+
 De weg die de gegevens afleggen:
 
 ```
@@ -87,6 +113,7 @@ rechtstreeks mag aanspreken.
 
 ### Welke wedstrijd getoond wordt
 
+Competitie en beker zitten in dezelfde lijst; er wordt er één van getoond.
 `pickWeekMatch()` in `volleyRepository.ts` kiest:
 
 1. Speelt het team **deze week** (maandag t/m zondag)? Dan die wedstrijd — de

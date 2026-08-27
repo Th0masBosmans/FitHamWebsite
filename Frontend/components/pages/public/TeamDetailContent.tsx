@@ -60,9 +60,11 @@ export function TeamDetailContent({ teamId }: TeamDetailContentProps) {
   }, [teamId]);
 
   // Zodra we weten in welke reeks het team speelt, halen we de rangschikking en
-  // de wedstrijd van deze week op bij VolleyAdmin. Teams zonder reeks slaan we over.
+  // de wedstrijd van deze week op bij VolleyAdmin. De bekerreeksen komen mee in
+  // de wedstrijden; de rangschikking blijft die van de competitie. Teams zonder
+  // reeks én zonder beker slaan we over.
   useEffect(() => {
-    if (!team?.reeks) {
+    if (!team?.reeks && !team?.beker_reeks) {
       setWeekMatch(null);
       setRanking([]);
       return;
@@ -71,8 +73,8 @@ export function TeamDetailContent({ teamId }: TeamDetailContentProps) {
     setLoadingComp(true);
     const clubId = team.volley_club_id ?? undefined;
     Promise.all([
-      volleyRepository.fetchRanking(team.reeks, clubId),
-      volleyRepository.fetchMatches(team.reeks, clubId),
+      volleyRepository.fetchRanking(team.reeks ?? "", clubId),
+      volleyRepository.fetchMatches(team.reeks ?? "", clubId, team.beker_reeks),
     ])
       .then(([rankingRows, matches]) => {
         if (!active) return;
@@ -83,7 +85,7 @@ export function TeamDetailContent({ teamId }: TeamDetailContentProps) {
     return () => {
       active = false;
     };
-  }, [team?.reeks, team?.volley_club_id]);
+  }, [team?.reeks, team?.beker_reeks, team?.volley_club_id]);
 
   if (loadingTeam) {
     return (
@@ -162,7 +164,7 @@ export function TeamDetailContent({ teamId }: TeamDetailContentProps) {
         {/* Trainingsuren naast de eerstvolgende wedstrijd */}
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <TrainingSchedule trainingDays={team.training_days} />
-          {team.reeks && <NextMatchCard match={weekMatch} loading={loadingComp} />}
+          {(team.reeks || team.beker_reeks) && <NextMatchCard match={weekMatch} loading={loadingComp} />}
         </div>
 
         {/* De witte rangschikkingstabel, live van VolleyAdmin */}

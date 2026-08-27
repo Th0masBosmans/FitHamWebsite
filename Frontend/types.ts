@@ -132,6 +132,9 @@ export type Team = {
   photo_url: string | null;
   /** De reeks bij de bond, bv. "LHP1". Leeg = geen wedstrijden en geen rangschikking tonen. */
   reeks: string | null;
+  /** De bekerreeks(en) bij de bond, met komma's ertussen, bv. "BVLPHG, IBH".
+   *  Leeg = dit team speelt geen beker. Die code staat los van `reeks`. */
+  beker_reeks: string | null;
   /** Onder welk clubnummer het team speelt. Leeg = dat van Fit Ham zelf (L-0759). */
   volley_club_id: string | null;
   players: Player[];
@@ -188,6 +191,9 @@ export type VolleyMatch = {
   stamnummer_bezoekersclub: string;
   /** Het beginuur als getal, om mee te sorteren. 0 als de datum onleesbaar was. */
   timestamp: number;
+  /** Waar als dit een bekerwedstrijd is. Staat niet in de gegevens van de bond;
+   *  wij leiden het af uit de reeks (zie repository/volleyRepository). */
+  isBeker: boolean;
 };
 
 /** Eén rij uit de rangschikking van een reeks. */

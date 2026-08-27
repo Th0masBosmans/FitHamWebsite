@@ -40,6 +40,7 @@ export function TeamsManager({ active }: { active: boolean }) {
     const description = teamModal?.item?.description ?? null;
     const division = extractFormString(formData, "division") as Division;
     const reeks = extractFormString(formData, "reeks").trim() || null;
+    const beker_reeks = extractFormString(formData, "beker_reeks").trim() || null;
     const volley_club_id = extractFormString(formData, "volley_club_id").trim() || null;
 
     const fileInput = form.querySelector('input[type="file"]') as HTMLInputElement | null;
@@ -48,10 +49,10 @@ export function TeamsManager({ active }: { active: boolean }) {
     setSaving(true);
     try {
       if (teamModal?.item?.id != null) {
-        const updated = await teamRepository.updateTeam(teamModal.item.id, { name, description, division, photo_url: teamModal.item.photo_url, reeks, volley_club_id }, file);
+        const updated = await teamRepository.updateTeam(teamModal.item.id, { name, description, division, photo_url: teamModal.item.photo_url, reeks, beker_reeks, volley_club_id }, file);
         setTeams((previous) => previous.map((team) => (team.id === updated.id ? { ...team, ...updated } : team)));
       } else {
-        const created = await teamRepository.postTeam({ name, description, division, reeks, volley_club_id }, file);
+        const created = await teamRepository.postTeam({ name, description, division, reeks, beker_reeks, volley_club_id }, file);
         setTeams((previous) => [...previous, created]);
       }
       setTeamModal(null);
@@ -123,6 +124,10 @@ export function TeamsManager({ active }: { active: boolean }) {
             </div>
             <p className="text-xs font-bold text-gray-400 -mt-2">
               Vul de reeks in om de live rangschikking en wedstrijd van deze week op de teampagina te tonen. Laat leeg voor teams zonder competitie.
+            </p>
+            <InputField label="VolleyAdmin bekerreeks (bv. BVLPHG)" name="beker_reeks" defaultValue={teamModal.item?.beker_reeks ?? undefined} />
+            <p className="text-xs font-bold text-gray-400 -mt-2">
+              Speelt dit team beker, vul dan ook die reeks in; anders staan de bekerwedstrijden niet op de teampagina. Speelt het in meer dan één beker, zet er een komma tussen (bv. BVLPHG, IBH).
             </p>
             <SubmitButton label={saving ? "Bezig met opslaan..." : teamModal.item ? "Opslaan" : "Toevoegen"} disabled={saving} />
           </form>

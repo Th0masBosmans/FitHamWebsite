@@ -8,21 +8,16 @@ const inputClasses =
   "w-full px-4 py-3 rounded-xl border-2 border-[var(--color-primary-brand)]/20 focus:border-[var(--color-primary-brand)] focus:outline-none transition-all text-[var(--color-primary-brand)] font-semibold";
 const labelClasses = "block text-[var(--color-primary-brand)] mb-2 label-regular font-bold";
 
-// Het telefoonveld erft de vormgeving van de andere velden via CSS-variabelen.
+// De omkadering van het telefoonveld zit in globals.css (.phone-field); hier
+// staan enkel nog de kleuren van het uitklaplijstje met landen.
 const phoneFieldStyle = {
-  "--react-international-phone-height": "50px",
-  "--react-international-phone-border-radius": "12px",
-  "--react-international-phone-font-size": "16px",
   "--react-international-phone-text-color": "var(--color-primary-brand)",
-  "--react-international-phone-border-color":
-    "color-mix(in srgb, var(--color-primary-brand) 20%, transparent)",
-  "--react-international-phone-country-selector-border-color":
-    "color-mix(in srgb, var(--color-primary-brand) 20%, transparent)",
-  "--react-international-phone-country-selector-background-color-hover":
-    "color-mix(in srgb, var(--color-primary-brand) 8%, transparent)",
+  "--react-international-phone-dropdown-item-text-color": "var(--color-primary-brand)",
+  "--react-international-phone-dropdown-item-font-size": "15px",
   "--react-international-phone-selected-dropdown-item-background-color":
     "color-mix(in srgb, var(--color-primary-brand) 12%, transparent)",
-  "--react-international-phone-dropdown-item-text-color": "var(--color-primary-brand)",
+  "--react-international-phone-dropdown-top": "52px",
+  "--react-international-phone-dropdown-shadow": "0 10px 25px rgb(0 0 0 / 0.15)",
 } as React.CSSProperties;
 
 type SubmitStatus = "idle" | "sending" | "success" | "error";

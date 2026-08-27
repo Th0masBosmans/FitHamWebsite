@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import { CalendarPlus, Camera, CheckCircle2, Clock, MapPin, Sparkles, X } from "lucide-react";
 import { EventRepository, type ClubEvent } from "@/repository/eventRepository";
+import { EventRegistrationButton } from "./EventRegistrationButton";
 import {
   formatEventDay,
   formatEventMonthShort,
@@ -156,14 +157,33 @@ export function EventDetailModal({ event, past, onClose }: EventDetailModalProps
                 </div>
 
                 {!past && (
-                  <a
-                    href={eventCalendarFileUrl(event)}
-                    download={eventCalendarFileName(event)}
-                    className="self-start inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] text-[var(--color-primary-brand)] px-5 py-2 shadow-lg label-small font-extrabold uppercase tracking-wide transition-all hover:bg-white hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white"
-                  >
-                    <CalendarPlus className="h-4 w-4" />
-                    Zet in agenda
-                  </a>
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    {event.registration_url && (
+                      <EventRegistrationButton url={event.registration_url} label={event.registration_label} />
+                    )}
+                    <a
+                      href={eventCalendarFileUrl(event)}
+                      download={eventCalendarFileName(event)}
+                      aria-label="Zet in agenda"
+                      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 shadow-lg label-small font-extrabold uppercase tracking-wide transition-all hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white sm:gap-2 sm:px-5 ${
+                        event.registration_url
+                          ? "bg-white/15 backdrop-blur-md text-white hover:bg-white/30"
+                          : "bg-[var(--color-accent)] text-[var(--color-primary-brand)] hover:bg-white"
+                      }`}
+                    >
+                      <CalendarPlus className="h-4 w-4 shrink-0" />
+                      {/* Zelfde afweging als op het kaartje: naast een actieknop
+                          past het volledige opschrift niet op een gsm. */}
+                      {event.registration_url ? (
+                        <>
+                          <span className="sm:hidden">Agenda</span>
+                          <span className="hidden sm:inline">Zet in agenda</span>
+                        </>
+                      ) : (
+                        "Zet in agenda"
+                      )}
+                    </a>
+                  </div>
                 )}
               </div>
             </div>

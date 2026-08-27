@@ -92,18 +92,19 @@ type InputFieldProps = {
   type?: string;
   required?: boolean;
   isTextarea?: boolean;
+  placeholder?: string;
 }
 
-export function InputField({ label, name, defaultValue, type = "text", required = false, isTextarea = false }: InputFieldProps) {
+export function InputField({ label, name, defaultValue, type = "text", required = false, isTextarea = false, placeholder }: InputFieldProps) {
   const sharedClasses =
     "w-full border-2 border-gray-200 rounded-xl p-3.5 font-bold text-sm text-gray-800 bg-gray-50 focus:border-[var(--color-primary-brand)] focus:bg-white outline-none transition-colors placeholder:text-gray-400";
   return (
     <div>
       <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">{label}</label>
       {isTextarea ? (
-        <textarea name={name} defaultValue={defaultValue} required={required} rows={4} className={`${sharedClasses} resize-none`} />
+        <textarea name={name} defaultValue={defaultValue} required={required} placeholder={placeholder} rows={4} className={`${sharedClasses} resize-none`} />
       ) : (
-        <input type={type} name={name} defaultValue={defaultValue} required={required} className={sharedClasses} />
+        <input type={type} name={name} defaultValue={defaultValue} required={required} placeholder={placeholder} className={sharedClasses} />
       )}
     </div>
   );

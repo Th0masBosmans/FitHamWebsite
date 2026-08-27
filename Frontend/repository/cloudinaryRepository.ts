@@ -38,7 +38,13 @@ class CloudinaryRepository {
       method: "POST",
       headers: await authHeader(),
     });
-    if (!signResponse.ok) throw new Error("Kon de upload niet ondertekenen");
+    if (!signResponse.ok) {
+      // De reden van de server meegeven: anders is niet te zien of het om een
+      // verlopen beheerderssessie (401) gaat of om ontbrekende Cloudinary-
+      // sleutels op de server (500).
+      const detail = (await signResponse.json().catch(() => null)) as { error?: string } | null;
+      throw new Error(`Kon de upload niet ondertekenen (${signResponse.status}${detail?.error ? `: ${detail.error}` : ""})`);
+    }
 
     const { apiKey, timestamp, signature } = (await signResponse.json()) as {
       apiKey: string;

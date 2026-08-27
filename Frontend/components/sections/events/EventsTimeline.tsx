@@ -98,9 +98,15 @@ export function EventsTimeline({ upcoming, past }: { upcoming: ClubEvent[]; past
                 </div>
               )}
 
-              <div className={`relative ${stagger}`}>
+              {/* Door het trapjeseffect hierboven schuift deze omhulling over de
+                  onderkant van de vorige kaart heen. Ze is doorzichtig, maar ving
+                  daar wel de muis op: net het stuk waar het paneeltje met de
+                  knoppen openklapt, dus dat viel weer dicht zodra je erheen ging.
+                  Vandaar dat enkel de kolom met de kaart zelf de muis opvangt; de
+                  omhulling en de stip erin zijn puur versiering. */}
+              <div className={`relative pointer-events-none ${stagger}`}>
                 <EventNode />
-                <div className={`lg:w-1/2 ${onLeft ? "lg:pr-10" : "lg:ml-auto lg:pl-10"}`}>
+                <div className={`pointer-events-auto lg:w-1/2 ${onLeft ? "lg:pr-10" : "lg:ml-auto lg:pl-10"}`}>
                   {/* Het opkomen van de kaart zit hier en niet in EventCard zelf:
                       de gele rand hieronder is een broertje van de kaart en geen
                       kind, dus moet ze mee verschuiven. Deden we dat niet, dan

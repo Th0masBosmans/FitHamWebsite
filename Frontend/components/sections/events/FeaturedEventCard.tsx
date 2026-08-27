@@ -5,6 +5,7 @@ import { CalendarPlus, Clock, MapPin, Sparkles } from "lucide-react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { EventRepository, type ClubEvent } from "@/repository/eventRepository";
 import { useIsDesktop } from "@/lib/useIsDesktop";
+import { EventRegistrationButton } from "./EventRegistrationButton";
 import {
   formatEventDay,
   formatEventMonthShort,
@@ -199,16 +200,27 @@ export function FeaturedEventCard({
               )}
 
               <div className="flex flex-wrap items-center justify-between gap-4">
-                <a
-                  href={eventCalendarFileUrl(event)}
-                  download={eventCalendarFileName(event)}
-                  onClick={(clickEvent) => clickEvent.stopPropagation()}
-                  aria-label="Zet in agenda"
-                  className={`order-2 inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] text-[var(--color-primary-brand)] ${agendaPadding} shadow-lg label-small font-extrabold uppercase tracking-wide transition-all hover:bg-white hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white`}
-                >
-                  <CalendarPlus className="h-4 w-4" />
-                  <span className={agendaLabelVisibility}>Zet in agenda</span>
-                </a>
+                {/* De knoppen staan rechts, de aftelklok links; op een smal
+                    scherm valt de rij vanzelf uiteen. */}
+                <div className="order-2 flex flex-wrap items-center gap-2">
+                  {event.registration_url && (
+                    <EventRegistrationButton url={event.registration_url} label={event.registration_label} />
+                  )}
+                  <a
+                    href={eventCalendarFileUrl(event)}
+                    download={eventCalendarFileName(event)}
+                    onClick={(clickEvent) => clickEvent.stopPropagation()}
+                    aria-label="Zet in agenda"
+                    className={`inline-flex items-center gap-2 rounded-full ${agendaPadding} shadow-lg label-small font-extrabold uppercase tracking-wide transition-all hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white ${
+                      event.registration_url
+                        ? "bg-white/15 backdrop-blur-md text-white hover:bg-white/30"
+                        : "bg-[var(--color-accent)] text-[var(--color-primary-brand)] hover:bg-white"
+                    }`}
+                  >
+                    <CalendarPlus className="h-4 w-4" />
+                    <span className={agendaLabelVisibility}>Zet in agenda</span>
+                  </a>
+                </div>
 
                 {timeLeft && (
                   <div className="order-1 flex gap-2">

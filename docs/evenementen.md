@@ -14,6 +14,7 @@ alles wat komt en al geweest is.
 | `Frontend/components/sections/events/EventCard.tsx` | Eén kaartje op de tijdlijn |
 | `Frontend/components/sections/events/EventDetailModal.tsx` | Het venster als je een kaartje aanklikt |
 | `Frontend/components/sections/events/timelineParts.tsx` | De losse stukjes van de tijdlijn |
+| `Frontend/components/sections/events/EventRegistrationButton.tsx` | De actieknop (bestellen / inschrijven) |
 | `Frontend/repository/eventRepository.ts` | Alle gesprekken over evenementen |
 | `Frontend/lib/eventFormat.ts` | Alles rond datums en het agenda-bestand |
 
@@ -24,7 +25,8 @@ alles wat komt en al geweest is.
 Alles uit de Supabase-tabel `events`; de affiches uit **Cloudinary**.
 
 Per evenement: titel, omschrijving, plaats, begin- en einduur, affiche, of het
-uitgelicht is, en optioneel een gekoppeld fotoalbum.
+uitgelicht is, optioneel een gekoppeld fotoalbum, en optioneel de link van de
+actieknop met het opschrift dat erop hoort.
 
 Bij het ophalen wordt er meteen bijgeteld hoeveel foto's er in het gekoppelde
 album zitten. Dat getal staat niet in de database — het dient alleen om te weten
@@ -68,6 +70,11 @@ verticale lijn naar beneden:
   een stukje lager dan de vorige (het trapjeseffect). Op mobiel staan ze onder
   elkaar over de volle breedte, en zie je de bal alleen in de tussenruimtes.
 
+Door dat trapjeseffect schuift de omhulling van elk kaartje over de onderkant van
+het vorige heen. Die omhulling is doorzichtig maar zou daar wel de muis opvangen,
+precies waar het paneeltje met de knoppen openklapt. Ze staat daarom op
+`pointer-events-none`, en alleen de kolom met de kaart zelf vangt de muis op.
+
 De losse onderdelen (lijn, streepjes, pijl, stippen, bordje "Afgelopen") staan in
 `timelineParts.tsx`; `EventsTimeline.tsx` zet ze samen en regelt de beweging.
 
@@ -87,6 +94,35 @@ het evenement geen einduur, dan rekenen we 2 uur.
 
 Staat in `lib/eventFormat.ts`. De wedstrijdkaart op een teampagina doet hetzelfde,
 maar heeft daar een eigen kopie van in `sections/teams/NextMatchCard.tsx`.
+
+---
+
+## De actieknop
+
+In het beheerpaneel, tab **Evenementen**, staat een vinkje **Actieknop**.
+Zet je dat aan, dan kies je met keuzerondjes één van twee vaste opschriften en
+vul je de link in waar de bezoeker naartoe moet, bijvoorbeeld naar Twizzit:
+
+| Opschrift | Icoontje | Waarvoor |
+| --- | --- | --- |
+| Bestel hier | winkelkarretje | verkoop, bv. maaltijden of wijn |
+| Schrijf in | pen | inschrijven voor een activiteit |
+
+Bewust geen vrij tekstveld: zo blijven de knoppen over de hele site hetzelfde en
+hoort er bij elk opschrift altijd het juiste icoontje. De twee staan samen in
+`REGISTRATION_OPTIONS` in `EventRegistrationButton.tsx` — het beheerpaneel leest
+diezelfde lijst uit, dus een opschrift toevoegen doe je daar op één plek.
+
+De knop verschijnt bij komende evenementen op alle drie de plaatsen waar een
+evenement getoond wordt: de grote kaart bovenaan (en op de homepagina), het
+kaartje op de tijdlijn en het detailvenster. Ze opent in een nieuw tabblad.
+
+Ze moet opvallen, dus ze is geel en heeft een trage halo eromheen
+(`.cta-glow` in `globals.css`, uit bij minder beweging). Om te vermijden dat er
+twee gele knoppen naast elkaar staan te roepen, zakt **"Zet in agenda"** naar de
+gedempte glazen stijl zodra er een actieknop is.
+
+Vinkje weer uit en opslaan wist de link ook echt uit de database.
 
 ---
 

@@ -155,6 +155,11 @@ export type ClubEvent = {
   highlighted: boolean;
   /** Gekoppeld fotoalbum, of null als er geen album bij hoort. */
   album_id: number | null;
+  /** Link naar de inschrijving of bestelling (bv. Twizzit). Null = geen knop. */
+  registration_url: string | null;
+  /** Wat er op die knop staat: één van de twee vaste opschriften uit
+   *  sections/events/EventRegistrationButton (dat bepaalt ook het icoontje). */
+  registration_label: string | null;
   /** Aantal foto's in dat album. Staat niet in de database; wordt bij het ophalen
    *  berekend, puur om te tonen of er iets te bekijken valt. */
   albumMediaCount?: number;

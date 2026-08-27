@@ -137,8 +137,25 @@
   border-color: var(--color-accent-border);
 }
 
+/* De inschrijfknop op een evenement moet opvallen: een trage gele halo die
+   telkens opnieuw naar buiten uitdijt. */
+@keyframes cta-glow {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 55%, transparent);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 12px color-mix(in srgb, var(--color-accent) 0%, transparent);
+  }
+}
+
+.cta-glow {
+  animation: cta-glow 2.4s ease-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .api-highlight {
+  .api-highlight,
+  .cta-glow {
     animation: none;
   }
 }

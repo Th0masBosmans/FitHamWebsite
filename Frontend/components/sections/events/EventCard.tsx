@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Camera, CalendarPlus, Clock, MapPin, Sparkles } from "lucide-react";
 import { EventRepository, type ClubEvent } from "@/repository/eventRepository";
 import { useIsDesktop } from "@/lib/useIsDesktop";
+import { EventRegistrationButton } from "./EventRegistrationButton";
 import {
   formatEventDay,
   formatEventMonthShort,
@@ -63,6 +64,9 @@ export function EventCard({
   const isWide = useIsDesktop(640);
 
   const hasPhotos = past && event.album_id != null && (event.albumMediaCount ?? 0) > 0;
+  // Is er een inschrijflink, dan is dat de knop die moet opvallen en zakt
+  // "zet in agenda" naar de gedempte glazen stijl.
+  const showRegistration = !past && Boolean(event.registration_url);
   // Bij een voorbij evenement zonder omschrijving en zonder album valt er niets
   // open te klappen; dan tonen we ook het pijltje niet.
   const hasMore = Boolean(event.description) || hasPhotos || !past;
@@ -187,15 +191,35 @@ export function EventCard({
               )}
 
               {!past && (
-                <a
-                  href={eventCalendarFileUrl(event)}
-                  download={eventCalendarFileName(event)}
-                  onClick={(clickEvent) => clickEvent.stopPropagation()}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-accent)] text-[var(--color-primary-brand)] px-4 py-1.5 label-small font-extrabold uppercase tracking-wide shadow-lg transition-all hover:bg-white hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white"
-                >
-                  <CalendarPlus className="h-3.5 w-3.5" />
-                  Zet in agenda
-                </a>
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                  {showRegistration && (
+                    <EventRegistrationButton url={event.registration_url!} label={event.registration_label} size="small" />
+                  )}
+                  <a
+                    href={eventCalendarFileUrl(event)}
+                    download={eventCalendarFileName(event)}
+                    onClick={(clickEvent) => clickEvent.stopPropagation()}
+                    aria-label="Zet in agenda"
+                    className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 label-small font-extrabold uppercase tracking-wide shadow-lg transition-all hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white sm:px-4 ${
+                      showRegistration
+                        ? "bg-white/15 backdrop-blur-md text-white hover:bg-white/30"
+                        : "bg-[var(--color-accent)] text-[var(--color-primary-brand)] hover:bg-white"
+                    }`}
+                  >
+                    <CalendarPlus className="h-3.5 w-3.5 shrink-0" />
+                    {/* Staat er een actieknop naast, dan is er op een gsm geen
+                        plaats voor het volledige opschrift; samen met het
+                        icoontje is "agenda" daar duidelijk genoeg. */}
+                    {showRegistration ? (
+                      <>
+                        <span className="sm:hidden">Agenda</span>
+                        <span className="hidden sm:inline">Zet in agenda</span>
+                      </>
+                    ) : (
+                      "Zet in agenda"
+                    )}
+                  </a>
+                </div>
               )}
             </div>
           </div>

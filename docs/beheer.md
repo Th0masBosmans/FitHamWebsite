@@ -70,6 +70,10 @@ worden in `AdminDashboardContent.tsx` bijgehouden omdat twee tabbladen ze delen 
 bij "Foto's" beheer je ze, bij "Evenementen" kan je er een aan een evenement
 koppelen of ter plekke een nieuw album maken.
 
+Bij "Evenementen" zit ook het vinkje **Actieknop**: aanvinken, een opschrift
+en een link invullen (bv. naar Twizzit), en er verschijnt op de site een
+opvallende knop bij dat evenement. Zie `docs/evenementen.md`.
+
 ### Gedeelde stukjes
 
 | Bestand | Waarvoor |

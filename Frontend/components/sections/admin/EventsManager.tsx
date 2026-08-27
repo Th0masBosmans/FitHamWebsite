@@ -10,6 +10,7 @@ import { ActionButton, EmptyState, SubmitButton, InputField, ImageUploadZone, Mo
 import { ExpandableListItem } from "./ExpandableListItem";
 import { DeleteConfirmModal } from "./DeleteConfirmModal";
 import { extractFormString, toDatetimeLocal, ALBUM_TAGS } from "./adminHelpers";
+import { REGISTRATION_OPTIONS, registrationOption } from "@/components/sections/events/EventRegistrationButton";
 
 const eventRepository = new EventRepository();
 const albumRepository = new AlbumRepository();
@@ -30,6 +31,8 @@ export function EventsManager({ active, albums, setAlbums }: EventsManagerProps)
   const [saving, setSaving] = useState(false);
   const [eventModal, setEventModal] = useState<{ isOpen: boolean; item?: ClubEvent } | null>(null);
   const [eventAlbumMode, setEventAlbumMode] = useState<"none" | "existing" | "new">("none");
+  // Vinkje "actieknop": staat het aan, dan verschijnen het opschrift en de link.
+  const [hasRegistration, setHasRegistration] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -41,9 +44,12 @@ export function EventsManager({ active, albums, setAlbums }: EventsManagerProps)
     if (!active) setExpandedId(null);
   }, [active]);
 
-  // Hangt er al een album aan het evenement, dan staat die keuze meteen goed.
+  // Hangt er al een album of een inschrijflink aan het evenement, dan staan die
+  // keuzes meteen goed.
   useEffect(() => {
-    if (eventModal?.isOpen) setEventAlbumMode(eventModal.item?.album_id != null ? "existing" : "none");
+    if (!eventModal?.isOpen) return;
+    setEventAlbumMode(eventModal.item?.album_id != null ? "existing" : "none");
+    setHasRegistration(Boolean(eventModal.item?.registration_url));
   }, [eventModal]);
 
   const handleSave = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -59,6 +65,9 @@ export function EventsManager({ active, albums, setAlbums }: EventsManagerProps)
     const endInput = extractFormString(formData, "end_date");
     const end_date = endInput ? new Date(endInput).toISOString() : null;
     const highlighted = formData.get("highlighted") === "on";
+    // Staat het vinkje uit, dan wissen we een eerder ingevulde link ook echt.
+    const registration_url = hasRegistration ? extractFormString(formData, "registration_url").trim() || null : null;
+    const registration_label = hasRegistration ? extractFormString(formData, "registration_label").trim() || null : null;
 
     const fileInput = form.querySelector('input[type="file"]') as HTMLInputElement | null;
     const file = fileInput?.files?.[0];
@@ -85,11 +94,11 @@ export function EventsManager({ active, albums, setAlbums }: EventsManagerProps)
       }
 
       if (eventModal?.item?.id != null) {
-        const updated = await eventRepository.updateEvent(eventModal.item.id, { title, description, location, start_date, end_date, image: eventModal.item.image, highlighted, album_id }, file);
+        const updated = await eventRepository.updateEvent(eventModal.item.id, { title, description, location, start_date, end_date, image: eventModal.item.image, highlighted, album_id, registration_url, registration_label }, file);
         setEvents((previous) => previous.map((eventItem) => (eventItem.id === updated.id ? updated : eventItem)));
       } else {
         if (!file) throw new Error("Selecteer een afbeelding.");
-        const created = await eventRepository.postEvent({ title, description, location, start_date, end_date, highlighted, album_id, image: file });
+        const created = await eventRepository.postEvent({ title, description, location, start_date, end_date, highlighted, album_id, registration_url, registration_label, image: file });
         setEvents((previous) => [...previous, created]);
       }
       setEventModal(null);
@@ -136,6 +145,7 @@ export function EventsManager({ active, albums, setAlbums }: EventsManagerProps)
               { label: "Locatie", value: clubEvent.location },
               { label: "Status", value: clubEvent.highlighted ? <span className="text-[var(--color-primary-brand)] font-black">Uitgelicht</span> : "Standaard" },
               { label: "Album", value: clubEvent.album_id != null ? (albums.find((album) => album.id === clubEvent.album_id)?.name ?? "Gekoppeld") : <span className="text-gray-400">Geen</span> },
+              { label: "Actieknop", value: clubEvent.registration_url ? registrationOption(clubEvent.registration_label).label : <span className="text-gray-400">Geen</span> },
             ]}
             description={clubEvent.description}
           />
@@ -158,6 +168,62 @@ export function EventsManager({ active, albums, setAlbums }: EventsManagerProps)
               <input type="checkbox" name="highlighted" defaultChecked={eventModal.item?.highlighted} className="w-5 h-5 accent-[var(--color-primary-brand)]" />
               <span className="font-black text-gray-700 uppercase tracking-wider text-sm">Uitgelicht Evenement</span>
             </label>
+
+            {/* Actieknop: vink aan en geef een link mee (bv. naar Twizzit). Op
+                de site wordt dat de opvallendste knop van het evenement. */}
+            <div className="space-y-3 rounded-xl border-2 border-gray-200 bg-gray-50 p-4">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={hasRegistration}
+                  onChange={(changeEvent) => setHasRegistration(changeEvent.target.checked)}
+                  className="w-5 h-5 accent-[var(--color-primary-brand)]"
+                />
+                <span className="font-black text-gray-700 uppercase tracking-wider text-sm">Actieknop</span>
+              </label>
+
+              {hasRegistration && (
+                <div className="space-y-3">
+                  <p className="text-xs font-bold text-gray-500">
+                    De knop verschijnt op de evenementkaart en in het detailvenster, en opent de link in een nieuw tabblad.
+                  </p>
+                  {/* Keuzerondjes en geen vrij tekstveld: er zijn maar twee
+                      knoppen, elk met hun eigen icoontje. */}
+                  <div>
+                    <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">Opschrift op de knop</label>
+                    <div className="flex flex-wrap gap-2">
+                      {REGISTRATION_OPTIONS.map((option, optionIndex) => (
+                        <label key={option.label} className="cursor-pointer">
+                          <input
+                            type="radio"
+                            name="registration_label"
+                            value={option.label}
+                            defaultChecked={
+                              eventModal.item?.registration_label
+                                ? eventModal.item.registration_label === option.label
+                                : optionIndex === 0
+                            }
+                            className="peer sr-only"
+                          />
+                          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-gray-200 bg-white text-gray-500 font-black uppercase tracking-wider text-xs transition-colors peer-checked:bg-[var(--color-primary-brand)] peer-checked:text-white peer-checked:border-[var(--color-primary-brand)] hover:border-[var(--color-primary-brand)]/40">
+                            <option.icon className="w-4 h-4 shrink-0" />
+                            {option.label}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <InputField
+                    label="Link"
+                    name="registration_url"
+                    type="url"
+                    defaultValue={eventModal.item?.registration_url ?? ""}
+                    placeholder="https://..."
+                    required
+                  />
+                </div>
+              )}
+            </div>
 
             {/* Album koppeling: geen, een bestaand album, of meteen een nieuw album aanmaken. */}
             <div className="space-y-3 rounded-xl border-2 border-gray-200 bg-gray-50 p-4">

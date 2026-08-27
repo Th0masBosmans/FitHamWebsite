@@ -12,7 +12,7 @@ class EventRepository {
     // weet of er iets te bekijken valt.
     const { data, error } = await supabase
       .from("events")
-      .select("id, title, description, location, start_date, end_date, image, highlighted, album_id, album:albums(images)")
+      .select("id, title, description, location, start_date, end_date, image, highlighted, album_id, registration_url, registration_label, album:albums(images)")
       .order("start_date", { ascending: true });
 
     if (error) {
@@ -40,8 +40,10 @@ class EventRepository {
         image: publicId,
         highlighted: event.highlighted,
         album_id: event.album_id,
+        registration_url: event.registration_url,
+        registration_label: event.registration_label,
       })
-      .select("id, title, description, location, start_date, end_date, image, highlighted, album_id")
+      .select("id, title, description, location, start_date, end_date, image, highlighted, album_id, registration_url, registration_label")
       .single();
 
     if (error || !data) {
@@ -72,9 +74,11 @@ class EventRepository {
         image: publicId,
         highlighted: event.highlighted,
         album_id: event.album_id,
+        registration_url: event.registration_url,
+        registration_label: event.registration_label,
       })
       .eq("id", id)
-      .select("id, title, description, location, start_date, end_date, image, highlighted, album_id")
+      .select("id, title, description, location, start_date, end_date, image, highlighted, album_id, registration_url, registration_label")
       .single();
 
     if (error || !data) {

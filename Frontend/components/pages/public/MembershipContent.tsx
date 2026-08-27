@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { MembershipRepository } from "@/repository/membershipRepository";
 import { MembershipFee } from "@/types";
 import { PlanCard } from "@/components/sections/membership/PlanCard";
+import { MembershipDiscounts } from "@/components/sections/membership/MembershipDiscounts";
 import { MembershipInfo } from "@/components/sections/membership/MembershipInfo";
 import { RegistrationModal } from "@/components/sections/membership/RegistrationModal";
 
@@ -40,8 +41,13 @@ export function MembershipContent() {
         </motion.div>
       </div>
 
+      {/* Uitleg over het lidgeld en de kortingen */}
+      <div className="px-4 mt-10 lg:mt-14 max-w-md lg:max-w-4xl mx-auto">
+        <MembershipDiscounts />
+      </div>
+
       {/* De lidgeld-kaartjes, uit de database */}
-      <div className="px-4 -mt-8 grid grid-cols-1 lg:grid-cols-2 lg:auto-rows-fr gap-6 max-w-md lg:max-w-4xl mx-auto relative z-10">
+      <div className="px-4 mt-8 lg:mt-12 grid grid-cols-1 lg:grid-cols-2 lg:auto-rows-fr gap-6 max-w-md lg:max-w-4xl mx-auto">
         {plans.map((plan, index) => (
           <PlanCard key={plan.id} plan={plan} index={index} onRegister={handleRegisterClick} />
         ))}

@@ -15,7 +15,8 @@ function getSilhouette(team: Pick<Team, "division" | "name">): string {
 /**
  * Het kaartje van één team op de teampagina: de teamfoto met de naam erover,
  * wat donkerder gemaakt zodat de tekst leesbaar blijft. Klikken brengt je naar
- * de pagina van dat team.
+ * de pagina van dat team. Van de foto valt bovenaan 10% en onderaan 35% weg; het
+ * middenstuk met de spelers wordt lichtjes uitgerekt tot in het kaartje past.
  */
 export function TeamCard({ team, index = 0 }: { team: Team; index?: number }) {
   const reduceMotion = useReducedMotion();
@@ -40,7 +41,7 @@ export function TeamCard({ team, index = 0 }: { team: Team; index?: number }) {
               src={photo}
               alt={team.name}
               loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+              className="absolute left-0 top-[-18%] h-[182%] w-full object-fill transition-transform duration-300 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-black/70 transition-colors duration-150 group-hover:bg-black/60" />
           </>

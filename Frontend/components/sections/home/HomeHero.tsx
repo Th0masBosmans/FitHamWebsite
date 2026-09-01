@@ -1,18 +1,29 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "motion/react";
 
 const FALLBACK_HERO = "/assets/hero-spirit.png";
 
+//Hangt af van foto tot foto manueel hier aanpassen indien nodig
+const CROP_TOP = 0.21;
+const CROP_BOTTOM = 0.21;
+
 export function HomeHero({ heroImageUrl }: { heroImageUrl?: string | null }) {
   const heroSrc = heroImageUrl ?? FALLBACK_HERO;
+  const [ratio, setRatio] = useState<number | null>(null);
+
+  const measure = (img: HTMLImageElement | null) => {
+    if (img?.naturalWidth && img.naturalHeight) {
+      setRatio(img.naturalWidth / (img.naturalHeight * (1 - CROP_TOP - CROP_BOTTOM)));
+    }
+  };
 
   return (
-    // Op een gsm groeit de balk mee met de foto zodat je ze volledig ziet;
-    // vanaf tablet blijft het een vaste strook van 24rem.
     <div
-      className="relative mb-6 overflow-hidden sm:h-96"
+      className="relative mb-6 overflow-hidden"
       style={{
+        aspectRatio: ratio ?? undefined,
         maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
         WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
       }}
@@ -24,9 +35,12 @@ export function HomeHero({ heroImageUrl }: { heroImageUrl?: string | null }) {
         className="w-full h-full"
       >
         <img
+          ref={measure}
+          onLoad={(event) => measure(event.currentTarget)}
           src={heroSrc}
           alt="Fit Ham Spirit"
-          className="w-full h-auto sm:h-full sm:object-cover"
+          className={ratio ? "w-full h-full object-cover" : "w-full h-auto"}
+          style={{ objectPosition: `center ${(CROP_TOP / (CROP_TOP + CROP_BOTTOM)) * 100}%` }}
         />
       </motion.div>
     </div>

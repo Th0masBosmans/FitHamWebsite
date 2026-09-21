@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import { HomeHero } from "@/components/sections/home/HomeHero";
 import { FeaturedEventSection } from "@/components/sections/home/FeaturedEventSection";
+import { NewsSection } from "@/components/sections/home/NewsSection";
 import { AboutSection } from "@/components/sections/home/AboutSection";
 import { WebshopSection } from "@/components/sections/home/WebshopSection";
 import { SocialMediaSection } from "@/components/sections/home/SocialMediaSection";
@@ -20,6 +21,9 @@ export function HomeContent({ heroImageUrl }: { heroImageUrl?: string | null }) 
 
       {/* Het uitgelichte evenement, dezelfde kaart als op de evenementenpagina */}
       <FeaturedEventSection />
+
+      {/* Het uitgelichte nieuws: hetzelfde idee, maar met een eigen pagina per bericht */}
+      <NewsSection />
 
       <div className="max-w-md lg:max-w-6xl mx-auto px-6">
         <AboutSection />

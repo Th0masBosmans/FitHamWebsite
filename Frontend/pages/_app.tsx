@@ -40,12 +40,15 @@ export default function App({ Component, pageProps }: AppProps) {
       <div className="min-h-screen w-full overflow-x-hidden relative flex flex-col">
         <div className="absolute inset-0 -z-10">
           <div className="absolute inset-0 bg-linear-to-b from-[#5cd6ff] to-[var(--color-primary-brand)]" />
+          {/* Het patroon hangt vast aan de bovenkant. Met "center" schoof het mee
+              telkens de pagina langer of korter werd, bv. bij het openklappen
+              van een vraag. */}
           <div
             className="absolute inset-0"
             style={{
               backgroundImage: "url(/assets/background-pattern.png)",
               backgroundSize: "540px",
-              backgroundPosition: "center",
+              backgroundPosition: "top center",
               backgroundRepeat: "repeat",
               opacity: 0.06,
             }}

@@ -11,6 +11,7 @@ import { SiteImagesManager } from "@/components/sections/admin/SiteImagesManager
 import { TeamsManager } from "@/components/sections/admin/TeamsManager";
 import { AlbumsManager } from "@/components/sections/admin/AlbumsManager";
 import { EventsManager } from "@/components/sections/admin/EventsManager";
+import { NewsManager } from "@/components/sections/admin/NewsManager";
 import { BoardManager } from "@/components/sections/admin/BoardManager";
 import { MembershipsManager } from "@/components/sections/admin/MembershipsManager";
 import { SponsorsManager } from "@/components/sections/admin/SponsorsManager";
@@ -142,10 +143,12 @@ export function AdminDashboardContent() {
 
         <div className="flex-1 overflow-y-auto p-4 lg:p-8">
           <div className="max-w-4xl mx-auto space-y-4 lg:space-y-6">
+            {/* Tabblad Home: de foto's van de homepagina én het nieuwsblok erop */}
             <SiteImagesManager active={activeTab === "homepage"} />
             <TeamsManager active={activeTab === "teams"} />
             <AlbumsManager active={activeTab === "photos"} albums={albums} setAlbums={setAlbums} />
             <EventsManager active={activeTab === "events"} albums={albums} setAlbums={setAlbums} />
+            <NewsManager active={activeTab === "homepage"} />
             <BoardManager active={activeTab === "contact"} />
             <MembershipsManager active={activeTab === "memberships"} />
             <SponsorsManager active={activeTab === "sponsors"} />

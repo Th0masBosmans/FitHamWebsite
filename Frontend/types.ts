@@ -168,6 +168,82 @@ export type ClubEvent = {
   albumMediaCount?: number;
 };
 
+// --- Nieuws (tabel `news_articles`) ---
+// Een nieuwsbericht werkt als een evenement, maar zonder datum en zonder
+// tijdlijn: het krijgt een eigen pagina op /nieuws/<slug>. De kop van die pagina
+// staat in de vaste velden hieronder, alles daaronder in `blocks`.
+
+/** Eén blok van een nieuwspagina. Elk soort blok heeft zijn eigen velden; het
+ *  veld `type` zegt welke het is. Een soort bijmaken doe je op twee plekken:
+ *  sections/admin/newsBlocks.ts (invullen) en sections/news/NewsBlocks (tonen). */
+export type NewsBlock =
+  /** Een tussentitel met lopende tekst eronder. Lege regels worden alinea's. */
+  | { type: "text"; title: string; body: string }
+  /** Een raster kaartjes, bv. de groepen of de stappen van een werking. */
+  | { type: "cards"; title: string; intro: string; cards: NewsCardItem[] }
+  /** Veelgestelde vragen die open- en dichtklappen. */
+  | { type: "faq"; title: string; intro: string; items: NewsFaqItem[] }
+  /** Een fotoraster. Die foto's staan in Cloudinary, net als de hoofdfoto. */
+  | { type: "photos"; title: string; images: string[] }
+  /** Een rij actieknoppen, bv. "Schrijf in" naast "Bekijk de kalender". */
+  | { type: "buttons"; title: string; intro: string; buttons: NewsButtonItem[] }
+  /** Eén of meer plekken met een kaartje en een knop naar de route. */
+  | { type: "locations"; title: string; intro: string; locations: NewsLocationItem[] };
+
+export type NewsBlockType = NewsBlock["type"];
+
+export type NewsCardItem = {
+  title: string;
+  /** De regel onder de titel, bv. "3–4 jaar · zondag 10u00–11u00". Mag leeg. */
+  meta: string;
+  body: string;
+  bullets: string[];
+};
+
+export type NewsFaqItem = {
+  question: string;
+  answer: string;
+};
+
+export type NewsLocationItem = {
+  /** De naam van de plek, bv. "Kristoffelheem". */
+  name: string;
+  /** Het adres zoals Google Maps het vindt, bv. "Sportlaan 10a, 3945 Ham". */
+  address: string;
+};
+
+export type NewsButtonItem = {
+  label: string;
+  url: string;
+  /** Geel en opvallend, of gedempt glas ernaast. Per rij hoort er hoogstens
+   *  één gele knop te staan, anders roepen ze door elkaar. */
+  style: "primary" | "secondary";
+};
+
+export type NewsArticle = {
+  id?: number;
+  /** Het stukje van het webadres: /nieuws/<slug>. */
+  slug: string;
+  title: string;
+  /** De ondertitel onder de titel. Mag leeg blijven. */
+  subtitle: string | null;
+  intro: string;
+  /** De hoofdfoto in Cloudinary, of null als er nog geen is. */
+  image: string | null;
+  blocks: NewsBlock[];
+  /** Aangevinkt = dit bericht staat in het nieuwsblok op de homepagina. */
+  highlighted: boolean;
+  /** Wanneer het bericht aangemaakt is. Zet de database zelf, niet de beheerder. */
+  published_at: string;
+  /** Wanneer het voor het laatst opgeslagen is. Ook dat zet de database zelf. */
+  updated_at: string;
+  /** Link van de actieknop (bv. naar Twizzit). Null = geen knop. */
+  cta_url: string | null;
+  /** Wat er op die knop staat: één van de vaste opschriften uit
+   *  sections/events/EventRegistrationButton, dezelfde als bij een evenement. */
+  cta_label: string | null;
+};
+
 // --- Beheerpaneel ---
 export type TabType = "teams" | "photos" | "events" | "memberships" | "sponsors" | "homepage" | "contact";
 

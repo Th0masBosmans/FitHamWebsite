@@ -36,7 +36,7 @@ export default function NewsArticlePage() {
           href="/nieuws"
           className="mt-6 inline-flex rounded-full bg-[var(--color-accent)] px-5 py-2.5 text-[var(--color-primary-brand)] label-small font-extrabold uppercase tracking-wide shadow-lg transition-transform hover:scale-105"
         >
-          Alle nieuws
+          Al het nieuws
         </Link>
       </div>
     );

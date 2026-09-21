@@ -4,13 +4,16 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { PageHeading } from "@/components/ui/PageHeading";
 import { NewsCard } from "@/components/sections/news/NewsCard";
+import { NewsSlideshow } from "@/components/sections/news/NewsSlideshow";
 import { NewsRepository, type NewsArticle } from "@/repository/newsRepository";
 
 const newsRepository = new NewsRepository();
 
 /**
- * De nieuwspagina: alle berichten, het recentste eerst. Het eerste bericht
- * krijgt de volle breedte, de rest staat in een raster van twee.
+ * De nieuwspagina, opgebouwd zoals de evenementenpagina: bovenaan de grote
+ * kaart met de uitgelichte berichten (wisselen elkaar af als het er meer zijn),
+ * daaronder de rest in een raster van twee. Is er niets uitgelicht, dan komt
+ * het recentste bericht bovenaan.
  */
 export function NewsContent() {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
@@ -23,7 +26,9 @@ export function NewsContent() {
       .finally(() => setLoaded(true));
   }, []);
 
-  const [newest, ...rest] = articles;
+  const highlighted = articles.filter((article) => article.highlighted);
+  const top = highlighted.length ? highlighted : articles.slice(0, 1);
+  const rest = articles.filter((article) => !top.includes(article));
 
   return (
     <motion.div
@@ -55,9 +60,9 @@ export function NewsContent() {
           </p>
         )}
 
-        {newest && (
+        {top.length > 0 && (
           <div className="mb-6 lg:mb-8">
-            <NewsCard article={newest} featured />
+            <NewsSlideshow articles={top} />
           </div>
         )}
 

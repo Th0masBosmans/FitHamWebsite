@@ -14,9 +14,9 @@ const newsRepository = new NewsRepository();
  * te openen.
  *
  * De foto vult de kaart; er staat standaard alleen het gele datumblokje en de
- * titel op. De inleiding en de knop schuiven op een breed scherm pas omhoog als
- * je met de muis over de kaart gaat — op een gsm staan ze er meteen, want daar
- * is elke tik meteen een klik naar de pagina.
+ * titel op. De inleiding schuift op een breed scherm pas omhoog als je met de
+ * muis over de kaart gaat. Op een gsm blijven de inleiding en de ondertitel weg
+ * en staan er enkel de titel en de knop "Lees meer".
  *
  * Wordt gebruikt op de homepagina (het nieuwsblok) en op /nieuws.
  */
@@ -24,7 +24,12 @@ export function NewsCard({ article, featured = false }: { article: NewsArticle; 
   const reduceMotion = useReducedMotion();
 
   // De klassen voluit, niet samengesteld: anders vindt Tailwind ze niet terug.
-  const heightClass = featured ? "sm:h-[26rem] lg:h-[32rem]" : "sm:h-[22rem] lg:h-[24rem]";
+  // Even hoog als de evenementkaarten: groot = het uitgelichte evenement,
+  // klein = een kaartje uit de tijdlijn. Op een gsm is een evenementkaart zo hoog
+  // als de staande affiche; hier volgt de kaart dezelfde staande verhouding.
+  const heightClass = featured
+    ? "aspect-3/4 sm:aspect-auto sm:h-[28rem] lg:h-[32rem]"
+    : "aspect-3/4 sm:aspect-auto sm:h-[26rem]";
   const titleClass = featured ? "title-section" : "label-xl font-black uppercase tracking-tight";
   const paddingClass = featured ? "p-5 lg:p-7" : "p-5";
 
@@ -38,7 +43,7 @@ export function NewsCard({ article, featured = false }: { article: NewsArticle; 
     >
       <Link
         href={`/nieuws/${article.slug}`}
-        className={`group relative flex h-full flex-col justify-end overflow-hidden rounded-2xl border border-white/15 bg-[var(--color-primary-brand-darker)] shadow-2xl transition-shadow hover:shadow-[0_20px_60px_rgba(0,0,0,0.35)] focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] ${heightClass}`}
+        className={`group relative flex flex-col justify-end overflow-hidden rounded-2xl border border-white/15 bg-[var(--color-primary-brand-darker)] shadow-2xl transition-shadow hover:shadow-[0_20px_60px_rgba(0,0,0,0.35)] focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] ${heightClass}`}
       >
         {/* De hoofdfoto. Is er nog geen, dan blijft er een gekleurd vlak staan
             met een klein icoontje, zodat de kaart niet leeg oogt. */}
@@ -72,11 +77,12 @@ export function NewsCard({ article, featured = false }: { article: NewsArticle; 
 
         <div className={`relative z-10 flex flex-col gap-3 ${paddingClass}`}>
           <h3 className={`text-white drop-shadow-lg ${titleClass}`}>{article.title}</h3>
-          {article.subtitle && <p className="text-[var(--color-accent)] label-regular font-bold">{article.subtitle}</p>}
+          {article.subtitle && <p className="hidden text-[var(--color-accent)] label-regular font-bold sm:block">{article.subtitle}</p>}
 
-          {/* Op een gsm staat de inleiding er meteen: daar is een tik meteen een
-              klik naar de pagina, dus valt er niets uit te klappen. */}
-          <div className="grid grid-rows-[1fr] transition-[grid-template-rows] duration-300 ease-out sm:grid-rows-[0fr] sm:group-hover:grid-rows-[1fr]">
+          {/* De inleiding schuift op een breed scherm omhoog bij hover. Op een
+              gsm blijft ze weg (net als de ondertitel): daar staan enkel de titel en de
+              knop, want elke tik is er meteen een klik naar de pagina. */}
+          <div className="hidden grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out sm:grid sm:group-hover:grid-rows-[1fr]">
             <div className="min-h-0 overflow-hidden">
               <p className="line-clamp-3 max-w-2xl text-white/85 body-small leading-relaxed lg:body-regular">
                 {article.intro}

@@ -48,7 +48,7 @@ export function NewsArticleContent({ article }: { article: NewsArticle }) {
           className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-white shadow-sm backdrop-blur-md label-small font-bold uppercase tracking-wide transition-colors hover:bg-white/30"
         >
           <ArrowLeft className="h-4 w-4" />
-          Alle nieuws
+          Al het nieuws
         </Link>
 
         {/* De kop van de pagina: tekst links, foto rechts. Op een gsm komt de

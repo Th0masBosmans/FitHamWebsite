@@ -48,6 +48,12 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
     }
   }, [prefillMessage]);
 
+  // Turnstile blijft normaal onzichtbaar, dus zonder deze tekst zou de bezoeker
+  // enkel een knop zien die het om onduidelijke reden niet doet.
+  const waitingForCaptcha = isTurnstileConfigured && !captchaToken;
+  const buttonLabel =
+    status === "sending" ? "Versturen..." : waitingForCaptcha ? "Even verifiëren..." : "Verstuur Bericht";
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
@@ -182,11 +188,11 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
             type="submit"
             // Wachten tot het vinkje van Turnstile groen staat, anders weigert de
             // server het bericht toch.
-            disabled={status === "sending" || (isTurnstileConfigured && !captchaToken)}
+            disabled={status === "sending" || waitingForCaptcha}
             className="w-full bg-[var(--color-primary-brand)] text-white px-6 py-4 rounded-xl hover:bg-[var(--color-primary-brand-dark)] transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 label-base disabled:opacity-60 disabled:cursor-not-allowed font-bold"
           >
             <Send className="w-5 h-5 flex-shrink-0" />
-            <span>{status === "sending" ? "Versturen..." : "Verstuur Bericht"}</span>
+            <span>{buttonLabel}</span>
           </button>
 
           {status === "success" && (

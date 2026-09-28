@@ -26,6 +26,10 @@ declare global {
         element: HTMLElement,
         options: {
           sitekey: string;
+          theme?: "auto" | "light" | "dark";
+          language?: string;
+          size?: "normal" | "flexible" | "compact";
+          appearance?: "always" | "execute" | "interaction-only";
           callback: (token: string) => void;
           "expired-callback"?: () => void;
           "error-callback"?: () => void;
@@ -74,6 +78,19 @@ export function TurnstileWidget({
 
       widgetIdRef.current = window.turnstile.render(containerRef.current, {
         sitekey: SITE_KEY,
+        // Vast op licht: de site heeft geen donkere variant, en de standaard
+        // ("auto") zou het vinkje zwart maken bij bezoekers met een donker
+        // systeemthema.
+        theme: "light",
+        // Anders volgt de tekst de browsertaal van de bezoeker.
+        language: "nl",
+        // Past zich aan de breedte van het formulier aan in plaats van een
+        // vaste 300px.
+        size: "flexible",
+        // Blijft onzichtbaar zolang Cloudflare de bezoeker vertrouwt. Enkel bij
+        // twijfel verschijnt het vinkje alsnog, zodat iemand met een VPN of een
+        // ouder toestel niet zonder uitleg vastloopt.
+        appearance: "interaction-only",
         callback: (token) => onTokenRef.current(token),
         // Een token blijft maar een paar minuten geldig.
         "expired-callback": () => onTokenRef.current(null),

@@ -3,6 +3,7 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { Send } from "lucide-react";
 import { PhoneInput } from "react-international-phone";
+import { TurnstileWidget, isTurnstileConfigured } from "@/components/ui/TurnstileWidget";
 
 const inputClasses =
   "w-full px-4 py-3 rounded-xl border-2 border-[var(--color-primary-brand)]/20 focus:border-[var(--color-primary-brand)] focus:outline-none transition-all text-[var(--color-primary-brand)] font-semibold";
@@ -32,6 +33,9 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
   });
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  // Het bewijsje van Turnstile dat de bezoeker geen bot is (zie components/ui/TurnstileWidget).
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaReset, setCaptchaReset] = useState(0);
 
   useEffect(() => {
     if (prefillMessage) {
@@ -61,7 +65,7 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, turnstileToken: captchaToken }),
       });
 
       if (!response.ok) {
@@ -77,9 +81,12 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
         lastName: "",
         message: "",
       });
+      // Een token werkt maar één keer, dus een volgend bericht heeft een nieuw nodig.
+      setCaptchaReset((value) => value + 1);
     } catch (caughtError) {
       setStatus("error");
       setErrorMessage(caughtError instanceof Error ? caughtError.message : "Versturen mislukt");
+      setCaptchaReset((value) => value + 1);
     }
   };
 
@@ -169,9 +176,13 @@ export function ContactForm({ prefillMessage }: { prefillMessage: string }) {
             />
           </div>
 
+          <TurnstileWidget onToken={setCaptchaToken} resetSignal={captchaReset} />
+
           <button
             type="submit"
-            disabled={status === "sending"}
+            // Wachten tot het vinkje van Turnstile groen staat, anders weigert de
+            // server het bericht toch.
+            disabled={status === "sending" || (isTurnstileConfigured && !captchaToken)}
             className="w-full bg-[var(--color-primary-brand)] text-white px-6 py-4 rounded-xl hover:bg-[var(--color-primary-brand-dark)] transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 label-base disabled:opacity-60 disabled:cursor-not-allowed font-bold"
           >
             <Send className="w-5 h-5 flex-shrink-0" />

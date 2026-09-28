@@ -14,9 +14,10 @@ De pagina bestaat van boven naar onder uit:
 
 1. `HomeHero` — de grote foto
 2. `FeaturedEventSection` — het uitgelichte evenement
-3. `AboutSection` — "Over ons"
-4. `WebshopSection` — de webshop met kortingscode
-5. `SocialMediaSection` — Facebook, Instagram, TikTok
+3. `NewsSection` — het uitgelichte nieuws
+4. `AboutSection` — "Over ons"
+5. `WebshopSection` — de webshop met kortingscode
+6. `SocialMediaSection` — Facebook, Instagram, TikTok
 
 `NextEventCountdown.tsx` staat wél in de map maar wordt **nergens gebruikt**. Het
 is een aftelklok naar het eerstvolgende evenement. Wil je die terug, voeg hem dan
@@ -63,6 +64,15 @@ waar de beheerder **Uitgelicht** bij aangevinkt heeft.
 Het gebruikt exact dezelfde kaart als de evenementenpagina
 (`sections/events/FeaturedEventCard.tsx`), zodat beide pagina's er hetzelfde
 uitzien.
+
+### Het uitgelichte nieuws — Supabase + Cloudinary
+
+`NewsSection` doet hetzelfde met de nieuwsberichten: het toont die waar de
+beheerder **Tonen op de homepagina** bij aangevinkt heeft, met dezelfde kaart als
+op `/nieuws`. Zijn het er meer, dan wisselen ze elkaar af in dezelfde kaart
+(`sections/news/NewsSlideshow.tsx`). De knop "Al het nieuws" staat gecentreerd
+eronder.
+Is er niets uitgelicht, dan verdwijnt ook dit blok. Zie [nieuws.md](nieuws.md).
 
 ---
 

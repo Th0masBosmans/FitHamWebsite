@@ -57,7 +57,7 @@ stuurt hij door naar `/admin/invite` of `/admin/update-password`.
 
 | Tabblad | Bestand | Wat het beheert | Waar het terechtkomt |
 | --- | --- | --- | --- |
-| Home | `SiteImagesManager.tsx` | De herobanner van de homepagina | `site_images` + Cloudinary |
+| Home | `SiteImagesManager.tsx` + `NewsManager.tsx` | De herobanner en de nieuwsberichten | `site_images`/`news_articles` + Cloudinary |
 | Teams | `TeamsManager.tsx` | Teams, spelers, staf, trainingen | `teams`/`players`/`staff`/`training_days` + Cloudinary |
 | Foto's | `AlbumsManager.tsx` | Albums en de diavoorstelling | `albums` + Cloudinary (cover) + Supabase Storage (foto's) |
 | Evenementen | `EventsManager.tsx` | De clubkalender | `events` + Cloudinary |
@@ -73,6 +73,11 @@ koppelen of ter plekke een nieuw album maken.
 Bij "Evenementen" zit ook het vinkje **Actieknop**: aanvinken, een opschrift
 en een link invullen (bv. naar Twizzit), en er verschijnt op de site een
 opvallende knop bij dat evenement. Zie `docs/evenementen.md`.
+
+Onderaan het tabblad **Home** staat het blok **Nieuws**, het buitenbeentje:
+naast de gewone velden stel je daar met **blokken** (tekst, kaarten, vragen,
+foto’s, knoppen, locaties) de inhoud van een eigen pagina samen. De foto’s in
+zo’n fotoblok worden pas bij het opslaan geüpload. Zie `docs/nieuws.md`.
 
 ### Gedeelde stukjes
 
@@ -106,6 +111,7 @@ Zo hoeft het geheime Cloudinary-wachtwoord nooit in de browser te staan.
 | --- | --- | --- |
 | Sponsorlogo's | ~50 KB | standaardwaarde in `cloudinaryRepository.ts` |
 | Teamfoto's, staf, bestuur, evenementen, banners | ~300 KB | per repository meegegeven |
+| Nieuws: hoofdfoto en fotoblokken | ~3 MB | `newsRepository.ts` (worden groot getoond) |
 | Albumcovers | tot 10 MB | `albumRepository.ts` (blijft scherp voor de diavoorstelling) |
 | Foto's ín een album | max 1920 px, kwaliteit 70 | `albumRepository.ts` |
 | Video's | niet verkleind | de browser kan dat niet |
@@ -128,6 +134,9 @@ De zeven tabbladen, hun volgorde en hun opschrift. Bij het openen staat
 ### `types.ts`
 De namen van de tabbladen (`TabType`), en de keuzelijstjes voor posities,
 stafrollen en afdelingen.
+
+### `sections/admin/newsBlocks.ts`
+De soorten blokken die je op een nieuwspagina kan zetten.
 
 ### `data/galleriesData.ts`
 De categorieën die je bij een album kan aankruisen.

@@ -10,6 +10,7 @@ bestanden uit `public/` gebruikt worden.
 | Teams + teamdetail | `/teams`, `/teams/[id]` | [teams.md](teams.md) |
 | Galerij | `/galerij` | [galerij.md](galerij.md) |
 | Evenementen | `/events` | [evenementen.md](evenementen.md) |
+| Nieuws | `/nieuws`, `/nieuws/[slug]` | [nieuws.md](nieuws.md) |
 | Contact | `/contact` | [contact.md](contact.md) |
 | Lidmaatschap | `/membership` | [lidmaatschap.md](lidmaatschap.md) |
 | Sponsors | `/sponsors` | [sponsors.md](sponsors.md) |
@@ -28,7 +29,7 @@ het altijd één van deze drie:
 ### 1. Supabase — de database
 
 Alle tekst en gegevens die een beheerder kan aanpassen: teams, spelers,
-evenementen, sponsors, lidgelden, bestuursleden, albums.
+evenementen, nieuwsberichten, sponsors, lidgelden, bestuursleden, albums.
 
 Verbinding: `Frontend/supabase.ts`. Tabellen: `Frontend/repository/*.ts`.
 De tabellen zelf zijn aangemaakt in `supabase/migrations/`.

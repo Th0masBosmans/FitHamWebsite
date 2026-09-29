@@ -1,15 +1,15 @@
 # Contact — `/contact`
 
-Contactformulier, uitleg over het Aanspreekpunt Integriteit, en de bestuursleden.
+Contactformulier en de bestuursleden. De uitleg over het Aanspreekpunt
+Integriteit (API) staat op `/onze-club/api`, zie [onze-club.md](onze-club.md).
 
 ## Welke bestanden
 
 | Bestand | Wat het doet |
 | --- | --- |
 | `Frontend/pages/contact.tsx` | Het adres |
-| `Frontend/components/pages/public/ContactContent.tsx` | Zet de drie blokken onder elkaar |
+| `Frontend/components/pages/public/ContactContent.tsx` | Zet de twee blokken onder elkaar |
 | `Frontend/components/sections/contact/ContactForm.tsx` | Het formulier |
-| `Frontend/components/sections/contact/IntegrityContact.tsx` | Het API-blok |
 | `Frontend/components/sections/contact/BoardMembers.tsx` | De bestuursleden |
 | `Frontend/pages/api/contact.ts` | Verstuurt de mail (draait op de server) |
 | `Frontend/lib/mail.ts` | De opmaak van de mail |
@@ -62,25 +62,6 @@ scrolt.
 
 ---
 
-## Het API-blok
-
-`IntegrityContact.tsx` — vaste uitleg over het Aanspreekpunt Integriteit.
-
-Onderaan staat een link "neem contact op met onze API". Die scrolt naar het
-juiste bestuurslid in de lijst eronder en laat dat even oplichten.
-
-Hoe dat bestuurslid gevonden wordt: er wordt in de **functieomschrijving**
-gezocht naar het woord "api" of "aanspreekpunt". Staat er bij niemand zoiets, dan
-scrolt de link gewoon naar het begin van de bestuurslijst.
-
-> Wil je dit laten werken, zet dan bij het juiste bestuurslid iets als
-> "Aanspreekpunt Integriteit" of "API" als functie in het beheerpaneel.
-
-Het oplichten gebeurt met de opmaakregel `api-highlight` in
-`Frontend/styles/globals.css`.
-
----
-
 ## De bestuursleden
 
 ### Gegevens
@@ -106,10 +87,6 @@ De titel "Contact" en de ondertitel "Neem contact met ons op!"
 ### `sections/contact/ContactForm.tsx`
 De tussentitel "Stuur een bericht", alle veldnamen, de voorbeeldteksten in de
 velden (`jouw@email.be`, `(+32 470 12 34 56)`), en de meldingen na het versturen.
-
-### `sections/contact/IntegrityContact.tsx`
-De **volledige tekst** van het API-blok: de drie alinea's over wat een
-Aanspreekpunt Integriteit is en waar de club voor staat.
 
 ### `lib/mail.ts`
 De opmaak van de mail: de blauwe kop, het tabelletje met gegevens en het

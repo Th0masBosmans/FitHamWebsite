@@ -78,8 +78,6 @@ dan 120) wordt geweigerd.
 
 `MembershipInfo.tsx`, volledig hardgecodeerd:
 
-**Verzekering** — een downloadknop naar `public/Verzekering.pdf`.
-
 **Gratis Proeftraining** — een knop naar het contactformulier met het bericht al
 ingevuld:
 
@@ -108,8 +106,5 @@ De veldnamen, de voorbeeldtekst in het ervaringsvak en de meldingen na het verst
 
 ## Bestanden uit `public/`
 
-| Bestand | Waar |
-| --- | --- |
-| `Verzekering.pdf` | De downloadknop bij "Verzekering" |
-
-Vervangen doe je door een nieuw PDF met dezelfde naam op dezelfde plek te zetten.
+Geen. Het verzekeringsdocument staat nu op `/onze-club/verzekeringen`, zie
+[onze-club.md](onze-club.md).

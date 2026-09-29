@@ -14,6 +14,7 @@ bestanden uit `public/` gebruikt worden.
 | Contact | `/contact` | [contact.md](contact.md) |
 | Lidmaatschap | `/membership` | [lidmaatschap.md](lidmaatschap.md) |
 | Sponsors | `/sponsors` | [sponsors.md](sponsors.md) |
+| Onze Club | `/onze-club/*` | [onze-club.md](onze-club.md) |
 | Beheerpaneel | `/admin/*` | [beheer.md](beheer.md) |
 
 Daarnaast: [gedeeld.md](gedeeld.md) — de header, de footer, het zoekvenster en
@@ -127,7 +128,7 @@ een nieuw bestand met **dezelfde naam** neer.
 | `MenSilhouette.png` | Vervangfoto als een herenteam geen foto heeft | Teams |
 | `WomenSilhouette.png` | Vervangfoto als een damesteam geen foto heeft | Teams |
 | `twizziticon.png` | Icoontje op de Twizzit-knop | Teams, Home (Volg Ons) |
-| `Verzekering.pdf` | De verzekeringspapieren om te downloaden | Lidmaatschap |
+| `Verzekering.pdf` | De verzekeringspapieren om te downloaden | Onze Club → Verzekeringen |
 | `Webshop/merch-shirt.png` | Shirt | Home, webshopblok |
 | `Webshop/merch-shorts.png` | Short | Home, webshopblok |
 | `Webshop/merch-bag.png` | Rugzak | Home, webshopblok |

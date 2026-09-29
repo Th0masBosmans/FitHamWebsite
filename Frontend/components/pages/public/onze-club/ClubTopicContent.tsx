@@ -10,14 +10,14 @@ import { findClubTopic } from "@/components/sections/onze-club/clubTopics";
 type ClubTopicContentProps = {
   /** De slug uit clubTopics; bepaalt de titel en de ondertitel van de pagina. */
   slug: string;
-  /** Extra blok onder de "binnenkort"-melding, bv. een downloadknop. */
+  /** De inhoud van de pagina. Zonder inhoud verschijnt een "binnenkort"-melding. */
   children?: ReactNode;
 }
 
 /**
- * Het casco van een onderwerp onder "Onze Club". De inhoud moet nog aangeleverd
- * worden, dus voorlopig staat hier alleen een "binnenkort"-melding. Zodra de
- * tekst er is, vervang je die melding door de echte inhoud.
+ * Het casco van een onderwerp onder "Onze Club": terugknop, titel en een kaart
+ * met de inhoud. Zolang een pagina nog geen inhoud meegeeft, toont de kaart een
+ * "binnenkort"-melding.
  */
 export function ClubTopicContent({ slug, children }: ClubTopicContentProps) {
   const router = useRouter();
@@ -44,23 +44,21 @@ export function ClubTopicContent({ slug, children }: ClubTopicContentProps) {
       {/* Titel van de pagina */}
       <PageHeading title={topic.label} subtitle={topic.description} />
 
-      {/* Tijdelijke melding zolang de inhoud nog niet is aangeleverd */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="rounded-2xl border border-white/20 bg-white/10 p-8 text-center backdrop-blur-sm lg:p-12"
-      >
-        <span className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-(--color-accent) text-(--color-primary-brand) shadow-lg">
-          <Hourglass className="h-8 w-8" strokeWidth={2.5} />
-        </span>
+      {/* De inhoud brengt zijn eigen (witte) kaarten mee; zonder inhoud tonen we
+          een tijdelijke melding. */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+        {children ?? (
+          <div className="rounded-2xl border border-white/20 bg-white/10 p-8 text-center backdrop-blur-sm lg:p-12">
+            <span className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-(--color-accent) text-(--color-primary-brand) shadow-lg">
+              <Hourglass className="h-8 w-8" strokeWidth={2.5} />
+            </span>
 
-        <h2 className="text-white title-section mb-3">Binnenkort beschikbaar</h2>
-        <p className="mx-auto max-w-prose text-white/80 body-regular">
-          We zijn deze pagina volop aan het samenstellen. Kom snel nog eens terug.
-        </p>
-
-        {children}
+            <h2 className="text-white title-section mb-3">Binnenkort beschikbaar</h2>
+            <p className="mx-auto max-w-prose text-white/80 body-regular">
+              We zijn deze pagina volop aan het samenstellen. Kom snel nog eens terug.
+            </p>
+          </div>
+        )}
       </motion.div>
     </motion.div>
   );

@@ -5,7 +5,6 @@ import { motion } from "motion/react";
 import { PageHeading } from "@/components/ui/PageHeading";
 import { ContactForm } from "@/components/sections/contact/ContactForm";
 import { BoardMembers } from "@/components/sections/contact/BoardMembers";
-import { IntegrityContact } from "@/components/sections/contact/IntegrityContact";
 
 export function ContactContent() {
   const { query } = useRouter();
@@ -22,7 +21,6 @@ export function ContactContent() {
       <PageHeading title="Contact" subtitle="Neem contact met ons op!" />
 
       <ContactForm prefillMessage={prefillMessage} />
-      <IntegrityContact />
       <BoardMembers />
     </motion.div>
   );

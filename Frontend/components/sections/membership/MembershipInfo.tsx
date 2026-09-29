@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FileText, Download, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 
 const PROEFTRAINING_MESSAGE = "Ik wil me graag aanmelden voor een gratis proeftraining!";
@@ -10,27 +10,6 @@ const proeftrainingHref = `/contact?message=${encodeURIComponent(PROEFTRAINING_M
 export function MembershipInfo() {
   return (
     <div className="mt-12 px-6 pb-8 max-w-md lg:max-w-4xl mx-auto space-y-6">
-      {/* Download van de verzekeringspapieren (public/Verzekering.pdf) */}
-      <motion.a
-        href="/Verzekering.pdf"
-        download
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="bg-white rounded-2xl p-5 shadow-lg border-2 border-gray-100 flex items-center gap-4 hover:border-[var(--color-secondary-brand)] transition-colors group cursor-pointer block"
-      >
-        <div className="bg-[var(--color-secondary-brand)]/10 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--color-secondary-brand)] transition-colors">
-          <FileText className="w-6 h-6 text-[var(--color-primary-brand)] group-hover:text-white transition-colors" />
-        </div>
-        <div className="flex-1">
-          <h4 className="text-[var(--color-primary-brand)] font-black italic uppercase label-large leading-tight">Verzekering</h4>
-          <p className="text-gray-500 label-small mt-0.5 font-medium">Download papieren (PDF)</p>
-        </div>
-        <div className="text-[var(--color-secondary-brand)] group-hover:scale-110 transition-transform">
-          <Download className="w-5 h-5" strokeWidth={2.5} />
-        </div>
-      </motion.a>
-
       <Link href={proeftrainingHref}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}

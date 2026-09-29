@@ -6,6 +6,10 @@ export type { BoardMember };
 
 const COLUMNS = "id, name, function, email, profile_picture";
 
+/** Of dit bestuurslid het Aanspreekpunt Integriteit (API) is, af te leiden uit zijn functie. */
+export const isIntegrityOfficer = (memberFunction: string) =>
+  /\bapi\b|aanspreekpunt/i.test(memberFunction);
+
 class BoardMemberRepository {
   private cloudinary = new CloudinaryRepository();
 
@@ -21,6 +25,12 @@ class BoardMemberRepository {
     }
 
     return data ?? [];
+  }
+
+  /** Het mailadres van de API, of null als er geen bestuurslid met die functie is. */
+  async fetchIntegrityOfficerEmail(): Promise<string | null> {
+    const members = await this.fetchBoardMembers();
+    return members.find((member) => isIntegrityOfficer(member.function))?.email || null;
   }
 
   async postBoardMember(member: { name: string; function: string; email: string; profile_picture: File }): Promise<BoardMember> {

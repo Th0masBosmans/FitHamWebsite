@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Pause, Play } from "lucide-react";
 import { PageHeading } from "@/components/ui/PageHeading";
@@ -10,13 +10,57 @@ export type HeroSlide = {
   caption: string;
 }
 
+// Wat we op pc van een foto onthouden om de beste uitsnede te kiezen.
+type DetailProfile = {
+  aspect: number; // hoogte gedeeld door breedte van de foto
+  rows: number[]; // hoeveel detail (mensen) er per rij te zien is
+};
+
+const PROFILE_SIZE = 100; // De foto wordt geanalyseerd als 100x100 minifoto
+const CLEAR_PART = 0.8; // Onderaan vervaagt de banner, alleen de bovenste 80% is echt goed zichtbaar
+const HEAD_BAND = 12; // Zoveel rijen boven de uitsnede controleren we op afgesneden hoofden
+const HEAD_PENALTY = 3; // Hoe zwaar het afsnijden van hoofden telt tegenover shirts en nummers
+
+// Kiest op pc de hoogte waarop we een foto bijsnijden, als percentage voor object-position.
+function desktopPosition(profile: DetailProfile, containerRatio: number) {
+  const totalRows = profile.rows.length;
+  // Welk deel van de fotohoogte past in de banner als de foto de volle breedte vult.
+  const visibleRows = Math.round(Math.min(1, containerRatio / profile.aspect) * totalRows);
+  if (visibleRows >= totalRows) return 50; // Past de hele foto, dan maakt de positie niet uit
+
+  const clearRows = Math.max(1, Math.round(visibleRows * CLEAR_PART));
+  let bestScore = -Infinity;
+  let bestStart = 0;
+
+  for (let start = 0; start + visibleRows <= totalRows; start++) {
+    // Zoveel mogelijk detail in het goed zichtbare deel...
+    let score = 0;
+    for (let y = start; y < start + clearRows; y++) score += profile.rows[y];
+    // ...maar straffen als we vlak erboven door drukke rijen snijden (hoofden).
+    for (let y = Math.max(0, start - HEAD_BAND); y < start; y++) score -= profile.rows[y] * HEAD_PENALTY;
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestStart = start;
+    }
+  }
+
+  // Omzetten naar object-position: 0% = bovenkant van de foto in beeld, 100% = onderkant.
+  return (bestStart / (totalRows - visibleRows)) * 100;
+}
+
 export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  // Onthoudt per foto op welke hoogte we ze best bijsnijden.
+  // Onthoudt per foto op welke hoogte we ze best bijsnijden (gsm).
   const [smartPositions, setSmartPositions] = useState<Record<string, number>>({});
-  // Op pc tonen we meer van de bovenkant van de foto, op gsm blijft het zoals het was.
+  // Onthoudt per foto waar het detail zit, om op pc de uitsnede te berekenen.
+  const [detailProfiles, setDetailProfiles] = useState<Record<string, DetailProfile>>({});
+  // Op pc gebruiken we de nauwkeurigere berekening, op gsm blijft het zoals het was.
   const [isDesktop, setIsDesktop] = useState(false);
+  // Verhouding hoogte/breedte van de banner, want die bepaalt hoeveel van de foto past.
+  const bannerRef = useRef<HTMLDivElement>(null);
+  const [bannerRatio, setBannerRatio] = useState(0);
 
   useEffect(() => {
     const query = window.matchMedia("(min-width: 1024px)");
@@ -24,6 +68,16 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
     update();
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    const banner = bannerRef.current;
+    if (!banner) return;
+    const observer = new ResizeObserver(() => {
+      if (banner.clientWidth > 0) setBannerRatio(banner.clientHeight / banner.clientWidth);
+    });
+    observer.observe(banner);
+    return () => observer.disconnect();
   }, []);
 
   const allMedia = slides;
@@ -89,6 +143,46 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
             ...prev,
             [media.url]: focalPercentage,
           }));
+
+          // Voor pc: een fijnere analyse die ook randen in de breedte meetelt.
+          // Het midden van de foto telt zwaarder, want daar staan meestal de spelers.
+          const size = PROFILE_SIZE;
+          canvas.width = size;
+          canvas.height = size;
+          ctx.drawImage(img, 0, 0, size, size);
+          const pixels = ctx.getImageData(0, 0, size, size).data;
+          const brightness = new Float32Array(size * size);
+          for (let i = 0; i < size * size; i++) {
+            brightness[i] = 0.299 * pixels[i * 4] + 0.587 * pixels[i * 4 + 1] + 0.114 * pixels[i * 4 + 2];
+          }
+
+          const rows = new Array(size).fill(0);
+          for (let y = 1; y < size; y++) {
+            for (let x = 1; x < size; x++) {
+              const i = y * size + x;
+              const edge = Math.abs(brightness[i] - brightness[i - 1]) + Math.abs(brightness[i] - brightness[i - size]);
+              const centerWeight = 1 - (0.5 * Math.abs(x - size / 2)) / (size / 2);
+              rows[y] += edge * centerWeight;
+            }
+          }
+
+          // Een beetje uitsmeren, zodat één toevallige lijn (bv. een doellat) niet alles bepaalt.
+          const smoothRows = rows.map((_, y) => {
+            let sum = 0;
+            let count = 0;
+            for (let w = -2; w <= 2; w++) {
+              if (rows[y + w] !== undefined) {
+                sum += rows[y + w];
+                count++;
+              }
+            }
+            return sum / count;
+          });
+
+          setDetailProfiles((prev) => ({
+            ...prev,
+            [media.url]: { aspect: img.naturalHeight / img.naturalWidth, rows: smoothRows },
+          }));
         } catch (e) {
           // Lukt het uitlezen niet, dan gewoon het midden nemen.
           setSmartPositions((prev) => ({ ...prev, [media.url]: 50 }));
@@ -113,6 +207,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
 
   return (
     <div
+      ref={bannerRef}
       className="relative mb-6 overflow-hidden h-96 lg:h-[min(70vh,40rem)] w-full bg-gradient-to-br from-[var(--color-primary-brand-darker)] via-[var(--color-primary-brand)] to-[var(--color-primary-brand-dark)]"
       style={{
         maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
@@ -124,9 +219,11 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           if (index !== currentSlideIndex) return null;
 
           // De berekende hoogte, of het midden zolang de berekening loopt.
-          // Op pc tonen we bijna de bovenkant, zodat hoofden niet wegvallen.
+          // Op pc rekenen we de uitsnede uit met de echte maten van banner en foto.
           const focalPercentage = smartPositions[media.url] ?? 50;
-          const currentObjectPosition = `center ${isDesktop ? 25 : focalPercentage}%`;
+          const profile = detailProfiles[media.url];
+          const desktopPercentage = profile && bannerRatio > 0 ? desktopPosition(profile, bannerRatio) : 25;
+          const currentObjectPosition = `center ${isDesktop ? desktopPercentage : focalPercentage}%`;
 
           return (
             <motion.div

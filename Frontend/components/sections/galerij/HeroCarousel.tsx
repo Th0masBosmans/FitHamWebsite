@@ -14,7 +14,17 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   // Onthoudt per foto op welke hoogte we ze best bijsnijden.
-  const [smartPositions, setSmartPositions] = useState<Record<string, string>>({});
+  const [smartPositions, setSmartPositions] = useState<Record<string, number>>({});
+  // Op pc tonen we meer van de bovenkant van de foto, op gsm blijft het zoals het was.
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsDesktop(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
 
   const allMedia = slides;
 
@@ -22,7 +32,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   // foto in de brede banner niet toevallig op de lucht of de vloer uitkomt.
   useEffect(() => {
     allMedia.forEach((media) => {
-      if (smartPositions[media.url]) return; // Deze foto is al bekeken
+      if (smartPositions[media.url] !== undefined) return; // Deze foto is al bekeken
 
       const img = new Image();
       img.crossOrigin = "anonymous"; // Nodig om een foto van Supabase te mogen uitlezen
@@ -74,14 +84,14 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
 
           // Omzetten naar een percentage dat we aan de foto kunnen meegeven.
           const focalPercentage = Math.round((focalRow / 50) * 100);
-          
+
           setSmartPositions((prev) => ({
             ...prev,
-            [media.url]: `center ${focalPercentage}%`,
+            [media.url]: focalPercentage,
           }));
         } catch (e) {
           // Lukt het uitlezen niet, dan gewoon het midden nemen.
-          setSmartPositions((prev) => ({ ...prev, [media.url]: "center center" }));
+          setSmartPositions((prev) => ({ ...prev, [media.url]: 50 }));
         }
       };
     });
@@ -103,7 +113,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
 
   return (
     <div
-      className="relative mb-6 overflow-hidden h-96 w-full bg-gradient-to-br from-[var(--color-primary-brand-darker)] via-[var(--color-primary-brand)] to-[var(--color-primary-brand-dark)]"
+      className="relative mb-6 overflow-hidden h-96 lg:h-[min(70vh,40rem)] w-full bg-gradient-to-br from-[var(--color-primary-brand-darker)] via-[var(--color-primary-brand)] to-[var(--color-primary-brand-dark)]"
       style={{
         maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
         WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
@@ -114,7 +124,9 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           if (index !== currentSlideIndex) return null;
 
           // De berekende hoogte, of het midden zolang de berekening loopt.
-          const currentObjectPosition = smartPositions[media.url] || "center center";
+          // Op pc tonen we bijna de bovenkant, zodat hoofden niet wegvallen.
+          const focalPercentage = smartPositions[media.url] ?? 50;
+          const currentObjectPosition = `center ${isDesktop ? 25 : focalPercentage}%`;
 
           return (
             <motion.div
@@ -129,7 +141,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
                 src={media.url}
                 alt={media.caption}
                 className="absolute inset-0 w-full h-full object-cover"
-                style={{ objectPosition: currentObjectPosition }}
+                style={{ objectPosition: currentObjectPosition, transformOrigin: isDesktop ? "top" : "center" }}
                 initial={{ scale: 1 }}
                 animate={{ scale: 1.06 }}
                 transition={{ duration: 4, ease: "easeOut" }}

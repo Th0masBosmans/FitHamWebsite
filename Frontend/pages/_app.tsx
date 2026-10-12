@@ -34,6 +34,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>Fit Ham</title>
+        <link rel="icon" href="/FitHamLogo.png" type="image/png" sizes="192x192" />
       </Head>
       <SplashScreen />
       <ScrollToTop />

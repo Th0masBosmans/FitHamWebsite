@@ -26,3 +26,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 Backup-codes-fithamwebsite.txt
+
+# claude code
+.claude/
+CLAUDE.md
+CLAUDE.local.md

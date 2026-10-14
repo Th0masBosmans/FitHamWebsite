@@ -6,7 +6,6 @@ const paragraphClasses = "text-(--color-primary-brand) leading-relaxed body-larg
 export default function VerzekeringenPage() {
   return (
     <ClubTopicContent slug="verzekeringen">
-      {/* Witte kaart in dezelfde stijl als de andere inhoudsblokken. */}
       <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 lg:p-10 shadow-xl border-2 border-white/50">
         <h2
           className="text-(--color-primary-brand) mb-2 lg:mb-3 title-section"

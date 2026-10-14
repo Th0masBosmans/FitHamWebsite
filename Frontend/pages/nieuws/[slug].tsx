@@ -16,8 +16,8 @@ export default function NewsArticlePage() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    // Bij de allereerste weergave kent Next.js het adres uit de URL nog niet.
     if (!key) return;
+    
     setLoaded(false);
     newsRepository
       .fetchArticleBySlug(key)

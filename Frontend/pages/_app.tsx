@@ -2,6 +2,7 @@ import type { AppProps } from "next/app";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import { Analytics } from "@vercel/analytics/next";
 import { Header } from "@/components/sections/layout/Header";
 import { Footer } from "@/components/sections/layout/Footer";
 import { SplashScreen } from "@/components/sections/layout/SplashScreen";
@@ -60,6 +61,7 @@ export default function App({ Component, pageProps }: AppProps) {
         </main>
         <Footer />
       </div>
+      <Analytics />
     </>
   );
 }

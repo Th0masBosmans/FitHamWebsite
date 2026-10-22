@@ -88,8 +88,9 @@ const parseRanking = (xml: string): VolleyRankingRow[] =>
 // --- Ophalen ---------------------------------------------------------------
 
 const fetchXML = async (proxyPath: string): Promise<string> => {
-  const url = `${proxyPath}&timestamp=${Date.now()}`;
-  const response = await fetch(url, { headers: { Accept: "text/xml, application/xml, */*" } });
+  // Geen tijdstempel in het adres: de proxy laat Vercel het antwoord even bewaren,
+  // en dat werkt alleen als elk bezoek hetzelfde adres opvraagt.
+  const response = await fetch(proxyPath, { headers: { Accept: "text/xml, application/xml, */*" } });
   if (!response.ok) throw new Error(`Status ${response.status}`);
   return response.text();
 };

@@ -5,6 +5,7 @@ import { ArrowUpRight, MapPin, Minus, Plus, X } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { NewsRepository } from "@/repository/newsRepository";
+import { safeHref } from "@/lib/safeHref";
 import type { NewsBlock } from "@/types";
 
 const newsRepository = new NewsRepository();
@@ -191,7 +192,7 @@ function ButtonsBlock({ block }: { block: Extract<NewsBlock, { type: "buttons" }
           return (
             <a
               key={index}
-              href={button.url}
+              href={safeHref(button.url)}
               target={isExternal ? "_blank" : undefined}
               rel={isExternal ? "noopener noreferrer" : undefined}
               className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 shadow-lg label-small font-extrabold uppercase tracking-wide transition-all hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white ${

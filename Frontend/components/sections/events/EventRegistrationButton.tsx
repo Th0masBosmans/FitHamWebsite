@@ -1,6 +1,7 @@
 "use client";
 
 import { PenLine, ShoppingCart } from "lucide-react";
+import { safeHref } from "@/lib/safeHref";
 
 /**
  * De twee knoppen die je in het beheerpaneel kan kiezen, elk met hun eigen
@@ -47,7 +48,7 @@ export function EventRegistrationButton({
 
   return (
     <a
-      href={url}
+      href={safeHref(url)}
       target="_blank"
       rel="noopener noreferrer"
       // De kaarten eronder openen bij een klik; die mag hier niet doorlopen.

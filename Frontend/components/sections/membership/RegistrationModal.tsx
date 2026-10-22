@@ -4,6 +4,7 @@ import { useState } from "react";
 import { X, UserPlus } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { calculateAge } from "@/lib/age";
+import { TurnstileWidget, isTurnstileConfigured } from "@/components/ui/TurnstileWidget";
 import { BirthDateField, ExperienceField, Field, NameFields } from "./registrationFields";
 
 // Het inschrijvingsvenster dat opengaat als je op een lidgeld-kaartje klikt
@@ -32,8 +33,12 @@ export function RegistrationModal({ isOpen, onClose, teamName }: RegistrationMod
   const [formData, setFormData] = useState(emptyForm);
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  // Het bewijsje van Turnstile dat de bezoeker geen bot is (zie components/ui/TurnstileWidget).
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaReset, setCaptchaReset] = useState(0);
 
   const age = formData.birthDate ? calculateAge(formData.birthDate) : null;
+  const waitingForCaptcha = isTurnstileConfigured && !captchaToken;
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -57,6 +62,7 @@ export function RegistrationModal({ isOpen, onClose, teamName }: RegistrationMod
           birthDate: formData.birthDate,
           email: formData.email,
           experience: formData.experienceDescription,
+          turnstileToken: captchaToken,
         }),
       });
 
@@ -67,9 +73,12 @@ export function RegistrationModal({ isOpen, onClose, teamName }: RegistrationMod
 
       setStatus("success");
       setFormData(emptyForm);
+      // Een token werkt maar één keer, dus een volgende inschrijving heeft een nieuw nodig.
+      setCaptchaReset((value) => value + 1);
     } catch (caughtError) {
       setStatus("error");
       setErrorMessage(caughtError instanceof Error ? caughtError.message : "Versturen mislukt");
+      setCaptchaReset((value) => value + 1);
     }
   };
 
@@ -126,6 +135,8 @@ export function RegistrationModal({ isOpen, onClose, teamName }: RegistrationMod
                 </div>
               </div>
 
+              <TurnstileWidget onToken={setCaptchaToken} resetSignal={captchaReset} />
+
               <div className="flex gap-3 pt-4">
                 <button
                   type="button"
@@ -136,10 +147,12 @@ export function RegistrationModal({ isOpen, onClose, teamName }: RegistrationMod
                 </button>
                 <button
                   type="submit"
-                  disabled={status === "sending"}
+                  // Wachten tot het vinkje van Turnstile groen staat, anders weigert de
+                  // server de inschrijving toch.
+                  disabled={status === "sending" || waitingForCaptcha}
                   className="flex-1 px-6 py-3 bg-gradient-to-r from-[var(--color-primary-brand)] to-[var(--color-secondary-brand)] text-white rounded-lg hover:shadow-lg transition-all font-bold disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  {status === "sending" ? "Versturen..." : "Versturen"}
+                  {status === "sending" ? "Versturen..." : waitingForCaptcha ? "Even verifiëren..." : "Versturen"}
                 </button>
               </div>
 

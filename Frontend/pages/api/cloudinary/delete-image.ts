@@ -4,12 +4,8 @@ import { isAdminRequest } from "@/lib/requireAdmin";
 
 // Verwijdert een foto uit Cloudinary.
 //
-// Draait op de server om dezelfde reden als sign-upload: het geheime
-// Cloudinary-wachtwoord mag de browser nooit zien. Alleen ingelogde beheerders
-// mogen hier langs, anders kon iedereen onze foto's wissen.
-//
-// Wordt aangeroepen door repository/cloudinaryRepository, telkens wanneer een
-// beheerder iets verwijdert of een foto vervangt.
+// Draait op de server, enkel ingelogde gebruikers mogen foto's verwijderen.
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });

@@ -7,6 +7,7 @@ import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { SponsorRepository } from "@/repository/sponsorRepository";
 import { PageHeading } from "@/components/ui/PageHeading";
+import { safeHref } from "@/lib/safeHref";
 import { Sponsor } from "@/types";
 
 const sponsorRepository = new SponsorRepository();
@@ -56,7 +57,7 @@ export function SponsorsContent() {
             </div>
             {sponsor.website_url && (
               <a
-                href={sponsor.website_url}
+                href={safeHref(sponsor.website_url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"

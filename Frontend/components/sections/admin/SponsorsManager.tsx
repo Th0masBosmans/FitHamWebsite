@@ -7,6 +7,7 @@ import { ActionButton, EmptyState, SubmitButton, InputField, ImageUploadZone, Mo
 import { ExpandableListItem } from "./ExpandableListItem";
 import { DeleteConfirmModal } from "./DeleteConfirmModal";
 import { extractFormString } from "./adminHelpers";
+import { safeHref } from "@/lib/safeHref";
 
 const sponsorRepository = new SponsorRepository();
 
@@ -93,7 +94,7 @@ export function SponsorsManager({ active }: { active: boolean }) {
               {
                 label: "Website",
                 value: sponsor.website_url ? (
-                  <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary-brand)] hover:underline flex items-center gap-1">
+                  <a href={safeHref(sponsor.website_url)} target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary-brand)] hover:underline flex items-center gap-1">
                     <LinkIcon className="w-3 h-3" /> {sponsor.website_url.replace(/^https?:\/\//, "")}
                   </a>
                 ) : (

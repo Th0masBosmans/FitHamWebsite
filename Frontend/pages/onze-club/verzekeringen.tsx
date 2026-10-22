@@ -18,7 +18,8 @@ export default function VerzekeringenPage() {
           bij Volley Vlaanderen, dus je hoeft zelf niets extra te regelen.
         </p>
         <p className={paragraphClasses}>
-          Een ongeval gehad? Je hebt 8 dagen na het ongeval de tijd om het aan te geven bij de club en de verzekiringspapieren door te sturen. Wij zorgen dat het dossier wordt aangegmaakt bij ethias.
+          Een ongeval gehad? Je hebt na het ongeval 8 dagen de tijd, om het aan te geven bij de club en de verzekiringspapieren door te sturen.
+          Wij zorgen dat het dossier wordt aangegmaakt bij Ethias.
         </p>
       </div>
 

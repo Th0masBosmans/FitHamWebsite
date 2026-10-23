@@ -1,8 +1,5 @@
 # Fit Ham website — documentatie
 
-Per pagina één bestand, met daarin: welke code de pagina opbouwt, waar de
-gegevens vandaan komen, wat er hardgecodeerd in de code staat en welke
-bestanden uit `public/` gebruikt worden.
 
 | Pagina | Adres | Document |
 | --- | --- | --- |

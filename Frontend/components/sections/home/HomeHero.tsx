@@ -3,15 +3,17 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 
-const FALLBACK_HERO = "/assets/hero-spirit.png";
-
 //Hangt af van foto tot foto manueel hier aanpassen indien nodig
 const CROP_TOP = 0.21;
 const CROP_BOTTOM = 0.21;
 
 export function HomeHero({ heroImageUrl }: { heroImageUrl?: string | null }) {
-  const heroSrc = heroImageUrl ?? FALLBACK_HERO;
   const [ratio, setRatio] = useState<number | null>(null);
+
+  // Geen banner ingesteld in het beheerpaneel: dan laten we het blok weg in
+  // plaats van een gebroken afbeelding te tonen.
+  if (!heroImageUrl) return null;
+  const heroSrc = heroImageUrl;
 
   const measure = (img: HTMLImageElement | null) => {
     if (img?.naturalWidth && img.naturalHeight) {

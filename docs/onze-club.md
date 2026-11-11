@@ -14,6 +14,7 @@ Kwaliteitslabels, Verzekeringen en API.
 | `Frontend/components/sections/layout/header/DesktopNav.tsx` | Het uitklapmenu op desktop |
 | `Frontend/components/sections/layout/header/MobileNavDrawer.tsx` | Het openklapbare blok in het mobiele menu |
 | `Frontend/components/sections/onze-club/IntegrityForm.tsx` | Het formulier op de API-pagina |
+| `Frontend/components/sections/onze-club/ClubIntegrityOfficer.tsx` | Het kaartje van onze eigen API onder het formulier (uit `board_members`) |
 | `Frontend/pages/api/integrity.ts` | Mailt dat formulier door naar de API (draait op de server) |
 
 Een pagina die nog geen inhoud meegeeft aan `ClubTopicContent`, toont een
@@ -21,6 +22,25 @@ Een pagina die nog geen inhoud meegeeft aan `ClubTopicContent`, toont een
 zoals in `verzekeringen.tsx` en `api.tsx`.
 
 ---
+
+## Missie & Visie
+
+Vaste tekst in drie kaarten: "Fit Ham - Meer dan volleybal", "Onze missie" en
+"Onze visie" (met de zes genummerde ambities).
+
+## Organigram
+
+Het organigram is nagebouwd in de pagina: per bestuurslid een kolom met het
+naamblok bovenaan en de taken eronder aan een lijn, zoals in het PDF. Die lijst staat vast bovenaan in `organigram.tsx` en is
+overgenomen uit `public/Organigram.pdf`; verandert de taakverdeling, pas dan de
+lijst aan én vervang het PDF. Onder het schema staat een knop om het PDF te
+openen. Daaronder staat hetzelfde bestuursoverzicht als op de
+contactpagina (`BoardMembers.tsx`, uit de tabel `board_members`).
+
+## Kwaliteitslabels
+
+Vaste lijst met de behaalde labels en het jaartal, bovenaan in
+`kwaliteitslabels.tsx`.
 
 ## Verzekeringen
 
@@ -51,6 +71,12 @@ formulier → /api/integrity → Gmail → mailadres van de API
 - Mailinstellingen: `SMTP_USER` en `SMTP_PASS` in `.env` (zie
   [contact.md](contact.md)). `CONTACT_TO` wordt hier **niet** gebruikt.
 
+Onder het formulier staat een apart wit kader voor het
+onafhankelijke aanspreekpunt van Volley Vlaanderen, de Federatie-API, met
+daaronder een contactkaartje in de stijl van een bestuurslid (foto, naam,
+telefoon, e-mail). Die gegevens en de twee links naar volleyvlaanderen.be staan
+vast in `api.tsx`.
+
 ---
 
 ## Bestanden uit `public/`
@@ -58,5 +84,8 @@ formulier → /api/integrity → Gmail → mailadres van de API
 | Bestand | Waar |
 | --- | --- |
 | `Verzekering.pdf` | De downloadknop op Verzekeringen |
+| `Organigram.pdf` | Het organigram op de pagina Organigram |
+| `AnnaMariaWilmot.jpg` | De foto op het contactkaartje van de Federatie-API (pagina API) |
+| `Kwaliteitslabels.jpeg` | De afbeelding met de labels op de pagina Kwaliteitslabels |
 
 Vervangen doe je door een nieuw PDF met dezelfde naam op dezelfde plek te zetten.

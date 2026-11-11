@@ -152,7 +152,7 @@ export function DesktopNav({ activePath }: { activePath: string }) {
         link.children ? (
           <DesktopNavMenu key={link.label} link={link} activePath={activePath} />
         ) : (
-          <Link key={link.path} href={link.path!} className={linkClasses(activePath === link.path)}>
+          <Link key={link.path} href={link.path!} className={linkClasses(isNavLinkActive(link, activePath))}>
             {link.label}
           </Link>
         )

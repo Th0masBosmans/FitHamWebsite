@@ -6,24 +6,30 @@
 // staan allemaal hier, zodat de datums er overal hetzelfde uitzien.
 //
 // Gebruikt door sections/events/* en sections/home/NextEventCountdown.
+
+// Altijd Belgische tijd, ook als de pagina op de server (in UTC) opgebouwd wordt,
+// zoals een nieuwsbericht. Anders toont de server rond middernacht een andere dag
+// dan de browser.
+const TIME_ZONE = "Europe/Brussels";
+
 export function formatEventDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("nl-BE", { day: "numeric", month: "long", year: "numeric" });
+  return new Date(iso).toLocaleDateString("nl-BE", { day: "numeric", month: "long", year: "numeric", timeZone: TIME_ZONE });
 }
 
 export function formatEventWeekday(iso: string): string {
-  return new Date(iso).toLocaleDateString("nl-BE", { weekday: "long" });
+  return new Date(iso).toLocaleDateString("nl-BE", { weekday: "long", timeZone: TIME_ZONE });
 }
 
 export function formatEventDay(iso: string): string {
-  return String(new Date(iso).getDate());
+  return new Date(iso).toLocaleDateString("nl-BE", { day: "numeric", timeZone: TIME_ZONE });
 }
 
 export function formatEventMonthShort(iso: string): string {
-  return new Date(iso).toLocaleDateString("nl-BE", { month: "short" }).replace(".", "");
+  return new Date(iso).toLocaleDateString("nl-BE", { month: "short", timeZone: TIME_ZONE }).replace(".", "");
 }
 
 export function formatEventTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString("nl-BE", { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString("nl-BE", { hour: "2-digit", minute: "2-digit", timeZone: TIME_ZONE });
 }
 
 export function formatEventTimeRange(startIso: string, endIso: string | null): string {

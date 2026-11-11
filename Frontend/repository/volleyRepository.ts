@@ -18,9 +18,10 @@ const DEFAULT_CLUB_ID = "L-0759";
 
 const cleanTeamName = (name = ""): string => name.replaceAll(/[+-]/g, "").trim();
 
+// "Ham" als los woord: anders licht ook een ploeg als Hamont of Hamme op.
 const isHamTeam = (name = ""): boolean => {
   const lower = name.toLowerCase();
-  return lower.includes("ham") || lower.includes("fit");
+  return /\bham\b/.test(lower) || lower.includes("fit");
 };
 
 const toTimestamp = (datum: string, aanvangsuur: string): number => {

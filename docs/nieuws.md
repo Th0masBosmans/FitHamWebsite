@@ -15,7 +15,7 @@ foto, een inleiding en een actieknop — met twee verschillen:
 | Bestand | Wat het doet |
 | --- | --- |
 | `Frontend/pages/nieuws/index.tsx` | Het adres van het overzicht |
-| `Frontend/pages/nieuws/[slug].tsx` | Het adres van één bericht; zet ook de tabbladtitel |
+| `Frontend/pages/nieuws/[slug].tsx` | Het adres van één bericht. Haalt het bericht op de **server** op en zet de tabbladtitel en de deelgegevens (`og:title`, `og:image`, ...), zodat een gedeelde link in WhatsApp of Facebook de titel en de foto toont |
 | `Frontend/components/pages/public/NewsContent.tsx` | Het overzicht |
 | `Frontend/components/pages/public/NewsArticleContent.tsx` | De pagina van één bericht |
 | `Frontend/components/sections/news/NewsCard.tsx` | Het kaartje van een bericht |

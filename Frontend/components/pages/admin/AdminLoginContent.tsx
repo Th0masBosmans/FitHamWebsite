@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { supabase } from "@/supabase";
 import { AdminAuthLayout, authInputClass, authButtonClass } from "./AdminAuthLayout";
 
@@ -17,11 +18,19 @@ export function AdminLoginContent() {
     setIsLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     setIsLoading(false);
 
     if (error) {
       setError("Ongeldig e-mailadres of wachtwoord.");
+      return;
+    }
+
+    // Een account zonder beheerdersrol werd anders zonder uitleg teruggestuurd
+    // naar dit scherm door het slot op het beheerpaneel.
+    if ((data.user?.app_metadata as { role?: string } | null)?.role !== "admin") {
+      await supabase.auth.signOut();
+      setError("Dit account heeft geen toegang tot het beheerpaneel.");
       return;
     }
 
@@ -58,6 +67,16 @@ export function AdminLoginContent() {
           placeholder="Wachtwoord"
           aria-label="Wachtwoord"
         />
+
+        {/* Zonder dit linkje was de herstelpagina nergens te vinden. */}
+        <div className="flex justify-end">
+          <Link
+            href="/admin/reset-password"
+            className="text-sm font-semibold text-[var(--color-primary-brand)] hover:underline"
+          >
+            Wachtwoord vergeten?
+          </Link>
+        </div>
 
         <div className="pt-3">
           <button type="submit" disabled={isLoading} className={`${authButtonClass} w-full`}>

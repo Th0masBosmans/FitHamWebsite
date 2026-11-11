@@ -64,6 +64,11 @@ export function EventsManager({ active, albums, setAlbums }: EventsManagerProps)
     const start_date = new Date(startInput).toISOString();
     const endInput = extractFormString(formData, "end_date");
     const end_date = endInput ? new Date(endInput).toISOString() : null;
+    // Een einde vóór het begin zou het evenement meteen als "voorbij" tonen.
+    if (end_date && end_date < start_date) {
+      alert("Het einde ligt vóór het begin. Pas de datums aan.");
+      return;
+    }
     const highlighted = formData.get("highlighted") === "on";
     // Staat het vinkje uit, dan wissen we een eerder ingevulde link ook echt.
     const registration_url = hasRegistration ? extractFormString(formData, "registration_url").trim() || null : null;

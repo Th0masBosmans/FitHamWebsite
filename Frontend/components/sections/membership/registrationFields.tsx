@@ -30,9 +30,10 @@ export function Field({
 }) {
   return (
     <div>
-      <label className={labelClasses}>{label}</label>
+      <label htmlFor={`registration-${name}`} className={labelClasses}>{label}</label>
       <input
         type={type}
+        id={`registration-${name}`}
         name={name}
         value={value}
         onChange={onChange}
@@ -76,8 +77,9 @@ export function BirthDateField({
 }) {
   return (
     <div>
-      <label className={labelClasses}>Geboortedatum *</label>
+      <label htmlFor="registration-birthDate" className={labelClasses}>Geboortedatum *</label>
       <input
+        id="registration-birthDate"
         type="date"
         name="birthDate"
         value={value}
@@ -102,10 +104,11 @@ export function ExperienceField({
 }) {
   return (
     <div>
-      <label className="block text-[var(--color-primary-brand)]/70 label-regular mb-2 font-semibold">
+      <label htmlFor="registration-experienceDescription" className="block text-[var(--color-primary-brand)]/70 label-regular mb-2 font-semibold">
         Eerdere volleybalervaring *
       </label>
       <textarea
+        id="registration-experienceDescription"
         name="experienceDescription"
         value={description}
         onChange={onChange}

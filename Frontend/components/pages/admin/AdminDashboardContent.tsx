@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Menu, Home as HomeIcon } from "lucide-react";
+import { Menu, Home as HomeIcon, LogOut } from "lucide-react";
 import { supabase } from "@/supabase";
 import { AlbumRepository, type Album } from "@/repository/albumRepository";
 import { type TabType } from "@/types";
@@ -117,13 +117,21 @@ export function AdminDashboardContent() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-white/10 relative z-10">
+        {/* Twee aparte knoppen: naar de site gaan logt je niet meer stilletjes uit. */}
+        <div className="p-4 border-t border-white/10 relative z-10 space-y-2">
           <button
-            onClick={async () => { await supabase.auth.signOut(); router.push("/"); }}
+            onClick={() => router.push("/")}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white/10 hover:bg-[var(--color-accent)] hover:text-[var(--color-primary-brand)] text-white rounded-lg transition-colors font-bold uppercase tracking-wider text-sm"
           >
             <HomeIcon className="w-4 h-4" />
             <span>Naar website</span>
+          </button>
+          <button
+            onClick={async () => { await supabase.auth.signOut(); router.push("/admin/login"); }}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors font-bold uppercase tracking-wider text-sm"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Uitloggen</span>
           </button>
         </div>
       </aside>

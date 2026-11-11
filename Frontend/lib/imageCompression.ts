@@ -28,6 +28,10 @@ export async function fileToImageData(file: File, maxDimension?: number): Promis
   canvas.height = height;
 
   const ctx = canvas.getContext("2d")!;
+  // JPEG kent geen doorzichtigheid: zonder witte ondergrond wordt een
+  // doorzichtig stuk (bv. rond een sponsorlogo in PNG) zwart.
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, width, height);
   ctx.drawImage(bitmap, 0, 0, width, height);
   bitmap.close();
 

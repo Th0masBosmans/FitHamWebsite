@@ -2,11 +2,11 @@ import type { AppProps } from "next/app";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { Analytics } from "@vercel/analytics/next";
 import { Header } from "@/components/sections/layout/Header";
 import { Footer } from "@/components/sections/layout/Footer";
 import { SplashScreen } from "@/components/sections/layout/SplashScreen";
 import { ScrollToTop } from "@/components/sections/layout/ScrollToTop";
+import { Analytics } from "@vercel/analytics/next"
 import "react-international-phone/style.css";
 import "@/styles/globals.css"
 
@@ -35,15 +35,13 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>Fit Ham</title>
+        <link rel="icon" href="./FitHamLogo.png"  type="image/png" sizes="192x192" />
       </Head>
       <SplashScreen />
       <ScrollToTop />
       <div className="min-h-screen w-full overflow-x-hidden relative flex flex-col">
         <div className="absolute inset-0 -z-10">
           <div className="absolute inset-0 bg-linear-to-b from-[#5cd6ff] to-[var(--color-primary-brand)]" />
-          {/* Het patroon hangt vast aan de bovenkant. Met "center" schoof het mee
-              telkens de pagina langer of korter werd, bv. bij het openklappen
-              van een vraag. */}
           <div
             className="absolute inset-0"
             style={{
@@ -58,10 +56,10 @@ export default function App({ Component, pageProps }: AppProps) {
         <Header />
         <main className="flex-1">
           <Component {...pageProps} />
+          <Analytics />
         </main>
         <Footer />
       </div>
-      <Analytics />
     </>
   );
 }

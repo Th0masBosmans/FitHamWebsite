@@ -51,6 +51,25 @@ export function MediaViewerModal({ gallery, mediaIndex, onClose, onSelectMedia }
     onSelectMedia((mediaIndex + 1) % gallery.media.length);
   };
 
+  // Zelfde als het evenementvenster: Escape sluit, de pijltjes bladeren, en de
+  // pagina erachter scrollt niet mee.
+  useEffect(() => {
+    if (!gallery) return;
+    const length = gallery.media.length;
+    const onKey = (keyEvent: KeyboardEvent) => {
+      if (keyEvent.key === "Escape") onClose();
+      else if (keyEvent.key === "ArrowLeft" && length > 1) onSelectMedia((mediaIndex - 1 + length) % length);
+      else if (keyEvent.key === "ArrowRight" && length > 1) onSelectMedia((mediaIndex + 1) % length);
+    };
+    window.addEventListener("keydown", onKey);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [gallery, mediaIndex, onClose, onSelectMedia]);
+
   return (
     <AnimatePresence>
       {gallery && (

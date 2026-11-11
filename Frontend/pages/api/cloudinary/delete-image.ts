@@ -3,9 +3,6 @@ import crypto from "crypto";
 import { isAdminRequest } from "@/lib/requireAdmin";
 
 // Verwijdert een foto uit Cloudinary.
-//
-// Draait op de server, enkel ingelogde gebruikers mogen foto's verwijderen.
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -48,9 +45,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const result = (await response.json()) as { result?: string };
 
-  // Is de foto er al niet meer, dan meldt Cloudinary "not found". Dat rekenen we
-  // als gelukt: een ontbrekende foto mag nooit beletten dat de rij in de
-  // database verwijderd wordt.
+  // Is de foto er niet meer, dan meldt Cloudinary "not found". Dat rekenen we
+  // als gelukt: een ontbrekende foto mag nooit zorgen dat de rij in de database niet verwijderd wordt.
   if (!response.ok || (result.result !== "ok" && result.result !== "not found")) {
     return res.status(502).json({ error: "Verwijderen uit Cloudinary mislukt", detail: result });
   }

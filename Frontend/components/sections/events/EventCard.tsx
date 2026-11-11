@@ -186,7 +186,7 @@ export function EventCard({
                   className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur-md text-white px-4 py-1.5 shadow-lg label-small font-extrabold uppercase tracking-wide transition-all hover:bg-white/30 hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-white"
                 >
                   <Camera className="h-3.5 w-3.5" />
-                  Foto's
+                  Foto&apos;s
                 </Link>
               )}
 

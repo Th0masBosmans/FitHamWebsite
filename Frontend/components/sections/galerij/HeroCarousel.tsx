@@ -61,6 +61,8 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   // Verhouding hoogte/breedte van de banner, want die bepaalt hoeveel van de foto past.
   const bannerRef = useRef<HTMLDivElement>(null);
   const [bannerRatio, setBannerRatio] = useState(0);
+  // Foto's die al geanalyseerd worden of zijn, zodat we ze maar één keer ophalen.
+  const analyzedUrls = useRef(new Set<string>());
 
   useEffect(() => {
     const query = window.matchMedia("(min-width: 1024px)");
@@ -87,6 +89,10 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   useEffect(() => {
     allMedia.forEach((media) => {
       if (smartPositions[media.url] !== undefined) return; // Deze foto is al bekeken
+      // Al aan het laden. Zonder dit begon elke nieuwe weergave dezelfde foto
+      // opnieuw te downloaden zolang de eerste poging nog bezig was.
+      if (analyzedUrls.current.has(media.url)) return;
+      analyzedUrls.current.add(media.url);
 
       const img = new Image();
       img.crossOrigin = "anonymous"; // Nodig om een foto van Supabase te mogen uitlezen

@@ -93,7 +93,7 @@ export function MobileNavDrawer({ isOpen, activePath, onClose }: MobileNavDrawer
               <Link
                 key={link.path}
                 href={link.path!}
-                className={`${rowClasses(activePath === link.path)} border-b border-gray-50`}
+                className={`${rowClasses(isNavLinkActive(link, activePath))} border-b border-gray-50`}
               >
                 {link.label}
               </Link>

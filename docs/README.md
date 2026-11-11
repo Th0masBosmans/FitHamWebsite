@@ -134,12 +134,7 @@ een nieuw bestand met **dezelfde naam** neer.
 | `Webshop/merch-bag.png` | Rugzak | Home, webshopblok |
 | `Webshop/merch-socks.png` | Sokken | Home, webshopblok |
 
-### Twee dingen om te weten
-
-**`assets/hero-spirit.png` ontbreekt.** De homepagina valt op dit bestand terug
-als er in het beheerpaneel géén herobanner is ingesteld — maar het bestaat niet
-in `public/assets/`. Zolang er wel een banner ingesteld staat merk je er niets
-van. Zie [home.md](home.md).
+### Goed om te weten
 
 De foto's van het bestuur komen uit Cloudinary en worden in het beheerpaneel
 geüpload; er staat daarvoor niets in `public/`.
@@ -160,6 +155,8 @@ Staat in `Frontend/.env` en hoort niet in git.
 | `SMTP_USER` | Gmail-adres waarmee mail verstuurd wordt |
 | `SMTP_PASS` | App-wachtwoord van dat Gmail-adres |
 | `CONTACT_TO` | Waar contact- en inschrijvingsmails naartoe gaan |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Publieke sleutel van de Cloudflare-captcha op de formulieren |
+| `TURNSTILE_SECRET_KEY` | Geheim — alleen op de server. Zonder deze sleutel weigert de echte site elke formuliermail |
 
 Alles met `NEXT_PUBLIC_` ervoor is zichtbaar in de browser. De rest niet, en dat
 moet zo blijven.

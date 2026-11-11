@@ -40,8 +40,11 @@ export const navLinks: NavLink[] = [
   { path: "/contact", label: "Contact" },
 ];
 
-/** Of een menu-item de pagina is waar je nu staat (ook bij een openklapbaar item). */
+/**
+ * Of een menu-item de pagina is waar je nu staat (ook bij een openklapbaar item).
+ * Een pagina eronder telt mee: op /teams/[teamId] licht "Teams" ook op.
+ */
 export function isNavLinkActive(link: NavLink, activePath: string): boolean {
-  if (link.path) return activePath === link.path;
+  if (link.path) return activePath === link.path || activePath.startsWith(`${link.path}/`);
   return link.children?.some((child) => activePath === child.path) ?? false;
 }

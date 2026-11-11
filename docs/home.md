@@ -47,10 +47,8 @@ De pagina wordt vooraf klaargezet en ververst zichzelf **elke 60 seconden**. Een
 nieuwe banner is dus binnen de minuut zichtbaar, zonder de site opnieuw te
 publiceren.
 
-> ⚠️ **Als er géén banner ingesteld is**, valt de code terug op
-> `/assets/hero-spirit.png` — en dat bestand bestaat niet in `public/assets/`.
-> Dan zie je een gebroken afbeelding. Ofwel altijd een banner ingesteld houden,
-> ofwel dat bestand alsnog toevoegen. Zie `sections/home/HomeHero.tsx`.
+> **Als er géén banner ingesteld is**, valt het blok gewoon weg en begint de
+> pagina met het uitgelichte evenement. Zie `sections/home/HomeHero.tsx`.
 
 ### Het uitgelichte evenement — Supabase + Cloudinary
 
@@ -101,10 +99,7 @@ De drie links:
 | --- | --- |
 | Facebook | `facebook.com/profile.php?id=100063627339831` |
 | Instagram | `instagram.com/vcfitham/` |
-| TikTok | `https://www.tiktok.com/` |
-
-> ⚠️ De TikTok-link wijst naar de startpagina van TikTok, niet naar een
-> clubaccount. Ofwel het echte adres invullen, ofwel de knop weghalen.
+| Twizzit | `twizzit.com/fitham` |
 
 ---
 
@@ -116,7 +111,6 @@ De drie links:
 | `Webshop/merch-shorts.png` | Webshopblok, links (alleen op desktop) |
 | `Webshop/merch-bag.png` | Webshopblok, rechts (alleen op desktop) |
 | `Webshop/merch-socks.png` | Webshopblok, rechts (alleen op desktop) |
-| `assets/hero-spirit.png` | Vervangfoto voor de banner — **ontbreekt** |
 
 De vier merch-foto's zijn op mobiel verborgen; daar zie je alleen de
 kortingscode in het midden.

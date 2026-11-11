@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowUpRight, MapPin, Minus, Plus, X } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -285,6 +285,14 @@ function PhotosBlock({ block }: { block: Extract<NewsBlock, { type: "photos" }> 
   // De aangeklikte foto, groot over de pagina. Null = geen foto open.
   const [zoomed, setZoomed] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
+
+  // Escape sluit de vergrote foto, zoals in de fotoviewer van de galerij.
+  useEffect(() => {
+    if (!zoomed) return;
+    const onKey = (keyEvent: KeyboardEvent) => keyEvent.key === "Escape" && setZoomed(null);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [zoomed]);
 
   if (block.images.length === 0) return null;
 

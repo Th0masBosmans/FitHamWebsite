@@ -15,7 +15,7 @@ const boardMemberRepository = new BoardMemberRepository();
 // mailt het naar het Aanspreekpunt Integriteit. Het adres halen we hier op de
 // server uit het bestuur, zodat niemand het vanuit de browser kan omleiden.
 //
-// Naam en e-mail zijn optioneel. Laat de melder ze leeg, dan blijft het bericht
+// Naam en e-mail/telefoon zijn optioneel. Laat de melder ze leeg, dan blijft het bericht
 // anoniem: geen reply-to en we loggen niets over de afzender.
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -34,15 +34,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const name = cleanField(body.name, FIELD_LIMITS.name);
-  const email = cleanField(body.email, FIELD_LIMITS.email);
+  // Eén veld voor e-mail óf telefoonnummer. Lijkt het op een e-mailadres, dan
+  // gebruiken we het ook als antwoordadres; anders tonen we het gewoon in de mail.
+  const contact = cleanField(body.contact, FIELD_LIMITS.email);
+  const email = isValidEmail(contact) ? contact : "";
   const message = cleanField(body.message, FIELD_LIMITS.message, { multiline: true });
 
   if (!message) {
     return res.status(400).json({ error: "Vul een bericht in" });
-  }
-
-  if (email && !isValidEmail(email)) {
-    return res.status(400).json({ error: "Vul een geldig e-mailadres in, of laat het veld leeg" });
   }
 
   const mail = getMailConfig();
@@ -55,13 +54,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: "Er is momenteel geen API, probeer het later opnieuw" });
   }
 
-  const isAnonymous = !name && !email;
+  const isAnonymous = !name && !contact;
   const rows: MailRow[] = [
     ["Naam", name || "Niet ingevuld"],
-    ["E-mail", email || "Niet ingevuld"],
+    ["E-mail of telefoon", contact || "Niet ingevuld"],
     ["Verstuurd via", "Formulier op /onze-club/api"],
   ];
-  const title = isAnonymous ? "Nieuw anoniem bericht" : `Nieuw bericht van ${name || email}`;
+  const title = isAnonymous ? "Nieuw anoniem bericht" : `Nieuw bericht van ${name || contact}`;
 
   try {
     await mail.transporter.sendMail({

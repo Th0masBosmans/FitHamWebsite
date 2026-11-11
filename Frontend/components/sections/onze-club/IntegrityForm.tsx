@@ -11,11 +11,11 @@ const labelClasses = "block text-(--color-primary-brand) mb-2 label-regular font
 type SubmitStatus = "idle" | "sending" | "success" | "error";
 
 /**
- * Formulier voor de API op /onze-club/api. Naam en e-mail zijn optioneel: wie ze
+ * Formulier voor de API op /onze-club/api. Naam en e-mail/telefoon zijn optioneel: wie ze
  * leeg laat, meldt anoniem. /api/integrity mailt het bericht door naar de API.
  */
 export function IntegrityForm() {
-  const emptyForm = { name: "", email: "", message: "" };
+  const emptyForm = { name: "", contact: "", message: "" };
   const [formData, setFormData] = useState(emptyForm);
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -67,7 +67,7 @@ export function IntegrityForm() {
         Stuur een bericht naar de API
       </h2>
       <p className="text-(--color-primary-brand) leading-relaxed body-regular font-medium mb-5">
-        Je bericht gaat rechtstreeks naar onze API. Je naam en e-mailadres zijn optioneel: laat ze
+        Je bericht gaat rechtstreeks naar onze API. Je naam en e-mailadres of telefoonnummer zijn optioneel: laat ze
         leeg als je anoniem wilt blijven, of vul ze in als je graag een antwoord krijgt.
       </p>
 
@@ -86,16 +86,16 @@ export function IntegrityForm() {
           />
         </div>
         <div>
-          <label htmlFor="integrity-email" className={labelClasses}>
-            E-mail <span className="font-medium opacity-60">(optioneel)</span>
+          <label htmlFor="integrity-contact" className={labelClasses}>
+            E-mail of telefoonnummer <span className="font-medium opacity-60">(optioneel)</span>
           </label>
           <input
-            type="email"
-            id="integrity-email"
-            value={formData.email}
-            onChange={(event) => setFormData({ ...formData, email: event.target.value })}
+            type="text"
+            id="integrity-contact"
+            value={formData.contact}
+            onChange={(event) => setFormData({ ...formData, contact: event.target.value })}
             className={inputClasses}
-            placeholder="jouw@email.be"
+            placeholder="jouw@email.be of 04xx xx xx xx"
           />
         </div>
       </div>
@@ -120,7 +120,7 @@ export function IntegrityForm() {
       <div className="mt-4 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <span className="inline-flex items-center gap-2 text-(--color-primary-brand)/70 label-small font-semibold">
           <ShieldCheck className="h-4 w-4 shrink-0" />
-          Naam en e-mail leeg? Dan blijf je anoniem
+          Naam en contactgegevens leeg? Dan blijf je anoniem
         </span>
         <button
           type="submit"
